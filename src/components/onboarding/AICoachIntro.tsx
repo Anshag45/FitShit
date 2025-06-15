@@ -16,13 +16,13 @@ export function AICoachIntro({ onNext, onBack }: AICoachIntroProps) {
   const questions = [
     {
       id: 'spiritAnimal',
-      title: 'Choose Your Spirit Animal',
+      title: 'Choose Your Gaming Style',
       subtitle: 'This will shape your AI coach\'s personality',
       options: [
-        { id: 'cheetah', title: 'Cheetah', emoji: '🐆', description: 'Fast, intense, explosive workouts' },
-        { id: 'turtle', title: 'Turtle', emoji: '🐢', description: 'Steady, consistent, mindful approach' },
-        { id: 'eagle', title: 'Eagle', emoji: '🦅', description: 'Focused, precise, soaring to new heights' },
-        { id: 'bear', title: 'Bear', emoji: '🐻', description: 'Strong, powerful, building raw strength' }
+        { id: 'cheetah', title: 'Speed Demon', emoji: '🐆', description: 'Fast, intense, explosive workouts' },
+        { id: 'turtle', title: 'Steady Grinder', emoji: '🐢', description: 'Consistent, methodical approach' },
+        { id: 'eagle', title: 'Precision Master', emoji: '🦅', description: 'Focused, precise, soaring to new heights' },
+        { id: 'bear', title: 'Power House', emoji: '🐻', description: 'Strong, powerful, building raw strength' }
       ]
     },
     {
@@ -30,9 +30,9 @@ export function AICoachIntro({ onNext, onBack }: AICoachIntroProps) {
       title: 'What\'s Your Vibe?',
       subtitle: 'How do you like to train?',
       options: [
-        { id: 'intense', title: 'Intense', emoji: '🔥', description: 'Push limits, break barriers' },
+        { id: 'intense', title: 'Hardcore', emoji: '🔥', description: 'Push limits, break barriers' },
         { id: 'balanced', title: 'Balanced', emoji: '⚖️', description: 'Mix of strength, cardio, and flexibility' },
-        { id: 'zen', title: 'Zen', emoji: '🧘‍♀️', description: 'Mindful movement, inner peace' }
+        { id: 'zen', title: 'Zen Mode', emoji: '🧘‍♀️', description: 'Mindful movement, inner peace' }
       ]
     },
     {
@@ -65,11 +65,11 @@ export function AICoachIntro({ onNext, onBack }: AICoachIntroProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-black relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0">
         <motion.div
-          className="absolute top-20 left-20 w-32 h-32 bg-purple-500/20 rounded-full blur-xl"
+          className="absolute top-20 left-20 w-32 h-32 bg-cyan-500/20 rounded-full blur-xl"
           animate={{ 
             scale: [1, 1.2, 1],
             opacity: [0.3, 0.6, 0.3]
@@ -77,7 +77,7 @@ export function AICoachIntro({ onNext, onBack }: AICoachIntroProps) {
           transition={{ duration: 4, repeat: Infinity }}
         />
         <motion.div
-          className="absolute bottom-20 right-20 w-48 h-48 bg-pink-500/20 rounded-full blur-xl"
+          className="absolute bottom-20 right-20 w-48 h-48 bg-purple-500/20 rounded-full blur-xl"
           animate={{ 
             scale: [1.2, 1, 1.2],
             opacity: [0.4, 0.7, 0.4]
@@ -95,7 +95,7 @@ export function AICoachIntro({ onNext, onBack }: AICoachIntroProps) {
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              className="w-20 h-20 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl"
+              className="w-20 h-20 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl"
             >
               <Sparkles className="w-10 h-10 text-white" />
             </motion.div>
@@ -112,7 +112,7 @@ export function AICoachIntro({ onNext, onBack }: AICoachIntroProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-white/70"
+              className="text-gray-300"
             >
               Answer 3 quick questions to create your perfect training companion
             </motion.p>
@@ -120,13 +120,13 @@ export function AICoachIntro({ onNext, onBack }: AICoachIntroProps) {
 
           {/* Progress */}
           <div className="mb-8">
-            <div className="flex justify-between text-sm text-white/60 mb-2">
+            <div className="flex justify-between text-sm text-gray-400 mb-2">
               <span>Question {currentQuestion + 1} of {questions.length}</span>
               <span>{Math.round(((currentQuestion + 1) / questions.length) * 100)}%</span>
             </div>
-            <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
+            <div className="w-full bg-gray-800/30 rounded-full h-2 overflow-hidden">
               <motion.div
-                className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full"
+                className="bg-gradient-to-r from-cyan-500 to-purple-500 h-2 rounded-full"
                 initial={{ width: 0 }}
                 animate={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }}
                 transition={{ duration: 0.5 }}
@@ -141,7 +141,7 @@ export function AICoachIntro({ onNext, onBack }: AICoachIntroProps) {
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -50 }}
-              className="bg-white/10 backdrop-blur-lg rounded-3xl p-6 border border-white/20 shadow-2xl"
+              className="bg-gray-800/30 backdrop-blur-lg rounded-3xl p-6 border border-cyan-500/30 shadow-2xl"
             >
               <motion.h2
                 initial={{ opacity: 0, y: 20 }}
@@ -154,7 +154,7 @@ export function AICoachIntro({ onNext, onBack }: AICoachIntroProps) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="text-white/70 mb-6"
+                className="text-gray-300 mb-6"
               >
                 {currentQ.subtitle}
               </motion.p>
@@ -169,7 +169,7 @@ export function AICoachIntro({ onNext, onBack }: AICoachIntroProps) {
                   >
                     <InteractiveCard
                       onClick={() => handleAnswer(option.id)}
-                      className="p-4 border-2 border-white/20 hover:border-purple-400 bg-white/5 hover:bg-white/10"
+                      className="p-4 border-2 border-gray-600/50 hover:border-cyan-400/50 bg-gray-800/30 hover:bg-gray-700/30"
                       hoverScale={1.02}
                       glowEffect
                     >
@@ -183,7 +183,7 @@ export function AICoachIntro({ onNext, onBack }: AICoachIntroProps) {
                         </motion.span>
                         <div>
                           <h3 className="font-bold text-white text-lg">{option.title}</h3>
-                          <p className="text-white/60 text-sm">{option.description}</p>
+                          <p className="text-gray-400 text-sm">{option.description}</p>
                         </div>
                       </div>
                     </InteractiveCard>

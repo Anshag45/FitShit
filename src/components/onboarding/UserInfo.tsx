@@ -31,11 +31,11 @@ export function UserInfo({ onNext, onBack }: UserInfoProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-black relative overflow-hidden">
       {/* Animated background */}
       <div className="absolute inset-0">
         <motion.div
-          className="absolute top-20 left-20 w-32 h-32 bg-purple-500/20 rounded-full blur-xl"
+          className="absolute top-20 left-20 w-32 h-32 bg-cyan-500/20 rounded-full blur-xl"
           animate={{ 
             scale: [1, 1.2, 1],
             opacity: [0.3, 0.6, 0.3]
@@ -43,7 +43,7 @@ export function UserInfo({ onNext, onBack }: UserInfoProps) {
           transition={{ duration: 4, repeat: Infinity }}
         />
         <motion.div
-          className="absolute bottom-20 right-20 w-40 h-40 bg-pink-500/15 rounded-full blur-2xl"
+          className="absolute bottom-20 right-20 w-40 h-40 bg-purple-500/15 rounded-full blur-2xl"
           animate={{ 
             scale: [1.1, 1.3, 1.1],
             opacity: [0.2, 0.5, 0.2]
@@ -59,14 +59,14 @@ export function UserInfo({ onNext, onBack }: UserInfoProps) {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/20 shadow-2xl"
+            className="bg-gray-800/30 backdrop-blur-lg rounded-3xl p-8 border border-cyan-500/30 shadow-2xl"
           >
             <div className="text-center mb-8">
               <motion.div
                 initial={{ scale: 0, rotate: -180 }}
                 animate={{ scale: 1, rotate: 0 }}
                 transition={{ delay: 0.2, duration: 0.6 }}
-                className="w-16 h-16 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg"
+                className="w-16 h-16 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg"
               >
                 <User className="w-8 h-8 text-white" />
               </motion.div>
@@ -82,7 +82,7 @@ export function UserInfo({ onNext, onBack }: UserInfoProps) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
-                className="text-white/70"
+                className="text-gray-300"
               >
                 Let's personalize your epic journey
               </motion.p>
@@ -94,17 +94,16 @@ export function UserInfo({ onNext, onBack }: UserInfoProps) {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.5 }}
               >
-                <label className="block text-sm font-medium text-white/80 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Hero Name
                 </label>
-                <motion.input
+                <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:ring-2 focus:ring-purple-500 focus:border-transparent backdrop-blur-sm transition-all duration-300"
+                  className="w-full px-4 py-3 bg-gray-900/50 border border-cyan-500/30 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 focus:outline-none backdrop-blur-sm transition-all duration-300"
                   placeholder="Enter your hero name"
                   required
-                  whileFocus={{ scale: 1.02 }}
                 />
               </motion.div>
 
@@ -113,19 +112,18 @@ export function UserInfo({ onNext, onBack }: UserInfoProps) {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.6 }}
               >
-                <label className="block text-sm font-medium text-white/80 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Age
                 </label>
-                <motion.input
+                <input
                   type="number"
                   value={formData.age}
                   onChange={(e) => setFormData({ ...formData, age: e.target.value })}
-                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:ring-2 focus:ring-purple-500 focus:border-transparent backdrop-blur-sm transition-all duration-300"
+                  className="w-full px-4 py-3 bg-gray-900/50 border border-cyan-500/30 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 focus:outline-none backdrop-blur-sm transition-all duration-300"
                   placeholder="Enter your age"
                   min="13"
                   max="100"
                   required
-                  whileFocus={{ scale: 1.02 }}
                 />
               </motion.div>
 
@@ -134,17 +132,16 @@ export function UserInfo({ onNext, onBack }: UserInfoProps) {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.7 }}
               >
-                <label className="block text-sm font-medium text-white/80 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Email
                 </label>
-                <motion.input
+                <input
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:ring-2 focus:ring-purple-500 focus:border-transparent backdrop-blur-sm transition-all duration-300"
+                  className="w-full px-4 py-3 bg-gray-900/50 border border-cyan-500/30 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 focus:outline-none backdrop-blur-sm transition-all duration-300"
                   placeholder="Enter your email"
                   required
-                  whileFocus={{ scale: 1.02 }}
                 />
               </motion.div>
 

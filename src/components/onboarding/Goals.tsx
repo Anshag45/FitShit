@@ -16,7 +16,7 @@ export function Goals({ onNext, onBack }: GoalsProps) {
   const goals = [
     { id: 'weight_loss', title: 'Lose Weight', emoji: '🔥', gradient: 'from-red-400 to-orange-500' },
     { id: 'strength', title: 'Build Strength', emoji: '💪', gradient: 'from-purple-400 to-indigo-500' },
-    { id: 'endurance', title: 'Boost Endurance', emoji: '🏃‍♂️', gradient: 'from-blue-400 to-cyan-500' },
+    { id: 'endurance', title: 'Boost Endurance', emoji: '🏃‍♂️', gradient: 'from-cyan-400 to-blue-500' },
     { id: 'flexibility', title: 'Increase Flexibility', emoji: '🧘‍♀️', gradient: 'from-green-400 to-emerald-500' },
     { id: 'health', title: 'General Health', emoji: '❤️', gradient: 'from-pink-400 to-rose-500' },
     { id: 'energy', title: 'Boost Energy', emoji: '⚡', gradient: 'from-yellow-400 to-orange-500' }
@@ -37,11 +37,11 @@ export function Goals({ onNext, onBack }: GoalsProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-black relative overflow-hidden">
       {/* Animated background */}
       <div className="absolute inset-0">
         <motion.div
-          className="absolute bottom-20 left-20 w-36 h-36 bg-green-500/20 rounded-full blur-xl"
+          className="absolute bottom-20 left-20 w-36 h-36 bg-cyan-500/20 rounded-full blur-xl"
           animate={{ 
             scale: [1, 1.4, 1],
             opacity: [0.2, 0.6, 0.2]
@@ -49,7 +49,7 @@ export function Goals({ onNext, onBack }: GoalsProps) {
           transition={{ duration: 4, repeat: Infinity }}
         />
         <motion.div
-          className="absolute top-20 right-20 w-44 h-44 bg-pink-500/15 rounded-full blur-2xl"
+          className="absolute top-20 right-20 w-44 h-44 bg-purple-500/15 rounded-full blur-2xl"
           animate={{ 
             scale: [1.1, 1.3, 1.1],
             opacity: [0.3, 0.5, 0.3]
@@ -71,7 +71,7 @@ export function Goals({ onNext, onBack }: GoalsProps) {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2 }}
-              className="w-20 h-20 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl"
+              className="w-20 h-20 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl"
             >
               <Target className="w-10 h-10 text-white" />
             </motion.div>
@@ -87,9 +87,9 @@ export function Goals({ onNext, onBack }: GoalsProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="text-white/70"
+              className="text-gray-300"
             >
-              Choose your cosmic objectives (select all that apply)
+              Choose your gaming objectives (select all that apply)
             </motion.p>
           </motion.div>
 
@@ -105,8 +105,8 @@ export function Goals({ onNext, onBack }: GoalsProps) {
                   onClick={() => toggleGoal(goal.id)}
                   className={`p-4 transition-all duration-300 ${
                     selectedGoals.includes(goal.id)
-                      ? 'border-white/50 bg-white/20 shadow-2xl ring-2 ring-purple-400/50 scale-105'
-                      : 'border-white/20 bg-white/10 hover:border-white/30 hover:bg-white/15'
+                      ? 'border-cyan-400 bg-cyan-500/20 shadow-2xl ring-2 ring-cyan-400/50 scale-105'
+                      : 'border-gray-600/50 bg-gray-800/30 hover:border-cyan-400/50 hover:bg-gray-700/30'
                   }`}
                   hoverScale={selectedGoals.includes(goal.id) ? 1.05 : 1.03}
                   glowEffect={selectedGoals.includes(goal.id)}
@@ -125,7 +125,7 @@ export function Goals({ onNext, onBack }: GoalsProps) {
                       <motion.div
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
-                        className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg"
+                        className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full flex items-center justify-center shadow-lg"
                       >
                         <div className="w-2 h-2 bg-white rounded-full" />
                       </motion.div>

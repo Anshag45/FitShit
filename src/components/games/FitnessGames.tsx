@@ -18,12 +18,12 @@ export function FitnessGames() {
       difficulty: 'Medium',
       duration: '3 min',
       calories: 45,
-      color: 'from-purple-500 to-pink-500'
+      color: 'from-cyan-500 to-purple-500'
     },
     {
       id: 'punch-master',
       name: 'Punch Master',
-      description: 'Throw punches to defeat cosmic enemies',
+      description: 'Throw punches to defeat cyber enemies',
       icon: '👊',
       difficulty: 'Hard',
       duration: '5 min',
@@ -33,7 +33,7 @@ export function FitnessGames() {
     {
       id: 'balance-beam',
       name: 'Balance Beam',
-      description: 'Navigate through space obstacles with balance poses',
+      description: 'Navigate through digital obstacles with balance poses',
       icon: '🧘‍♀️',
       difficulty: 'Easy',
       duration: '4 min',
@@ -43,7 +43,7 @@ export function FitnessGames() {
     {
       id: 'cardio-runner',
       name: 'Cardio Runner',
-      description: 'Run in place to escape the black hole',
+      description: 'Run in place to escape the digital void',
       icon: '🏃‍♂️',
       difficulty: 'Hard',
       duration: '6 min',
@@ -57,7 +57,7 @@ export function FitnessGames() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 p-4">
+    <div className="min-h-screen p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -68,12 +68,12 @@ export function FitnessGames() {
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            className="w-20 h-20 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl"
+            className="w-20 h-20 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl"
           >
             <Gamepad2 className="w-10 h-10 text-white" />
           </motion.div>
           <h1 className="text-4xl font-bold text-white mb-2">Fitness Games</h1>
-          <p className="text-white/70">Turn your workout into an epic gaming adventure</p>
+          <p className="text-gray-300">Turn your workout into an epic gaming adventure</p>
         </div>
 
         {/* Games Grid */}
@@ -86,7 +86,7 @@ export function FitnessGames() {
               transition={{ delay: index * 0.1 }}
             >
               <InteractiveCard 
-                className="p-6 relative overflow-hidden"
+                className="p-6 relative overflow-hidden bg-gray-800/30 border-gray-600/30"
                 hoverScale={1.03}
                 glowEffect
               >
@@ -103,12 +103,12 @@ export function FitnessGames() {
                       </motion.div>
                       <div>
                         <h3 className="text-xl font-bold text-white mb-1">{game.name}</h3>
-                        <p className="text-white/70 text-sm">{game.description}</p>
+                        <p className="text-gray-300 text-sm">{game.description}</p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex items-center space-x-4 text-sm text-white/80 mb-4">
+                  <div className="flex items-center space-x-4 text-sm text-gray-300 mb-4">
                     <div className="flex items-center space-x-1">
                       <Target className="w-4 h-4" />
                       <span>{game.difficulty}</span>
@@ -139,9 +139,9 @@ export function FitnessGames() {
         </div>
 
         {/* Leaderboard */}
-        <InteractiveCard className="p-6 mt-8" glowEffect>
+        <InteractiveCard className="p-6 mt-8 bg-gray-800/30 border-gray-600/30" glowEffect>
           <h3 className="text-xl font-bold text-white mb-4 flex items-center">
-            <Trophy className="w-6 h-6 mr-2 text-yellow-400" />
+            <Trophy className="w-6 h-6 mr-2 text-cyan-400" />
             Today's Leaderboard
           </h3>
           <div className="space-y-3">
@@ -157,24 +157,24 @@ export function FitnessGames() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.1 }}
                 className={`flex items-center space-x-4 p-3 rounded-lg ${
-                  player.name === 'You' ? 'bg-purple-500/20 border border-purple-400/30' : 'bg-white/5'
+                  player.name === 'You' ? 'bg-cyan-500/20 border border-cyan-400/30' : 'bg-gray-800/30'
                 }`}
               >
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
                   index === 0 ? 'bg-yellow-500' :
                   index === 1 ? 'bg-gray-400' :
                   index === 2 ? 'bg-orange-500' :
-                  'bg-white/20'
+                  'bg-gray-600'
                 } text-white`}>
                   {index + 1}
                 </div>
                 <div className="flex-1">
                   <div className="font-bold text-white">{player.name}</div>
-                  <div className="text-sm text-white/60">{player.game}</div>
+                  <div className="text-sm text-gray-400">{player.game}</div>
                 </div>
                 <div className="text-right">
                   <div className="font-bold text-white">{player.score.toLocaleString()}</div>
-                  <div className="text-xs text-white/60">points</div>
+                  <div className="text-xs text-gray-400">points</div>
                 </div>
               </motion.div>
             ))}
@@ -238,7 +238,7 @@ function GameSession({ gameId, onExit }: { gameId: string; onExit: () => void })
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-black relative overflow-hidden">
       {/* Game UI */}
       <div className="absolute top-4 left-4 right-4 z-20">
         <div className="flex items-center justify-between">
@@ -248,11 +248,11 @@ function GameSession({ gameId, onExit }: { gameId: string; onExit: () => void })
           <div className="flex items-center space-x-6 text-white">
             <div className="text-center">
               <div className="text-2xl font-bold">{score.toLocaleString()}</div>
-              <div className="text-sm text-white/70">Score</div>
+              <div className="text-sm text-gray-400">Score</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold">{formatTime(timeLeft)}</div>
-              <div className="text-sm text-white/70">Time</div>
+              <div className="text-sm text-gray-400">Time</div>
             </div>
           </div>
           <div className="flex space-x-2">
@@ -285,7 +285,7 @@ function GameSession({ gameId, onExit }: { gameId: string; onExit: () => void })
               className={`absolute w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold transition-all ${
                 target.hit 
                   ? 'bg-green-500 text-white' 
-                  : 'bg-gradient-to-r from-red-500 to-pink-500 text-white hover:scale-110'
+                  : 'bg-gradient-to-r from-cyan-500 to-purple-500 text-white hover:scale-110'
               }`}
               style={{ left: `${target.x}%`, top: `${target.y}%` }}
               onClick={() => handleTargetHit(target.id)}
@@ -307,9 +307,9 @@ function GameSession({ gameId, onExit }: { gameId: string; onExit: () => void })
             exit={{ opacity: 0 }}
             className="absolute inset-0 bg-black/50 flex items-center justify-center z-30"
           >
-            <InteractiveCard className="p-8 text-center max-w-md" glowEffect>
+            <InteractiveCard className="p-8 text-center max-w-md bg-gray-800/50 border-cyan-500/30" glowEffect>
               <h2 className="text-3xl font-bold text-white mb-4">Squat Challenge</h2>
-              <p className="text-white/80 mb-6">
+              <p className="text-gray-300 mb-6">
                 Hit the targets by doing squats! Each squat counts as a hit. 
                 The faster you squat, the higher your score!
               </p>
@@ -333,7 +333,7 @@ function GameSession({ gameId, onExit }: { gameId: string; onExit: () => void })
             exit={{ opacity: 0 }}
             className="absolute inset-0 bg-black/50 flex items-center justify-center z-30"
           >
-            <InteractiveCard className="p-8 text-center" glowEffect>
+            <InteractiveCard className="p-8 text-center bg-gray-800/50 border-cyan-500/30" glowEffect>
               <h2 className="text-2xl font-bold text-white mb-4">Game Paused</h2>
               <div className="flex space-x-4">
                 <Button
@@ -359,7 +359,7 @@ function GameSession({ gameId, onExit }: { gameId: string; onExit: () => void })
             exit={{ opacity: 0 }}
             className="absolute inset-0 bg-black/50 flex items-center justify-center z-30"
           >
-            <InteractiveCard className="p-8 text-center max-w-md" glowEffect>
+            <InteractiveCard className="p-8 text-center max-w-md bg-gray-800/50 border-cyan-500/30" glowEffect>
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
@@ -368,8 +368,8 @@ function GameSession({ gameId, onExit }: { gameId: string; onExit: () => void })
                 🏆
               </motion.div>
               <h2 className="text-3xl font-bold text-white mb-2">Game Complete!</h2>
-              <div className="text-4xl font-bold text-yellow-400 mb-4">{score.toLocaleString()}</div>
-              <p className="text-white/80 mb-6">
+              <div className="text-4xl font-bold text-cyan-400 mb-4">{score.toLocaleString()}</div>
+              <p className="text-gray-300 mb-6">
                 Amazing work! You've earned 50 XP and 25 coins for completing this challenge.
               </p>
               <div className="flex space-x-4">
@@ -400,7 +400,7 @@ function GameSession({ gameId, onExit }: { gameId: string; onExit: () => void })
           animate={{ opacity: 1, y: 0 }}
           className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-20"
         >
-          <div className="bg-white/10 backdrop-blur-lg rounded-2xl px-6 py-3 border border-white/20">
+          <div className="bg-gray-800/50 backdrop-blur-lg rounded-2xl px-6 py-3 border border-cyan-500/30">
             <p className="text-white text-center">
               Do a squat to hit the targets! 🏋️‍♀️
             </p>

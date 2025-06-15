@@ -52,7 +52,7 @@ export function Analytics() {
       label: 'Total Time',
       value: `${state.userStats.totalTime}m`,
       change: '+15%',
-      color: 'from-blue-400 to-cyan-500'
+      color: 'from-cyan-400 to-blue-500'
     },
     {
       icon: Zap,
@@ -85,7 +85,7 @@ export function Analytics() {
                 animate={{ height: `${(value / maxValue) * 100}%` }}
                 transition={{ delay: index * 0.1, duration: 0.6 }}
               />
-              <span className="text-xs text-white/60 mt-1">{labels[index]}</span>
+              <span className="text-xs text-gray-400 mt-1">{labels[index]}</span>
             </div>
           ))}
         </div>
@@ -94,7 +94,7 @@ export function Analytics() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 p-4">
+    <div className="min-h-screen p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -105,12 +105,12 @@ export function Analytics() {
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            className="w-20 h-20 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl"
+            className="w-20 h-20 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl"
           >
             <BarChart3 className="w-10 h-10 text-white" />
           </motion.div>
-          <h1 className="text-4xl font-bold text-white mb-2">Mission Analytics</h1>
-          <p className="text-white/70">Deep insights into your cosmic fitness journey</p>
+          <h1 className="text-4xl font-bold text-white mb-2">Gaming Analytics</h1>
+          <p className="text-gray-300">Deep insights into your fitness gaming journey</p>
         </div>
 
         {/* Time Range Selector */}
@@ -121,8 +121,8 @@ export function Analytics() {
               onClick={() => setTimeRange(range)}
               className={`px-6 py-2 rounded-full font-medium transition-all ${
                 timeRange === range
-                  ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white'
-                  : 'bg-white/10 text-white/70 hover:bg-white/20'
+                  ? 'bg-gradient-to-r from-cyan-500 to-purple-500 text-white'
+                  : 'bg-gray-800/50 text-gray-300 hover:bg-gray-700/50'
               }`}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -141,7 +141,7 @@ export function Analytics() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
             >
-              <InteractiveCard className="p-4" glowEffect>
+              <InteractiveCard className="p-4 bg-gray-800/30 border-gray-600/30" glowEffect>
                 <div className="flex items-center space-x-3">
                   <motion.div
                     className={`w-12 h-12 rounded-full flex items-center justify-center bg-gradient-to-r ${stat.color}`}
@@ -152,7 +152,7 @@ export function Analytics() {
                   </motion.div>
                   <div>
                     <div className="text-2xl font-bold text-white">{stat.value}</div>
-                    <div className="text-sm text-white/60">{stat.label}</div>
+                    <div className="text-sm text-gray-400">{stat.label}</div>
                     <div className="text-xs text-green-400">{stat.change}</div>
                   </div>
                 </div>
@@ -163,23 +163,23 @@ export function Analytics() {
 
         {/* Charts */}
         <div className="grid lg:grid-cols-3 gap-6 mb-8">
-          <InteractiveCard className="p-6" glowEffect>
-            {renderChart(currentData.workouts, 'Workouts Completed', 'from-purple-500 to-pink-500')}
+          <InteractiveCard className="p-6 bg-gray-800/30 border-gray-600/30" glowEffect>
+            {renderChart(currentData.workouts, 'Workouts Completed', 'from-cyan-500 to-purple-500')}
           </InteractiveCard>
           
-          <InteractiveCard className="p-6" glowEffect>
+          <InteractiveCard className="p-6 bg-gray-800/30 border-gray-600/30" glowEffect>
             {renderChart(currentData.calories, 'Calories Burned', 'from-red-500 to-orange-500')}
           </InteractiveCard>
           
-          <InteractiveCard className="p-6" glowEffect>
+          <InteractiveCard className="p-6 bg-gray-800/30 border-gray-600/30" glowEffect>
             {renderChart(currentData.duration, 'Workout Duration (min)', 'from-blue-500 to-cyan-500')}
           </InteractiveCard>
         </div>
 
         {/* Achievement Progress */}
-        <InteractiveCard className="p-6 mb-8" glowEffect>
+        <InteractiveCard className="p-6 mb-8 bg-gray-800/30 border-gray-600/30" glowEffect>
           <h3 className="text-xl font-bold text-white mb-6 flex items-center">
-            <Target className="w-6 h-6 mr-2 text-yellow-400" />
+            <Target className="w-6 h-6 mr-2 text-cyan-400" />
             Achievement Progress
           </h3>
           <div className="grid md:grid-cols-2 gap-6">
@@ -193,7 +193,7 @@ export function Analytics() {
               >
                 <div className="flex justify-between text-sm">
                   <span className="text-white font-medium">{achievement.name}</span>
-                  <span className="text-white/70">{achievement.progress}/{achievement.target}</span>
+                  <span className="text-gray-400">{achievement.progress}/{achievement.target}</span>
                 </div>
                 <ProgressBar
                   progress={achievement.progress}
@@ -207,7 +207,7 @@ export function Analytics() {
         </InteractiveCard>
 
         {/* Insights */}
-        <InteractiveCard className="p-6" glowEffect>
+        <InteractiveCard className="p-6 bg-gray-800/30 border-gray-600/30" glowEffect>
           <h3 className="text-xl font-bold text-white mb-4 flex items-center">
             <TrendingUp className="w-6 h-6 mr-2 text-green-400" />
             AI Insights
@@ -215,19 +215,19 @@ export function Analytics() {
           <div className="space-y-4">
             <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-4">
               <div className="text-green-400 font-bold mb-1">🎯 Great Progress!</div>
-              <div className="text-white/80 text-sm">
+              <div className="text-gray-300 text-sm">
                 You've increased your workout frequency by 15% this month. Keep up the momentum!
               </div>
             </div>
-            <div className="bg-blue-500/20 border border-blue-500/30 rounded-lg p-4">
-              <div className="text-blue-400 font-bold mb-1">💡 Optimization Tip</div>
-              <div className="text-white/80 text-sm">
+            <div className="bg-cyan-500/20 border border-cyan-500/30 rounded-lg p-4">
+              <div className="text-cyan-400 font-bold mb-1">💡 Optimization Tip</div>
+              <div className="text-gray-300 text-sm">
                 Your best performance days are Tuesday and Thursday. Consider scheduling intense workouts then.
               </div>
             </div>
             <div className="bg-purple-500/20 border border-purple-500/30 rounded-lg p-4">
               <div className="text-purple-400 font-bold mb-1">🚀 Next Goal</div>
-              <div className="text-white/80 text-sm">
+              <div className="text-gray-300 text-sm">
                 You're 3 workouts away from unlocking the "Consistency Master" achievement!
               </div>
             </div>

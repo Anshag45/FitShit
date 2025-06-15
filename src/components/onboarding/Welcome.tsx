@@ -9,11 +9,11 @@ interface WelcomeProps {
 
 export function Welcome({ onNext }: WelcomeProps) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-black relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0">
         <motion.div
-          className="absolute top-20 left-20 w-32 h-32 bg-purple-500/20 rounded-full blur-xl"
+          className="absolute top-20 left-20 w-32 h-32 bg-cyan-500/20 rounded-full blur-xl"
           animate={{ 
             scale: [1, 1.2, 1],
             opacity: [0.3, 0.6, 0.3]
@@ -21,7 +21,7 @@ export function Welcome({ onNext }: WelcomeProps) {
           transition={{ duration: 4, repeat: Infinity }}
         />
         <motion.div
-          className="absolute bottom-20 right-20 w-48 h-48 bg-pink-500/20 rounded-full blur-xl"
+          className="absolute bottom-20 right-20 w-48 h-48 bg-purple-500/20 rounded-full blur-xl"
           animate={{ 
             scale: [1.2, 1, 1.2],
             opacity: [0.4, 0.7, 0.4]
@@ -29,7 +29,7 @@ export function Welcome({ onNext }: WelcomeProps) {
           transition={{ duration: 3, repeat: Infinity }}
         />
         <motion.div
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-blue-500/10 rounded-full blur-2xl"
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-cyan-500/10 rounded-full blur-2xl"
           animate={{ 
             rotate: [0, 360],
             scale: [1, 1.1, 1]
@@ -46,7 +46,7 @@ export function Welcome({ onNext }: WelcomeProps) {
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="mb-8"
           >
-            <div className="w-24 h-24 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl">
+            <div className="w-24 h-24 bg-gradient-to-r from-cyan-500 via-purple-600 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl">
               <Zap className="w-12 h-12 text-white" />
             </div>
           </motion.div>
@@ -55,7 +55,7 @@ export function Welcome({ onNext }: WelcomeProps) {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="text-5xl font-bold text-white mb-4 bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-transparent"
+            className="text-5xl font-bold text-white mb-4 bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent"
           >
             FitQuest
           </motion.h1>
@@ -64,9 +64,9 @@ export function Welcome({ onNext }: WelcomeProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="text-xl text-white/80 mb-12"
+            className="text-xl text-gray-300 mb-12"
           >
-            Your epic fitness adventure begins now
+            Your epic gaming fitness adventure begins now
           </motion.p>
 
           <div className="space-y-6 mb-12">
@@ -95,14 +95,14 @@ export function Welcome({ onNext }: WelcomeProps) {
                 initial={{ opacity: 0, x: -30 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: feature.delay }}
-                className="flex items-center space-x-4 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20"
+                className="flex items-center space-x-4 bg-gray-800/30 backdrop-blur-sm rounded-2xl p-4 border border-cyan-500/30"
               >
-                <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                <div className="w-12 h-12 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full flex items-center justify-center">
                   <feature.icon className="w-6 h-6 text-white" />
                 </div>
                 <div className="text-left">
                   <h3 className="font-bold text-white text-lg">{feature.title}</h3>
-                  <p className="text-white/60 text-sm">{feature.description}</p>
+                  <p className="text-gray-400 text-sm">{feature.description}</p>
                 </div>
               </motion.div>
             ))}

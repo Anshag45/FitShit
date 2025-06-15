@@ -10,13 +10,13 @@ interface CompleteProps {
 
 export function Complete({ onComplete, userName }: CompleteProps) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-black relative overflow-hidden">
       {/* Celebration particles */}
       <div className="absolute inset-0">
         {[...Array(20)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-2 h-2 bg-yellow-400 rounded-full"
+            className="absolute w-2 h-2 bg-cyan-400 rounded-full"
             initial={{ 
               x: Math.random() * window.innerWidth,
               y: window.innerHeight + 20,
@@ -56,26 +56,26 @@ export function Complete({ onComplete, userName }: CompleteProps) {
             transition={{ delay: 0.3 }}
             className="text-4xl font-bold text-white mb-2"
           >
-            Welcome to the Galaxy, {userName}!
+            Welcome to the Game, {userName}!
           </motion.h1>
           
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="text-white/80 mb-8 text-lg"
+            className="text-gray-300 mb-8 text-lg"
           >
-            Your cosmic fitness adventure is ready to launch
+            Your epic fitness gaming adventure is ready to launch
           </motion.p>
 
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.7 }}
-            className="bg-gradient-to-r from-purple-600/20 to-pink-600/20 backdrop-blur-lg rounded-3xl p-6 mb-8 border border-white/20"
+            className="bg-gradient-to-r from-cyan-600/20 to-purple-600/20 backdrop-blur-lg rounded-3xl p-6 mb-8 border border-cyan-500/30"
           >
             <div className="flex items-center justify-center space-x-2 mb-6">
-              <Zap className="w-6 h-6 text-yellow-400" />
+              <Zap className="w-6 h-6 text-cyan-400" />
               <span className="text-xl font-bold text-white">Launch Rewards</span>
             </div>
             
@@ -86,11 +86,11 @@ export function Complete({ onComplete, userName }: CompleteProps) {
                 transition={{ delay: 0.9 }}
                 className="text-center"
               >
-                <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-2">
+                <div className="w-12 h-12 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-2">
                   <Star className="w-6 h-6 text-white" />
                 </div>
-                <div className="text-2xl font-bold text-purple-400">100</div>
-                <div className="text-sm text-white/60">XP Points</div>
+                <div className="text-2xl font-bold text-cyan-400">100</div>
+                <div className="text-sm text-gray-400">XP Points</div>
               </motion.div>
               
               <motion.div
@@ -103,7 +103,7 @@ export function Complete({ onComplete, userName }: CompleteProps) {
                   <Coins className="w-6 h-6 text-white" />
                 </div>
                 <div className="text-2xl font-bold text-yellow-400">50</div>
-                <div className="text-sm text-white/60">Cosmic Coins</div>
+                <div className="text-sm text-gray-400">Gaming Coins</div>
               </motion.div>
               
               <motion.div
@@ -116,7 +116,7 @@ export function Complete({ onComplete, userName }: CompleteProps) {
                   <div className="text-white font-bold">1</div>
                 </div>
                 <div className="text-2xl font-bold text-blue-400">1</div>
-                <div className="text-sm text-white/60">Level</div>
+                <div className="text-sm text-gray-400">Level</div>
               </motion.div>
             </div>
           </motion.div>
@@ -133,7 +133,7 @@ export function Complete({ onComplete, userName }: CompleteProps) {
               className="w-full"
               glowEffect
             >
-              Launch Into Space! 🚀
+              Enter the Game! 🎮
             </Button>
           </motion.div>
         </div>
