@@ -67,8 +67,8 @@ export function FitnessGames() {
 
   const handleGameComplete = (score: number) => {
     // Award XP and coins based on score
-    const xpEarned = Math.floor(score / 100);
-    const coinsEarned = Math.floor(score / 200);
+    const xpEarned = Math.floor(score / 100) || 50;
+    const coinsEarned = Math.floor(score / 200) || 25;
     
     dispatch({ type: 'UPDATE_STATS', payload: {
       xp: state.userStats.xp + xpEarned,
@@ -76,6 +76,10 @@ export function FitnessGames() {
       totalWorkouts: state.userStats.totalWorkouts + 1
     }});
     
+    setSelectedGame(null);
+  };
+
+  const handleBackToGames = () => {
     setSelectedGame(null);
   };
 
@@ -88,7 +92,7 @@ export function FitnessGames() {
         <InteractiveWorkout
           exercise={exercise}
           onComplete={handleGameComplete}
-          onSkip={() => setSelectedGame(null)}
+          onSkip={handleBackToGames}
         />
       );
     }
@@ -115,7 +119,7 @@ export function FitnessGames() {
         </div>
 
         {/* Games Grid */}
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid md:grid-cols-2 gap-6 mb-8">
           {games.map((game, index) => (
             <motion.div
               key={game.id}
@@ -177,7 +181,7 @@ export function FitnessGames() {
         </div>
 
         {/* Leaderboard */}
-        <InteractiveCard className="p-6 mt-8 bg-gray-800/30 border-gray-600/30" glowEffect>
+        <InteractiveCard className="p-6 bg-gray-800/30 border-gray-600/30" glowEffect>
           <h3 className="text-xl font-bold text-white mb-4 flex items-center">
             <Trophy className="w-6 h-6 mr-2 text-cyan-400" />
             Today's Leaderboard
@@ -187,7 +191,7 @@ export function FitnessGames() {
               { name: 'Alex', score: 2450, game: 'Squat Challenge' },
               { name: 'Sarah', score: 2200, game: 'Punch Master' },
               { name: 'Mike', score: 1980, game: 'Cardio Runner' },
-              { name: 'You', score: 1750, game: 'Balance Beam' }
+              { name: 'You', score: state.userStats.xp || 1750, game: 'Balance Beam' }
             ].map((player, index) => (
               <motion.div
                 key={index}

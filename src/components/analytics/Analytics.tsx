@@ -13,24 +13,24 @@ export function Analytics() {
     week: {
       workouts: [3, 5, 2, 4, 6, 3, 4],
       calories: [320, 450, 280, 380, 520, 340, 410],
-      duration: [25, 35, 20, 30, 45, 25, 35]
+      duration: [25, 35, 20, 30, 45, 25, 35],
+      labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
     },
     month: {
       workouts: [15, 18, 22, 20],
       calories: [2100, 2400, 2800, 2600],
-      duration: [180, 210, 240, 220]
+      duration: [180, 210, 240, 220],
+      labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4']
     },
     year: {
       workouts: [180, 195, 210, 225, 240, 255, 270, 285, 300, 315, 330, 345],
       calories: [25200, 27300, 29400, 31500, 33600, 35700, 37800, 39900, 42000, 44100, 46200, 48300],
-      duration: [2160, 2340, 2520, 2700, 2880, 3060, 3240, 3420, 3600, 3780, 3960, 4140]
+      duration: [2160, 2340, 2520, 2700, 2880, 3060, 3240, 3420, 3600, 3780, 3960, 4140],
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     }
   };
 
   const currentData = mockData[timeRange];
-  const labels = timeRange === 'week' ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] :
-                timeRange === 'month' ? ['Week 1', 'Week 2', 'Week 3', 'Week 4'] :
-                ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
   const stats = [
     {
@@ -85,7 +85,7 @@ export function Analytics() {
                 animate={{ height: `${(value / maxValue) * 100}%` }}
                 transition={{ delay: index * 0.1, duration: 0.6 }}
               />
-              <span className="text-xs text-gray-400 mt-1">{labels[index]}</span>
+              <span className="text-xs text-gray-400 mt-1">{currentData.labels[index]}</span>
             </div>
           ))}
         </div>

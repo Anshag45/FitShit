@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Target, Zap, Trophy, Timer, Heart } from 'lucide-react';
+import { Target, Zap, Trophy, Timer, Heart, ArrowLeft } from 'lucide-react';
 import { Button } from '../common/Button';
 import { InteractiveCard } from '../common/InteractiveCard';
 import { WorkoutVisualization } from '../3d/WorkoutVisualization';
@@ -15,7 +15,7 @@ interface InteractiveWorkoutProps {
 export function InteractiveWorkout({ exercise, onComplete, onSkip }: InteractiveWorkoutProps) {
   const [gameState, setGameState] = useState<'ready' | 'active' | 'complete'>('ready');
   const [score, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(exercise.duration);
+  const [timeLeft, setTimeLeft] = useState(exercise.duration || 60);
   const [repsCompleted, setRepsCompleted] = useState(0);
   const [heartRate, setHeartRate] = useState(75);
   const [targets, setTargets] = useState<Array<{ id: number; x: number; y: number; hit: boolean }>>([]);
@@ -74,7 +74,7 @@ export function InteractiveWorkout({ exercise, onComplete, onSkip }: Interactive
     
     const baseScore = 100;
     const comboBonus = combo * 10;
-    const timeBonus = timeLeft > exercise.duration * 0.5 ? 50 : 0;
+    const timeBonus = timeLeft > (exercise.duration || 60) * 0.5 ? 50 : 0;
     const totalScore = baseScore + comboBonus + timeBonus;
     
     setScore(prev => prev + totalScore);
@@ -93,7 +93,7 @@ export function InteractiveWorkout({ exercise, onComplete, onSkip }: Interactive
     setScore(0);
     setRepsCompleted(0);
     setCombo(0);
-    setTimeLeft(exercise.duration);
+    setTimeLeft(exercise.duration || 60);
   };
 
   const handleComplete = () => {
@@ -101,11 +101,24 @@ export function InteractiveWorkout({ exercise, onComplete, onSkip }: Interactive
     onComplete(finalScore);
   };
 
-  const progress = ((exercise.duration - timeLeft) / exercise.duration) * 100;
+  const progress = (((exercise.duration || 60) - timeLeft) / (exercise.duration || 60)) * 100;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-black relative overflow-hidden">
       <ParticleSystem count={500} color="#00d4ff" speed={gameState === 'active' ? 2 : 0.5} />
+      
+      {/* Back Button */}
+      <motion.button
+        onClick={onSkip}
+        className="fixed top-6 left-6 z-50 w-12 h-12 bg-white/10 backdrop-blur-lg rounded-full flex items-center justify-center border border-white/20 shadow-lg"
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <ArrowLeft className="w-5 h-5 text-white" />
+      </motion.button>
       
       {/* Game UI */}
       <div className="absolute top-4 left-4 right-4 z-20">
@@ -270,7 +283,7 @@ export function InteractiveWorkout({ exercise, onComplete, onSkip }: Interactive
                 </div>
               </div>
               <p className="text-gray-300 mb-6">
-                Outstanding performance! You've earned {Math.floor(score / 100)} XP and {Math.floor(score / 200)} coins.
+                Outstanding performance! You've earned {Math.floor(score / 100) || 50} XP and {Math.floor(score / 200) || 25} coins.
               </p>
               <Button
                 onClick={handleComplete}

@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Users, Sword, Trophy, Flame, Target, Crown, Plus } from 'lucide-react';
+import { Users, Sword, Trophy, Flame, Target, Crown, Plus, Play } from 'lucide-react';
 import { Button } from '../common/Button';
 import { InteractiveCard } from '../common/InteractiveCard';
 import { ProgressBar } from '../common/ProgressBar';
 import { useApp } from '../../contexts/AppContext';
 
 export function SquadBattles() {
-  const { state } = useApp();
+  const { state, dispatch } = useApp();
   const [activeTab, setActiveTab] = useState<'battles' | 'squad' | 'leaderboard'>('battles');
 
   const mockSquads = [
@@ -49,7 +49,8 @@ export function SquadBattles() {
       progress: 75,
       reward: { xp: 500, coins: 200 },
       participants: 24,
-      isLive: true
+      isLive: true,
+      isActive: false
     },
     {
       id: '2',
@@ -59,7 +60,8 @@ export function SquadBattles() {
       progress: 60,
       reward: { xp: 300, coins: 150 },
       participants: 18,
-      isLive: true
+      isLive: true,
+      isActive: false
     }
   ];
 
@@ -70,6 +72,18 @@ export function SquadBattles() {
     { name: 'Emma', level: 14, calories: 2900, isOnline: true, avatar: '👩‍💻' },
     { name: 'You', level: state.userStats.level, calories: 2100, isOnline: true, avatar: '🎮' }
   ];
+
+  const handleJoinBattle = (battleId: string) => {
+    const battle = mockBattles.find(b => b.id === battleId);
+    if (battle) {
+      battle.isActive = true;
+      // Award some XP for joining
+      dispatch({ type: 'UPDATE_STATS', payload: {
+        xp: state.userStats.xp + 50,
+        coins: state.userStats.coins + 25
+      }});
+    }
+  };
 
   const renderBattles = () => (
     <div className="space-y-4">
@@ -93,6 +107,11 @@ export function SquadBattles() {
                   {battle.isLive && (
                     <span className="px-2 py-1 bg-red-500 text-white text-xs rounded-full animate-pulse">
                       LIVE
+                    </span>
+                  )}
+                  {battle.isActive && (
+                    <span className="px-2 py-1 bg-green-500 text-white text-xs rounded-full">
+                      JOINED
                     </span>
                   )}
                 </div>
@@ -122,6 +141,18 @@ export function SquadBattles() {
                 <div className="text-gray-400 text-sm mb-1">Rewards</div>
                 <div className="text-cyan-400 font-bold">{battle.reward.xp} XP</div>
                 <div className="text-green-400 font-bold">{battle.reward.coins} Coins</div>
+                
+                {!battle.isActive && (
+                  <Button
+                    onClick={() => handleJoinBattle(battle.id)}
+                    variant="cosmic"
+                    size="sm"
+                    className="mt-2 flex items-center space-x-1"
+                  >
+                    <Play className="w-3 h-3" />
+                    <span>Join Battle</span>
+                  </Button>
+                )}
               </div>
             </div>
           </InteractiveCard>
