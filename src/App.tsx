@@ -20,6 +20,8 @@ import { Analytics } from './components/analytics/Analytics';
 import { FitnessGames } from './components/games/FitnessGames';
 import { ColorShiftBackground } from './components/common/ColorShiftBackground';
 import { LiquidGlass } from './components/common/LiquidGlass';
+import { CursorTrail } from './components/effects/CursorTrail';
+import { InteractiveCursor } from './components/effects/InteractiveCursor';
 import { achievements } from './data/achievements';
 import type { User } from './types';
 
@@ -251,7 +253,11 @@ function AppContent() {
 function App() {
   return (
     <AppProvider>
-      <AppContent />
+      <div style={{ cursor: 'none' }}>
+        <CursorTrail />
+        <InteractiveCursor />
+        <AppContent />
+      </div>
     </AppProvider>
   );
 }

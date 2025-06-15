@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '../../utils/cn';
+import { MagneticEffect } from '../effects/MagneticEffect';
 
 interface InteractiveCardProps {
   children: React.ReactNode;
@@ -9,6 +10,7 @@ interface InteractiveCardProps {
   hoverScale?: number;
   glowEffect?: boolean;
   pulseEffect?: boolean;
+  magnetic?: boolean;
 }
 
 export function InteractiveCard({ 
@@ -17,12 +19,14 @@ export function InteractiveCard({
   onClick, 
   hoverScale = 1.02,
   glowEffect = false,
-  pulseEffect = false
+  pulseEffect = false,
+  magnetic = true
 }: InteractiveCardProps) {
-  return (
+  const CardContent = (
     <motion.div
       className={cn(
-        'bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 cursor-pointer relative overflow-hidden',
+        'bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 relative overflow-hidden',
+        onClick && 'cursor-pointer',
         glowEffect && 'shadow-lg hover:shadow-2xl hover:shadow-purple-500/20',
         className
       )}
@@ -53,4 +57,14 @@ export function InteractiveCard({
       )}
     </motion.div>
   );
+
+  if (magnetic && onClick) {
+    return (
+      <MagneticEffect strength={0.15}>
+        {CardContent}
+      </MagneticEffect>
+    );
+  }
+
+  return CardContent;
 }

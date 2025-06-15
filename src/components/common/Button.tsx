@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '../../utils/cn';
+import { MagneticEffect } from '../effects/MagneticEffect';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'cosmic' | 'legendary';
@@ -8,6 +9,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   isLoading?: boolean;
   glowEffect?: boolean;
+  magnetic?: boolean;
 }
 
 export function Button({ 
@@ -17,9 +19,10 @@ export function Button({
   children, 
   isLoading = false,
   glowEffect = false,
+  magnetic = true,
   ...props 
 }: ButtonProps) {
-  const baseClasses = 'font-bold rounded-2xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden';
+  const baseClasses = 'font-bold rounded-2xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden cursor-pointer';
   
   const variants = {
     primary: 'bg-gradient-to-r from-cyan-500 via-purple-600 to-pink-600 text-white hover:from-cyan-600 hover:via-purple-700 hover:to-pink-700 shadow-2xl hover:shadow-cyan-500/25',
@@ -39,7 +42,7 @@ export function Button({
 
   const glowClasses = glowEffect ? 'before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent before:translate-x-[-100%] hover:before:translate-x-[100%] before:transition-transform before:duration-700' : '';
 
-  return (
+  const ButtonContent = (
     <motion.button
       className={cn(baseClasses, variants[variant], sizes[size], glowClasses, className)}
       whileHover={{ scale: 1.05 }}
@@ -57,4 +60,14 @@ export function Button({
       )}
     </motion.button>
   );
+
+  if (magnetic) {
+    return (
+      <MagneticEffect strength={0.2}>
+        {ButtonContent}
+      </MagneticEffect>
+    );
+  }
+
+  return ButtonContent;
 }
