@@ -13,14 +13,14 @@ export function InteractiveCursor() {
 
     const handleMouseEnter = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (target && (target.tagName === 'BUTTON' || target.closest('button') || target.classList.contains('cursor-pointer'))) {
+      if (target && target instanceof Element && (target.tagName === 'BUTTON' || target.closest('button') || target.classList.contains('cursor-pointer'))) {
         setIsHovering(true);
       }
     };
 
     const handleMouseLeave = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (target && (target.tagName === 'BUTTON' || target.closest('button') || target.classList.contains('cursor-pointer'))) {
+      if (target && target instanceof Element && (target.tagName === 'BUTTON' || target.closest('button') || target.classList.contains('cursor-pointer'))) {
         setIsHovering(false);
       }
     };
