@@ -19,11 +19,11 @@ export function Header({ showBackButton = false, onBack, title }: HeaderProps) {
   const xpProgress = ((userStats.xp % 1000) / 1000) * 100;
 
   return (
-    <div className="bg-gradient-to-r from-indigo-900 via-purple-900 to-pink-900 px-4 py-4 relative overflow-hidden">
+    <div className="bg-gradient-to-r from-gray-900 via-purple-900 to-black px-4 py-4 relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0">
         <motion.div
-          className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-xl"
+          className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-xl"
           animate={{ 
             scale: [1, 1.2, 1],
             opacity: [0.3, 0.6, 0.3]
@@ -38,16 +38,16 @@ export function Header({ showBackButton = false, onBack, title }: HeaderProps) {
             {showBackButton && onBack && (
               <motion.button
                 onClick={onBack}
-                className="p-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20"
+                className="p-2 bg-gray-800/50 backdrop-blur-sm rounded-full border border-cyan-500/30"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <ArrowLeft className="w-5 h-5 text-white" />
+                <ArrowLeft className="w-5 h-5 text-cyan-400" />
               </motion.button>
             )}
             
             <InteractiveCard
-              className="p-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full shadow-lg border-0"
+              className="p-2 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full shadow-lg border-0"
               hoverScale={1.1}
               glowEffect
             >
@@ -60,7 +60,7 @@ export function Header({ showBackButton = false, onBack, title }: HeaderProps) {
                 animate={{ opacity: 1, x: 0 }}
                 className="text-xl font-bold text-white"
               >
-                {title || `Welcome back, ${user?.name || 'Space Hero'}! 🚀`}
+                {title || `Welcome back, ${user?.name || 'Gamer'}! 🎮`}
               </motion.h1>
               <div className="flex items-center space-x-4 text-sm">
                 <InteractiveCard
@@ -90,24 +90,24 @@ export function Header({ showBackButton = false, onBack, title }: HeaderProps) {
           
           <div className="flex items-center space-x-3">
             <InteractiveCard
-              className="p-3 hover:bg-white/10 rounded-full transition-colors backdrop-blur-sm border-0"
+              className="p-3 hover:bg-gray-800/50 rounded-full transition-colors backdrop-blur-sm border-0"
               hoverScale={1.1}
             >
-              <Bell className="w-5 h-5 text-white" />
+              <Bell className="w-5 h-5 text-cyan-400" />
             </InteractiveCard>
             
             <InteractiveCard
-              className="p-3 hover:bg-white/10 rounded-full transition-colors backdrop-blur-sm border-0"
+              className="p-3 hover:bg-gray-800/50 rounded-full transition-colors backdrop-blur-sm border-0"
               hoverScale={1.1}
             >
-              <Settings className="w-5 h-5 text-white" />
+              <Settings className="w-5 h-5 text-cyan-400" />
             </InteractiveCard>
           </div>
         </div>
         
         {/* XP Progress Bar */}
         <div className="mt-4">
-          <div className="flex justify-between text-xs text-white/70 mb-2">
+          <div className="flex justify-between text-xs text-gray-400 mb-2">
             <span className="font-medium">{userStats.xp} XP</span>
             <span className="font-medium">{xpToNextLevel} XP to level {userStats.level + 1}</span>
           </div>

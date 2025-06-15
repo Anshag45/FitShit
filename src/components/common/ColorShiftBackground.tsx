@@ -3,13 +3,13 @@ import { motion } from 'framer-motion';
 
 interface ColorShiftBackgroundProps {
   children: React.ReactNode;
-  variant?: 'cosmic' | 'aurora' | 'nebula' | 'galaxy';
+  variant?: 'cosmic' | 'aurora' | 'nebula' | 'galaxy' | 'cyberpunk' | 'neon';
   intensity?: 'subtle' | 'medium' | 'intense';
 }
 
 export function ColorShiftBackground({ 
   children, 
-  variant = 'cosmic',
+  variant = 'cyberpunk',
   intensity = 'medium'
 }: ColorShiftBackgroundProps) {
   const variants = {
@@ -44,6 +44,22 @@ export function ColorShiftBackground({
         'linear-gradient(45deg, #9b59b6, #e74c3c, #f39c12)',
         'linear-gradient(45deg, #e74c3c, #f39c12, #2c3e50)'
       ]
+    },
+    cyberpunk: {
+      colors: [
+        'linear-gradient(45deg, #0f0f23, #1a1a2e, #16213e)',
+        'linear-gradient(45deg, #1a1a2e, #16213e, #0f3460)',
+        'linear-gradient(45deg, #16213e, #0f3460, #533483)',
+        'linear-gradient(45deg, #0f3460, #533483, #0f0f23)'
+      ]
+    },
+    neon: {
+      colors: [
+        'linear-gradient(45deg, #000000, #1a0033, #330066)',
+        'linear-gradient(45deg, #1a0033, #330066, #4d0099)',
+        'linear-gradient(45deg, #330066, #4d0099, #6600cc)',
+        'linear-gradient(45deg, #4d0099, #6600cc, #000000)'
+      ]
     }
   };
 
@@ -70,7 +86,7 @@ export function ColorShiftBackground({
         {[...Array(20)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-2 h-2 bg-white/20 rounded-full"
+            className="absolute w-2 h-2 bg-cyan-400/30 rounded-full"
             initial={{
               x: Math.random() * window.innerWidth,
               y: Math.random() * window.innerHeight,

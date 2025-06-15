@@ -132,7 +132,7 @@ function Dashboard() {
         );
       case 'achievements':
         return (
-          <ColorShiftBackground variant="cosmic" intensity="medium">
+          <ColorShiftBackground variant="cyberpunk" intensity="medium">
             <Header 
               showBackButton 
               onBack={() => setCurrentSection('home')} 
@@ -161,7 +161,7 @@ function Dashboard() {
         );
       case 'quests':
         return (
-          <ColorShiftBackground variant="galaxy" intensity="medium">
+          <ColorShiftBackground variant="neon" intensity="medium">
             <Header 
               showBackButton 
               onBack={() => setCurrentSection('home')} 
@@ -172,7 +172,7 @@ function Dashboard() {
         );
       case 'social':
         return (
-          <ColorShiftBackground variant="aurora" intensity="medium">
+          <ColorShiftBackground variant="cyberpunk" intensity="medium">
             <Header 
               showBackButton 
               onBack={() => setCurrentSection('home')} 
@@ -183,7 +183,7 @@ function Dashboard() {
         );
       case 'analytics':
         return (
-          <ColorShiftBackground variant="nebula" intensity="medium">
+          <ColorShiftBackground variant="neon" intensity="medium">
             <Header 
               showBackButton 
               onBack={() => setCurrentSection('home')} 
@@ -194,7 +194,7 @@ function Dashboard() {
         );
       case 'games':
         return (
-          <ColorShiftBackground variant="cosmic" intensity="intense">
+          <ColorShiftBackground variant="cyberpunk" intensity="intense">
             <Header 
               showBackButton 
               onBack={() => setCurrentSection('home')} 
@@ -205,7 +205,7 @@ function Dashboard() {
         );
       default:
         return (
-          <ColorShiftBackground variant="cosmic" intensity="subtle">
+          <ColorShiftBackground variant="cyberpunk" intensity="subtle">
             <Header />
             <div className="p-4">
               <LiquidGlass intensity="medium" colorShift animated className="mb-6">

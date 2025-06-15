@@ -22,12 +22,12 @@ export function Button({
   const baseClasses = 'font-bold rounded-2xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden';
   
   const variants = {
-    primary: 'bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 text-white hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 shadow-2xl hover:shadow-purple-500/25',
+    primary: 'bg-gradient-to-r from-cyan-500 via-purple-600 to-pink-600 text-white hover:from-cyan-600 hover:via-purple-700 hover:to-pink-700 shadow-2xl hover:shadow-cyan-500/25',
     secondary: 'bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white hover:from-emerald-600 hover:via-teal-600 hover:to-cyan-600 shadow-2xl hover:shadow-emerald-500/25',
-    outline: 'border-2 border-purple-500 text-purple-400 hover:bg-purple-500 hover:text-white backdrop-blur-sm',
-    ghost: 'text-white/80 hover:bg-white/10 backdrop-blur-sm',
-    cosmic: 'bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white shadow-2xl hover:shadow-indigo-500/30 animate-pulse',
-    legendary: 'bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 text-white shadow-2xl hover:shadow-yellow-500/30 animate-pulse'
+    outline: 'border-2 border-cyan-500 text-cyan-400 hover:bg-cyan-500 hover:text-black backdrop-blur-sm',
+    ghost: 'text-gray-300 hover:bg-gray-800/50 backdrop-blur-sm',
+    cosmic: 'bg-gradient-to-r from-purple-600 via-cyan-500 to-pink-600 text-white shadow-2xl hover:shadow-cyan-500/30 animate-pulse',
+    legendary: 'bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 text-black shadow-2xl hover:shadow-yellow-500/30 animate-pulse'
   };
 
   const sizes = {

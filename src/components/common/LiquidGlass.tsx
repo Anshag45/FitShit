@@ -18,17 +18,17 @@ export function LiquidGlass({
   animated = true
 }: LiquidGlassProps) {
   const intensityClasses = {
-    light: 'bg-white/5 backdrop-blur-sm border-white/10',
-    medium: 'bg-white/10 backdrop-blur-lg border-white/20',
-    heavy: 'bg-white/20 backdrop-blur-xl border-white/30'
+    light: 'bg-gray-900/20 backdrop-blur-sm border-gray-600/20',
+    medium: 'bg-gray-800/30 backdrop-blur-lg border-gray-500/30',
+    heavy: 'bg-gray-700/40 backdrop-blur-xl border-gray-400/40'
   };
 
   const colorShiftAnimation = colorShift ? {
     background: [
-      'linear-gradient(45deg, rgba(139, 92, 246, 0.1), rgba(236, 72, 153, 0.1))',
+      'linear-gradient(45deg, rgba(6, 182, 212, 0.1), rgba(147, 51, 234, 0.1))',
+      'linear-gradient(45deg, rgba(147, 51, 234, 0.1), rgba(236, 72, 153, 0.1))',
       'linear-gradient(45deg, rgba(236, 72, 153, 0.1), rgba(59, 130, 246, 0.1))',
-      'linear-gradient(45deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1))',
-      'linear-gradient(45deg, rgba(16, 185, 129, 0.1), rgba(139, 92, 246, 0.1))'
+      'linear-gradient(45deg, rgba(59, 130, 246, 0.1), rgba(6, 182, 212, 0.1))'
     ]
   } : {};
 
@@ -47,12 +47,12 @@ export function LiquidGlass({
       } : {}}
     >
       {/* Liquid glass effect overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/5 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-purple-500/10 pointer-events-none" />
       
       {/* Animated light reflection */}
       {animated && (
         <motion.div
-          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+          className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/20 to-transparent"
           initial={{ x: '-100%' }}
           animate={{ x: '100%' }}
           transition={{
