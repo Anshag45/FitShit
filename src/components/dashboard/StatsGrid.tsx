@@ -1,7 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Trophy, Flame, Clock, Target, Star, Zap } from 'lucide-react';
+import { Trophy, Flame, Clock, Target } from 'lucide-react';
 import { useApp } from '../../contexts/AppContext';
+import { InteractiveCard } from '../common/InteractiveCard';
 
 export function StatsGrid() {
   const { state } = useApp();
@@ -46,36 +47,33 @@ export function StatsGrid() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: index * 0.1 }}
-          whileHover={{ scale: 1.05 }}
-          className="bg-white/10 backdrop-blur-lg rounded-2xl p-4 border border-white/20 relative overflow-hidden"
         >
-          <div className="flex items-center space-x-3 relative z-10">
-            <motion.div
-              className={`w-12 h-12 rounded-full flex items-center justify-center bg-gradient-to-r ${stat.color} shadow-lg`}
-              whileHover={{ rotate: 360 }}
-              transition={{ duration: 0.6 }}
-            >
-              <stat.icon className="w-6 h-6 text-white" />
-            </motion.div>
-            <div>
+          <InteractiveCard
+            className="p-4 border border-white/20 relative overflow-hidden"
+            hoverScale={1.05}
+            glowEffect
+          >
+            <div className="flex items-center space-x-3 relative z-10">
               <motion.div
-                className="text-2xl font-bold text-white"
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.2 + index * 0.1, type: "spring" }}
+                className={`w-12 h-12 rounded-full flex items-center justify-center bg-gradient-to-r ${stat.color} shadow-lg`}
+                whileHover={{ rotate: 360, scale: 1.1 }}
+                transition={{ duration: 0.6 }}
               >
-                {stat.value}
+                <stat.icon className="w-6 h-6 text-white" />
               </motion.div>
-              <div className="text-sm text-white/70 font-medium">{stat.label}</div>
+              <div>
+                <motion.div
+                  className="text-2xl font-bold text-white"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.2 + index * 0.1, type: "spring" }}
+                >
+                  {stat.value}
+                </motion.div>
+                <div className="text-sm text-white/70 font-medium">{stat.label}</div>
+              </div>
             </div>
-          </div>
-          
-          {/* Animated background glow */}
-          <motion.div
-            className={`absolute inset-0 ${stat.bgColor} rounded-2xl opacity-0`}
-            whileHover={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
-          />
+          </InteractiveCard>
         </motion.div>
       ))}
     </div>

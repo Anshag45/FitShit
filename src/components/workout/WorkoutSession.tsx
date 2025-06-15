@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, SkipForward, CheckCircle, Star } from 'lucide-react';
+import { SkipForward, CheckCircle, Star } from 'lucide-react';
 import { Button } from '../common/Button';
 import { Timer } from '../common/Timer';
 import { ProgressBar } from '../common/ProgressBar';
 import { BackButton } from '../common/BackButton';
+import { InteractiveCard } from '../common/InteractiveCard';
 import { useApp } from '../../contexts/AppContext';
 
 interface WorkoutSessionProps {
@@ -90,17 +91,26 @@ export function WorkoutSession({ onBack, onComplete }: WorkoutSessionProps) {
         />
       </div>
 
+      <BackButton onClick={onBack} variant="floating" />
+
       {/* Header */}
-      <div className="relative z-10 bg-black/20 backdrop-blur-sm px-4 py-4">
-        <div className="flex items-center justify-between">
-          <BackButton onClick={onBack} />
-          <div className="text-center">
-            <h1 className="font-bold text-white text-lg">{currentWorkout.name}</h1>
-            <p className="text-white/70 text-sm">
-              Exercise {currentExerciseIndex + 1} of {currentWorkout.exercises.length}
-            </p>
-          </div>
-          <div className="w-16"></div>
+      <div className="relative z-10 bg-black/20 backdrop-blur-sm px-4 py-4 mt-16">
+        <div className="text-center">
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="font-bold text-white text-lg"
+          >
+            {currentWorkout.name}
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-white/70 text-sm"
+          >
+            Exercise {currentExerciseIndex + 1} of {currentWorkout.exercises.length}
+          </motion.p>
         </div>
       </div>
 
@@ -126,7 +136,7 @@ export function WorkoutSession({ onBack, onComplete }: WorkoutSessionProps) {
               transition={{ duration: 0.3 }}
             >
               {/* Exercise Image */}
-              <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-4 mb-6 border border-white/20">
+              <InteractiveCard className="p-4 mb-6 border border-white/20" glowEffect>
                 <motion.img
                   src={currentExercise.imageUrl}
                   alt={currentExercise.name}
@@ -176,24 +186,25 @@ export function WorkoutSession({ onBack, onComplete }: WorkoutSessionProps) {
                     <div>Duration</div>
                   </div>
                 </motion.div>
-              </div>
+              </InteractiveCard>
 
               {/* Timer */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.6 }}
-                className="bg-white/10 backdrop-blur-lg rounded-3xl p-6 mb-6 border border-white/20 text-center"
               >
-                <Timer
-                  seconds={timerSeconds}
-                  isActive={timerActive}
-                  onStart={handleStartTimer}
-                  onPause={handlePauseTimer}
-                  onStop={handleStopTimer}
-                  onReset={handleStopTimer}
-                  maxSeconds={currentExercise.duration}
-                />
+                <InteractiveCard className="p-6 mb-6 border border-white/20 text-center" glowEffect>
+                  <Timer
+                    seconds={timerSeconds}
+                    isActive={timerActive}
+                    onStart={handleStartTimer}
+                    onPause={handlePauseTimer}
+                    onStop={handleStopTimer}
+                    onReset={handleStopTimer}
+                    maxSeconds={currentExercise.duration}
+                  />
+                </InteractiveCard>
               </motion.div>
 
               {/* Instructions */}
@@ -201,28 +212,29 @@ export function WorkoutSession({ onBack, onComplete }: WorkoutSessionProps) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.7 }}
-                className="bg-white/10 backdrop-blur-lg rounded-3xl p-4 mb-6 border border-white/20"
               >
-                <h3 className="font-bold text-white text-lg mb-4 flex items-center">
-                  <Star className="w-5 h-5 mr-2 text-yellow-400" />
-                  Mission Instructions
-                </h3>
-                <ol className="space-y-3">
-                  {currentExercise.instructions.map((instruction, index) => (
-                    <motion.li
-                      key={index}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.8 + index * 0.1 }}
-                      className="flex items-start space-x-3"
-                    >
-                      <span className="flex-shrink-0 w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full flex items-center justify-center text-sm font-bold">
-                        {index + 1}
-                      </span>
-                      <span className="text-white/90">{instruction}</span>
-                    </motion.li>
-                  ))}
-                </ol>
+                <InteractiveCard className="p-4 mb-6 border border-white/20" glowEffect>
+                  <h3 className="font-bold text-white text-lg mb-4 flex items-center">
+                    <Star className="w-5 h-5 mr-2 text-yellow-400" />
+                    Mission Instructions
+                  </h3>
+                  <ol className="space-y-3">
+                    {currentExercise.instructions.map((instruction, index) => (
+                      <motion.li
+                        key={index}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.8 + index * 0.1 }}
+                        className="flex items-start space-x-3"
+                      >
+                        <span className="flex-shrink-0 w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                          {index + 1}
+                        </span>
+                        <span className="text-white/90">{instruction}</span>
+                      </motion.li>
+                    ))}
+                  </ol>
+                </InteractiveCard>
               </motion.div>
 
               {/* Action Buttons */}

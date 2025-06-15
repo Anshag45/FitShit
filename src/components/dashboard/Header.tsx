@@ -1,10 +1,17 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { User, Bell, Settings, Crown } from 'lucide-react';
+import { User, Bell, Settings, Crown, ArrowLeft } from 'lucide-react';
 import { useApp } from '../../contexts/AppContext';
 import { ProgressBar } from '../common/ProgressBar';
+import { InteractiveCard } from '../common/InteractiveCard';
 
-export function Header() {
+interface HeaderProps {
+  showBackButton?: boolean;
+  onBack?: () => void;
+  title?: string;
+}
+
+export function Header({ showBackButton = false, onBack, title }: HeaderProps) {
   const { state } = useApp();
   const { user, userStats } = state;
 
@@ -28,60 +35,73 @@ export function Header() {
       <div className="relative z-10">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-4">
-            <motion.div
-              className="w-14 h-14 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center shadow-lg"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
+            {showBackButton && onBack && (
+              <motion.button
+                onClick={onBack}
+                className="p-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <ArrowLeft className="w-5 h-5 text-white" />
+              </motion.button>
+            )}
+            
+            <InteractiveCard
+              className="p-2 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full shadow-lg border-0"
+              hoverScale={1.1}
+              glowEffect
             >
               <User className="w-7 h-7 text-white" />
-            </motion.div>
+            </InteractiveCard>
+            
             <div>
               <motion.h1
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 className="text-xl font-bold text-white"
               >
-                Welcome back, {user?.name || 'Space Hero'}! 🚀
+                {title || `Welcome back, ${user?.name || 'Space Hero'}! 🚀`}
               </motion.h1>
               <div className="flex items-center space-x-4 text-sm">
-                <motion.div
-                  className="flex items-center space-x-1 bg-purple-600/30 px-2 py-1 rounded-full"
-                  whileHover={{ scale: 1.05 }}
+                <InteractiveCard
+                  className="flex items-center space-x-1 bg-purple-600/30 px-2 py-1 rounded-full border-0"
+                  hoverScale={1.05}
                 >
                   <Crown className="w-4 h-4 text-yellow-400" />
                   <span className="text-yellow-400 font-bold">Level {userStats.level}</span>
-                </motion.div>
-                <motion.span
-                  className="text-green-400 font-bold bg-green-500/20 px-2 py-1 rounded-full"
-                  whileHover={{ scale: 1.05 }}
+                </InteractiveCard>
+                
+                <InteractiveCard
+                  className="text-green-400 font-bold bg-green-500/20 px-2 py-1 rounded-full border-0"
+                  hoverScale={1.05}
                 >
                   {userStats.coins} coins
-                </motion.span>
-                <motion.span
-                  className="text-orange-400 font-bold bg-orange-500/20 px-2 py-1 rounded-full"
-                  whileHover={{ scale: 1.05 }}
+                </InteractiveCard>
+                
+                <InteractiveCard
+                  className="text-orange-400 font-bold bg-orange-500/20 px-2 py-1 rounded-full border-0"
+                  hoverScale={1.05}
                 >
                   {userStats.streak} day streak 🔥
-                </motion.span>
+                </InteractiveCard>
               </div>
             </div>
           </div>
           
           <div className="flex items-center space-x-3">
-            <motion.button
-              className="p-3 hover:bg-white/10 rounded-full transition-colors backdrop-blur-sm"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
+            <InteractiveCard
+              className="p-3 hover:bg-white/10 rounded-full transition-colors backdrop-blur-sm border-0"
+              hoverScale={1.1}
             >
               <Bell className="w-5 h-5 text-white" />
-            </motion.button>
-            <motion.button
-              className="p-3 hover:bg-white/10 rounded-full transition-colors backdrop-blur-sm"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
+            </InteractiveCard>
+            
+            <InteractiveCard
+              className="p-3 hover:bg-white/10 rounded-full transition-colors backdrop-blur-sm border-0"
+              hoverScale={1.1}
             >
               <Settings className="w-5 h-5 text-white" />
-            </motion.button>
+            </InteractiveCard>
           </div>
         </div>
         

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Zap, Target } from 'lucide-react';
-import { Button } from '../common/Button';
+import { Sparkles } from 'lucide-react';
 import { BackButton } from '../common/BackButton';
+import { InteractiveCard } from '../common/InteractiveCard';
 
 interface AICoachIntroProps {
   onNext: (data: { spiritAnimal: string; workoutStyle: string; motivation: string }) => void;
@@ -86,16 +86,16 @@ export function AICoachIntro({ onNext, onBack }: AICoachIntroProps) {
         />
       </div>
 
+      <BackButton onClick={onBack} variant="floating" />
+
       <div className="relative z-10 flex items-center justify-center min-h-screen p-4">
         <div className="max-w-md w-full">
           {/* Header */}
           <div className="text-center mb-8">
-            <BackButton onClick={onBack} className="absolute top-8 left-8" />
-            
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              className="w-20 h-20 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-6"
+              className="w-20 h-20 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl"
             >
               <Sparkles className="w-10 h-10 text-white" />
             </motion.div>
@@ -124,7 +124,7 @@ export function AICoachIntro({ onNext, onBack }: AICoachIntroProps) {
               <span>Question {currentQuestion + 1} of {questions.length}</span>
               <span>{Math.round(((currentQuestion + 1) / questions.length) * 100)}%</span>
             </div>
-            <div className="w-full bg-white/10 rounded-full h-2">
+            <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
               <motion.div
                 className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full"
                 initial={{ width: 0 }}
@@ -141,31 +141,53 @@ export function AICoachIntro({ onNext, onBack }: AICoachIntroProps) {
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -50 }}
-              className="bg-white/10 backdrop-blur-lg rounded-3xl p-6 border border-white/20"
+              className="bg-white/10 backdrop-blur-lg rounded-3xl p-6 border border-white/20 shadow-2xl"
             >
-              <h2 className="text-2xl font-bold text-white mb-2">{currentQ.title}</h2>
-              <p className="text-white/70 mb-6">{currentQ.subtitle}</p>
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-2xl font-bold text-white mb-2"
+              >
+                {currentQ.title}
+              </motion.h2>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="text-white/70 mb-6"
+              >
+                {currentQ.subtitle}
+              </motion.p>
 
               <div className="space-y-3">
                 {currentQ.options.map((option, index) => (
-                  <motion.button
+                  <motion.div
                     key={option.id}
-                    onClick={() => handleAnswer(option.id)}
-                    className="w-full p-4 rounded-2xl border-2 border-white/20 hover:border-purple-400 transition-all duration-200 text-left bg-white/5 hover:bg-white/10"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
+                    transition={{ delay: 0.2 + index * 0.1 }}
                   >
-                    <div className="flex items-center space-x-4">
-                      <span className="text-3xl">{option.emoji}</span>
-                      <div>
-                        <h3 className="font-bold text-white text-lg">{option.title}</h3>
-                        <p className="text-white/60 text-sm">{option.description}</p>
+                    <InteractiveCard
+                      onClick={() => handleAnswer(option.id)}
+                      className="p-4 border-2 border-white/20 hover:border-purple-400 bg-white/5 hover:bg-white/10"
+                      hoverScale={1.02}
+                      glowEffect
+                    >
+                      <div className="flex items-center space-x-4">
+                        <motion.span 
+                          className="text-3xl"
+                          whileHover={{ scale: 1.2, rotate: 10 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          {option.emoji}
+                        </motion.span>
+                        <div>
+                          <h3 className="font-bold text-white text-lg">{option.title}</h3>
+                          <p className="text-white/60 text-sm">{option.description}</p>
+                        </div>
                       </div>
-                    </div>
-                  </motion.button>
+                    </InteractiveCard>
+                  </motion.div>
                 ))}
               </div>
             </motion.div>

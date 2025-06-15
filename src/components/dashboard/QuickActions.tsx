@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Users, Award, BarChart3, Store, Sword, Map } from 'lucide-react';
+import { Users, Award, BarChart3, Map } from 'lucide-react';
+import { InteractiveCard } from '../common/InteractiveCard';
 
 interface QuickActionsProps {
   onNavigate: (section: string) => void;
@@ -45,32 +46,29 @@ export function QuickActions({ onNavigate }: QuickActionsProps) {
   return (
     <div className="grid grid-cols-2 gap-4">
       {actions.map((action, index) => (
-        <motion.button
+        <motion.div
           key={index}
-          onClick={() => onNavigate(action.action)}
-          className="bg-white/10 backdrop-blur-lg rounded-2xl p-4 border border-white/20 text-left relative overflow-hidden group"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: index * 0.1 }}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
         >
-          <motion.div
-            className={`w-12 h-12 rounded-full flex items-center justify-center bg-gradient-to-r ${action.color} mb-3 shadow-lg`}
-            whileHover={{ rotate: 360 }}
-            transition={{ duration: 0.6 }}
+          <InteractiveCard
+            onClick={() => onNavigate(action.action)}
+            className="p-4 border border-white/20 text-left relative overflow-hidden group"
+            hoverScale={1.05}
+            glowEffect
           >
-            <action.icon className="w-6 h-6 text-white" />
-          </motion.div>
-          <h3 className="font-bold text-white text-lg mb-1">{action.label}</h3>
-          <p className="text-white/60 text-sm">{action.description}</p>
-          
-          {/* Hover effect */}
-          <motion.div
-            className={`absolute inset-0 ${action.bgColor} rounded-2xl opacity-0 group-hover:opacity-100`}
-            transition={{ duration: 0.3 }}
-          />
-        </motion.button>
+            <motion.div
+              className={`w-12 h-12 rounded-full flex items-center justify-center bg-gradient-to-r ${action.color} mb-3 shadow-lg`}
+              whileHover={{ rotate: 360, scale: 1.1 }}
+              transition={{ duration: 0.6 }}
+            >
+              <action.icon className="w-6 h-6 text-white" />
+            </motion.div>
+            <h3 className="font-bold text-white text-lg mb-1">{action.label}</h3>
+            <p className="text-white/60 text-sm">{action.description}</p>
+          </InteractiveCard>
+        </motion.div>
       ))}
     </div>
   );

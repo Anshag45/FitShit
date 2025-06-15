@@ -21,8 +21,18 @@ function OnboardingFlow() {
   const [step, setStep] = useState(-1); // Start with Welcome screen
   const [userData, setUserData] = useState<Partial<User>>({});
 
-  const handleUserInfo = (data: { name: string; age: number; email: string }) => {
-    setUserData({ ...userData, ...data });
+  const handleUserInfo = (data: { name: string; age: number; email: string; rememberMe: boolean }) => {
+    setUserData({ ...userData, name: data.name, age: data.age, email: data.email });
+    
+    // Store remember me preference
+    if (data.rememberMe) {
+      localStorage.setItem('fitquest_remember_user', JSON.stringify({
+        name: data.name,
+        email: data.email,
+        age: data.age
+      }));
+    }
+    
     setStep(1);
   };
 
@@ -106,15 +116,12 @@ function Dashboard() {
       case 'achievements':
         return (
           <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
-            <Header />
+            <Header 
+              showBackButton 
+              onBack={() => setCurrentSection('home')} 
+              title="🏆 Achievement Gallery"
+            />
             <div className="p-4">
-              <motion.h2
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-3xl font-bold text-white mb-6"
-              >
-                🏆 Achievement Gallery
-              </motion.h2>
               <div className="grid grid-cols-2 gap-4">
                 {achievements.map((achievement, index) => (
                   <motion.div
@@ -136,15 +143,12 @@ function Dashboard() {
       case 'quests':
         return (
           <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
-            <Header />
+            <Header 
+              showBackButton 
+              onBack={() => setCurrentSection('home')} 
+              title="🚀 Epic Quests"
+            />
             <div className="p-4">
-              <motion.h2
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-3xl font-bold text-white mb-6"
-              >
-                🚀 Epic Quests
-              </motion.h2>
               <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-6 text-center border border-white/20">
                 <div className="text-6xl mb-4">🌌</div>
                 <h3 className="text-2xl font-bold text-white mb-2">Quest System Coming Soon!</h3>
@@ -156,15 +160,12 @@ function Dashboard() {
       case 'social':
         return (
           <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
-            <Header />
+            <Header 
+              showBackButton 
+              onBack={() => setCurrentSection('home')} 
+              title="⚔️ Squad Battles"
+            />
             <div className="p-4">
-              <motion.h2
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-3xl font-bold text-white mb-6"
-              >
-                ⚔️ Squad Battles
-              </motion.h2>
               <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-6 text-center border border-white/20">
                 <div className="text-6xl mb-4">👥</div>
                 <h3 className="text-2xl font-bold text-white mb-2">Squad Battles Coming Soon!</h3>
@@ -176,15 +177,12 @@ function Dashboard() {
       case 'analytics':
         return (
           <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
-            <Header />
+            <Header 
+              showBackButton 
+              onBack={() => setCurrentSection('home')} 
+              title="📊 Mission Analytics"
+            />
             <div className="p-4">
-              <motion.h2
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-3xl font-bold text-white mb-6"
-              >
-                📊 Mission Analytics
-              </motion.h2>
               <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-6 text-center border border-white/20">
                 <div className="text-6xl mb-4">📈</div>
                 <h3 className="text-2xl font-bold text-white mb-2">Advanced Analytics Coming Soon!</h3>
