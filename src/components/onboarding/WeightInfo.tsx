@@ -11,11 +11,9 @@ interface WeightInfoProps {
 }
 
 export function WeightInfo({ onNext, onBack }: WeightInfoProps) {
-  const [weightData, setWeightData] = useState({
-    currentWeight: '',
-    targetWeight: '',
-    weightGoal: '' as 'lose' | 'gain' | 'maintain' | ''
-  });
+  const [currentWeight, setCurrentWeight] = useState('');
+  const [targetWeight, setTargetWeight] = useState('');
+  const [weightGoal, setWeightGoal] = useState<'lose' | 'gain' | 'maintain' | ''>('');
 
   const weightGoals = [
     { id: 'lose', title: 'Lose Weight', emoji: '📉', color: 'from-red-400 to-pink-500' },
@@ -24,26 +22,16 @@ export function WeightInfo({ onNext, onBack }: WeightInfoProps) {
   ];
 
   const handleContinue = () => {
-    if (weightData.currentWeight && weightData.targetWeight && weightData.weightGoal) {
+    if (currentWeight && targetWeight && weightGoal) {
       onNext({
-        currentWeight: parseFloat(weightData.currentWeight),
-        targetWeight: parseFloat(weightData.targetWeight),
-        weightGoal: weightData.weightGoal
+        currentWeight: parseFloat(currentWeight),
+        targetWeight: parseFloat(targetWeight),
+        weightGoal: weightGoal
       });
     }
   };
 
-  const handleCurrentWeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setWeightData({ ...weightData, currentWeight: e.target.value });
-  };
-
-  const handleTargetWeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setWeightData({ ...weightData, targetWeight: e.target.value });
-  };
-
-  const handleGoalSelect = (goalId: 'lose' | 'gain' | 'maintain') => {
-    setWeightData({ ...weightData, weightGoal: goalId });
-  };
+  const isFormValid = currentWeight && targetWeight && weightGoal;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-black relative overflow-hidden">
@@ -102,104 +90,77 @@ export function WeightInfo({ onNext, onBack }: WeightInfoProps) {
             </motion.p>
           </motion.div>
 
-          <InteractiveCard className="p-6 mb-6 bg-gray-800/50 border-cyan-500/30" glowEffect>
+          <div className="bg-gray-800/50 backdrop-blur-lg rounded-2xl p-6 mb-6 border border-cyan-500/30 shadow-2xl">
             <div className="space-y-6">
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.5 }}
-              >
+              {/* Current Weight Input */}
+              <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
                   Current Weight (kg)
                 </label>
                 <input
                   type="number"
-                  value={weightData.currentWeight}
-                  onChange={handleCurrentWeightChange}
-                  className="w-full px-4 py-3 bg-gray-900/80 border border-cyan-500/30 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-cyan-500 focus:border-transparent backdrop-blur-sm transition-all duration-300"
+                  value={currentWeight}
+                  onChange={(e) => setCurrentWeight(e.target.value)}
+                  className="w-full px-4 py-3 bg-gray-900/80 border border-cyan-500/30 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 focus:outline-none backdrop-blur-sm transition-all duration-300"
                   placeholder="Enter your current weight"
                   min="30"
                   max="300"
                   step="0.1"
-                  required
                 />
-              </motion.div>
+              </div>
 
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.6 }}
-              >
+              {/* Target Weight Input */}
+              <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
                   Target Weight (kg)
                 </label>
                 <input
                   type="number"
-                  value={weightData.targetWeight}
-                  onChange={handleTargetWeightChange}
-                  className="w-full px-4 py-3 bg-gray-900/80 border border-cyan-500/30 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-cyan-500 focus:border-transparent backdrop-blur-sm transition-all duration-300"
+                  value={targetWeight}
+                  onChange={(e) => setTargetWeight(e.target.value)}
+                  className="w-full px-4 py-3 bg-gray-900/80 border border-cyan-500/30 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 focus:outline-none backdrop-blur-sm transition-all duration-300"
                   placeholder="Enter your target weight"
                   min="30"
                   max="300"
                   step="0.1"
-                  required
                 />
-              </motion.div>
+              </div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7 }}
-              >
+              {/* Weight Goal Selection */}
+              <div>
                 <label className="block text-sm font-medium text-gray-300 mb-4">
                   Weight Goal
                 </label>
                 <div className="grid grid-cols-1 gap-3">
-                  {weightGoals.map((goal, index) => (
-                    <motion.div
+                  {weightGoals.map((goal) => (
+                    <button
                       key={goal.id}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.8 + index * 0.1 }}
+                      onClick={() => setWeightGoal(goal.id as 'lose' | 'gain' | 'maintain')}
+                      className={`p-4 rounded-xl transition-all duration-300 border-2 ${
+                        weightGoal === goal.id
+                          ? 'border-cyan-400 bg-cyan-500/20 shadow-lg shadow-cyan-500/25'
+                          : 'border-gray-600/50 bg-gray-800/30 hover:border-cyan-400/50 hover:bg-gray-700/30'
+                      }`}
                     >
-                      <InteractiveCard
-                        onClick={() => handleGoalSelect(goal.id as 'lose' | 'gain' | 'maintain')}
-                        className={`p-4 transition-all duration-300 cursor-pointer ${
-                          weightData.weightGoal === goal.id
-                            ? 'border-cyan-400/50 bg-cyan-500/20 shadow-2xl ring-2 ring-cyan-400/50'
-                            : 'border-gray-600/30 bg-gray-800/30 hover:border-cyan-400/30 hover:bg-gray-700/30'
-                        }`}
-                        hoverScale={1.02}
-                        glowEffect={weightData.weightGoal === goal.id}
-                      >
-                        <div className="flex items-center space-x-4">
-                          <motion.div 
-                            className={`w-12 h-12 bg-gradient-to-r ${goal.color} rounded-full flex items-center justify-center text-xl shadow-lg`}
-                            whileHover={{ rotate: 360, scale: 1.1 }}
-                            transition={{ duration: 0.6 }}
-                          >
-                            {goal.emoji}
-                          </motion.div>
-                          <div className="flex-1">
-                            <h3 className="font-bold text-white text-lg">{goal.title}</h3>
-                          </div>
-                          {weightData.weightGoal === goal.id && (
-                            <motion.div
-                              initial={{ scale: 0 }}
-                              animate={{ scale: 1 }}
-                              className="w-6 h-6 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full flex items-center justify-center"
-                            >
-                              <div className="w-2 h-2 bg-white rounded-full" />
-                            </motion.div>
-                          )}
+                      <div className="flex items-center space-x-4">
+                        <div className={`w-12 h-12 bg-gradient-to-r ${goal.color} rounded-full flex items-center justify-center text-xl shadow-lg`}>
+                          {goal.emoji}
                         </div>
-                      </InteractiveCard>
-                    </motion.div>
+                        <div className="flex-1 text-left">
+                          <h3 className="font-bold text-white text-lg">{goal.title}</h3>
+                        </div>
+                        {weightGoal === goal.id && (
+                          <div className="w-6 h-6 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full flex items-center justify-center">
+                            <div className="w-2 h-2 bg-white rounded-full" />
+                          </div>
+                        )}
+                      </div>
+                    </button>
                   ))}
                 </div>
-              </motion.div>
+              </div>
             </div>
-          </InteractiveCard>
+          </div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -208,7 +169,7 @@ export function WeightInfo({ onNext, onBack }: WeightInfoProps) {
           >
             <Button 
               onClick={handleContinue} 
-              disabled={!weightData.currentWeight || !weightData.targetWeight || !weightData.weightGoal}
+              disabled={!isFormValid}
               size="lg"
               variant="cosmic"
               className="w-full"
