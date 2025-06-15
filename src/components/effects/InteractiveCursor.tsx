@@ -54,47 +54,46 @@ export function InteractiveCursor() {
 
   return (
     <>
-      {/* Custom cursor */}
+      {/* Custom cursor - Vercel style */}
       <motion.div
-        className="fixed w-4 h-4 pointer-events-none z-50 mix-blend-difference"
+        className="fixed w-2 h-2 pointer-events-none z-50"
         style={{
-          left: mousePosition.x - 8,
-          top: mousePosition.y - 8,
+          left: mousePosition.x - 4,
+          top: mousePosition.y - 4,
         }}
         animate={{
-          scale: isHovering ? 2 : 1,
-          backgroundColor: isHovering ? '#00d4ff' : '#ffffff',
+          scale: isHovering ? 2.5 : 1,
         }}
         transition={{ duration: 0.2 }}
       >
-        <div className="w-full h-full rounded-full bg-current" />
+        <div className="w-full h-full rounded-full bg-white shadow-lg" />
       </motion.div>
 
-      {/* Cursor ring */}
+      {/* Cursor ring - minimal Vercel style */}
       <motion.div
-        className="fixed w-8 h-8 border-2 border-cyan-400 rounded-full pointer-events-none z-50 mix-blend-difference"
+        className="fixed w-6 h-6 border border-white/40 rounded-full pointer-events-none z-50"
         style={{
-          left: mousePosition.x - 16,
-          top: mousePosition.y - 16,
+          left: mousePosition.x - 12,
+          top: mousePosition.y - 12,
         }}
         animate={{
-          scale: isHovering ? 1.5 : 1,
-          opacity: isHovering ? 0.8 : 0.4,
+          scale: isHovering ? 2 : 1,
+          opacity: isHovering ? 0.8 : 0.3,
         }}
         transition={{ duration: 0.3, ease: "easeOut" }}
       />
 
-      {/* Click ripples */}
+      {/* Click ripples - clean white */}
       {clickRipples.map((ripple) => (
         <motion.div
           key={ripple.id}
-          className="fixed w-4 h-4 border-2 border-cyan-400 rounded-full pointer-events-none z-50"
+          className="fixed w-2 h-2 border border-white/60 rounded-full pointer-events-none z-50"
           style={{
-            left: ripple.x - 8,
-            top: ripple.y - 8,
+            left: ripple.x - 4,
+            top: ripple.y - 4,
           }}
           initial={{ scale: 0, opacity: 1 }}
-          animate={{ scale: 8, opacity: 0 }}
+          animate={{ scale: 12, opacity: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
         />
       ))}

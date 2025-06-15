@@ -134,7 +134,7 @@ function Dashboard() {
         );
       case 'achievements':
         return (
-          <ColorShiftBackground variant="cyberpunk" intensity="medium">
+          <ColorShiftBackground variant="vercel" intensity="subtle">
             <Header 
               showBackButton 
               onBack={() => setCurrentSection('home')} 
@@ -163,7 +163,7 @@ function Dashboard() {
         );
       case 'quests':
         return (
-          <ColorShiftBackground variant="neon" intensity="medium">
+          <ColorShiftBackground variant="vercel" intensity="subtle">
             <Header 
               showBackButton 
               onBack={() => setCurrentSection('home')} 
@@ -174,7 +174,7 @@ function Dashboard() {
         );
       case 'social':
         return (
-          <ColorShiftBackground variant="cyberpunk" intensity="medium">
+          <ColorShiftBackground variant="vercel" intensity="subtle">
             <Header 
               showBackButton 
               onBack={() => setCurrentSection('home')} 
@@ -185,7 +185,7 @@ function Dashboard() {
         );
       case 'analytics':
         return (
-          <ColorShiftBackground variant="neon" intensity="medium">
+          <ColorShiftBackground variant="vercel" intensity="subtle">
             <Header 
               showBackButton 
               onBack={() => setCurrentSection('home')} 
@@ -196,7 +196,7 @@ function Dashboard() {
         );
       case 'games':
         return (
-          <ColorShiftBackground variant="cyberpunk" intensity="intense">
+          <ColorShiftBackground variant="vercel" intensity="subtle">
             <Header 
               showBackButton 
               onBack={() => setCurrentSection('home')} 
@@ -207,7 +207,7 @@ function Dashboard() {
         );
       default:
         return (
-          <ColorShiftBackground variant="cyberpunk" intensity="subtle">
+          <ColorShiftBackground variant="vercel" intensity="subtle">
             <Header />
             <div className="p-4">
               <LiquidGlass intensity="medium" colorShift animated className="mb-6">

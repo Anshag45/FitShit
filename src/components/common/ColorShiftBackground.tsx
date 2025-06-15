@@ -3,14 +3,14 @@ import { motion } from 'framer-motion';
 
 interface ColorShiftBackgroundProps {
   children: React.ReactNode;
-  variant?: 'cosmic' | 'aurora' | 'nebula' | 'galaxy' | 'cyberpunk' | 'neon';
+  variant?: 'cosmic' | 'aurora' | 'nebula' | 'galaxy' | 'cyberpunk' | 'neon' | 'vercel';
   intensity?: 'subtle' | 'medium' | 'intense';
 }
 
 export function ColorShiftBackground({ 
   children, 
-  variant = 'cyberpunk',
-  intensity = 'medium'
+  variant = 'vercel',
+  intensity = 'subtle'
 }: ColorShiftBackgroundProps) {
   const variants = {
     cosmic: {
@@ -60,13 +60,21 @@ export function ColorShiftBackground({
         'linear-gradient(45deg, #330066, #4d0099, #6600cc)',
         'linear-gradient(45deg, #4d0099, #6600cc, #000000)'
       ]
+    },
+    vercel: {
+      colors: [
+        '#000000',
+        '#000000',
+        '#000000',
+        '#000000'
+      ]
     }
   };
 
   const intensityDurations = {
-    subtle: 12,
-    medium: 8,
-    intense: 4
+    subtle: 20,
+    medium: 12,
+    intense: 6
   };
 
   return (
@@ -81,28 +89,55 @@ export function ColorShiftBackground({
         ease: "linear"
       }}
     >
-      {/* Floating particles */}
-      <div className="absolute inset-0">
-        {[...Array(20)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-2 h-2 bg-cyan-400/30 rounded-full"
-            initial={{
-              x: Math.random() * window.innerWidth,
-              y: Math.random() * window.innerHeight,
-            }}
-            animate={{
-              x: Math.random() * window.innerWidth,
-              y: Math.random() * window.innerHeight,
-            }}
-            transition={{
-              duration: 10 + Math.random() * 10,
-              repeat: Infinity,
-              ease: "linear"
-            }}
-          />
-        ))}
-      </div>
+      {/* Vercel-style floating elements */}
+      {variant === 'vercel' && (
+        <div className="absolute inset-0">
+          {[...Array(8)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-px h-px bg-white/20 rounded-full"
+              initial={{
+                x: Math.random() * window.innerWidth,
+                y: Math.random() * window.innerHeight,
+              }}
+              animate={{
+                x: Math.random() * window.innerWidth,
+                y: Math.random() * window.innerHeight,
+              }}
+              transition={{
+                duration: 15 + Math.random() * 10,
+                repeat: Infinity,
+                ease: "linear"
+              }}
+            />
+          ))}
+        </div>
+      )}
+      
+      {/* Other variant particles */}
+      {variant !== 'vercel' && (
+        <div className="absolute inset-0">
+          {[...Array(20)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-2 h-2 bg-cyan-400/30 rounded-full"
+              initial={{
+                x: Math.random() * window.innerWidth,
+                y: Math.random() * window.innerHeight,
+              }}
+              animate={{
+                x: Math.random() * window.innerWidth,
+                y: Math.random() * window.innerHeight,
+              }}
+              transition={{
+                duration: 10 + Math.random() * 10,
+                repeat: Infinity,
+                ease: "linear"
+              }}
+            />
+          ))}
+        </div>
+      )}
       
       {/* Content */}
       <div className="relative z-10">

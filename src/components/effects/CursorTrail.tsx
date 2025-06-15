@@ -24,7 +24,7 @@ export function CursorTrail() {
         timestamp: Date.now()
       };
 
-      setTrail(prev => [...prev.slice(-15), newPoint]); // Keep last 15 points
+      setTrail(prev => [...prev.slice(-25), newPoint]); // Keep more points for smoother trail
       setIsMoving(true);
 
       // Clear existing timeout
@@ -41,7 +41,7 @@ export function CursorTrail() {
     // Clean up old trail points
     const cleanupTrail = () => {
       const now = Date.now();
-      setTrail(prev => prev.filter(point => now - point.timestamp < 1000));
+      setTrail(prev => prev.filter(point => now - point.timestamp < 2000));
       animationFrame = requestAnimationFrame(cleanupTrail);
     };
 
@@ -61,13 +61,13 @@ export function CursorTrail() {
     <div className="fixed inset-0 pointer-events-none z-50">
       <svg className="w-full h-full">
         <defs>
-          <linearGradient id="trailGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#00d4ff" stopOpacity="0.8" />
-            <stop offset="50%" stopColor="#8b5cf6" stopOpacity="0.6" />
-            <stop offset="100%" stopColor="#ec4899" stopOpacity="0.4" />
+          <linearGradient id="vercelTrailGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.9" />
+            <stop offset="50%" stopColor="#ffffff" stopOpacity="0.6" />
+            <stop offset="100%" stopColor="#ffffff" stopOpacity="0.2" />
           </linearGradient>
-          <filter id="glow">
-            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+          <filter id="vercelGlow">
+            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
             <feMerge> 
               <feMergeNode in="coloredBlur"/>
               <feMergeNode in="SourceGraphic"/>
@@ -84,67 +84,67 @@ export function CursorTrail() {
               const cpy = (prevPoint.y + point.y) / 2;
               return `Q ${prevPoint.x} ${prevPoint.y} ${cpx} ${cpy}`;
             }).join(' ')}`}
-            stroke="url(#trailGradient)"
-            strokeWidth={isMoving ? "4" : "2"}
+            stroke="url(#vercelTrailGradient)"
+            strokeWidth={isMoving ? "3" : "1.5"}
             fill="none"
             strokeLinecap="round"
             strokeLinejoin="round"
-            filter="url(#glow)"
+            filter="url(#vercelGlow)"
             initial={{ pathLength: 0, opacity: 0 }}
             animate={{ 
               pathLength: 1, 
-              opacity: isMoving ? 0.8 : 0.3,
-              strokeWidth: isMoving ? 4 : 2
+              opacity: isMoving ? 0.9 : 0.4,
+              strokeWidth: isMoving ? 3 : 1.5
             }}
             transition={{ 
-              pathLength: { duration: 0.3 },
-              opacity: { duration: 0.2 },
-              strokeWidth: { duration: 0.2 }
+              pathLength: { duration: 0.4 },
+              opacity: { duration: 0.3 },
+              strokeWidth: { duration: 0.3 }
             }}
           />
         )}
       </svg>
 
-      {/* Trail particles */}
+      {/* Flowing particles along the trail */}
       <AnimatePresence>
-        {trail.slice(-8).map((point, index) => (
+        {trail.slice(-12).map((point, index) => (
           <motion.div
             key={point.id}
-            className="absolute w-2 h-2 rounded-full pointer-events-none"
+            className="absolute w-1 h-1 rounded-full pointer-events-none"
             style={{
-              left: point.x - 4,
-              top: point.y - 4,
-              background: `linear-gradient(45deg, #00d4ff, #8b5cf6, #ec4899)`,
-              boxShadow: '0 0 10px rgba(0, 212, 255, 0.6)'
+              left: point.x - 2,
+              top: point.y - 2,
+              background: '#ffffff',
+              boxShadow: '0 0 8px rgba(255, 255, 255, 0.6)'
             }}
             initial={{ scale: 0, opacity: 0 }}
             animate={{ 
-              scale: isMoving ? 1 : 0.5, 
-              opacity: isMoving ? 0.8 - (index * 0.1) : 0.3 - (index * 0.05)
+              scale: isMoving ? 1 : 0.3, 
+              opacity: isMoving ? 0.8 - (index * 0.06) : 0.2 - (index * 0.02)
             }}
             exit={{ scale: 0, opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.4 }}
           />
         ))}
       </AnimatePresence>
 
-      {/* Main cursor glow */}
+      {/* Main cursor glow - Vercel style */}
       {trail.length > 0 && (
         <motion.div
-          className="absolute w-6 h-6 rounded-full pointer-events-none"
+          className="absolute w-8 h-8 rounded-full pointer-events-none"
           style={{
-            left: trail[trail.length - 1]?.x - 12,
-            top: trail[trail.length - 1]?.y - 12,
-            background: 'radial-gradient(circle, rgba(0, 212, 255, 0.4) 0%, rgba(139, 92, 246, 0.3) 50%, rgba(236, 72, 153, 0.2) 100%)',
-            filter: 'blur(8px)'
+            left: trail[trail.length - 1]?.x - 16,
+            top: trail[trail.length - 1]?.y - 16,
+            background: 'radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 50%, transparent 100%)',
+            filter: 'blur(6px)'
           }}
           animate={{
-            scale: isMoving ? [1, 1.5, 1] : [1, 1.2, 1],
-            opacity: isMoving ? 0.8 : 0.4
+            scale: isMoving ? [1, 1.3, 1] : [1, 1.1, 1],
+            opacity: isMoving ? 0.7 : 0.3
           }}
           transition={{
-            scale: { duration: 0.6, repeat: Infinity },
-            opacity: { duration: 0.3 }
+            scale: { duration: 0.8, repeat: Infinity },
+            opacity: { duration: 0.4 }
           }}
         />
       )}

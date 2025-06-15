@@ -4,7 +4,7 @@ import { cn } from '../../utils/cn';
 import { MagneticEffect } from '../effects/MagneticEffect';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'cosmic' | 'legendary';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'cosmic' | 'legendary' | 'vercel';
   size?: 'sm' | 'md' | 'lg' | 'xl';
   children: React.ReactNode;
   isLoading?: boolean;
@@ -13,7 +13,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 export function Button({ 
-  variant = 'primary', 
+  variant = 'vercel', 
   size = 'md', 
   className, 
   children, 
@@ -22,15 +22,16 @@ export function Button({
   magnetic = true,
   ...props 
 }: ButtonProps) {
-  const baseClasses = 'font-bold rounded-2xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden cursor-pointer';
+  const baseClasses = 'font-medium rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden cursor-pointer border';
   
   const variants = {
-    primary: 'bg-gradient-to-r from-cyan-500 via-purple-600 to-pink-600 text-white hover:from-cyan-600 hover:via-purple-700 hover:to-pink-700 shadow-2xl hover:shadow-cyan-500/25',
-    secondary: 'bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white hover:from-emerald-600 hover:via-teal-600 hover:to-cyan-600 shadow-2xl hover:shadow-emerald-500/25',
-    outline: 'border-2 border-cyan-500 text-cyan-400 hover:bg-cyan-500 hover:text-black backdrop-blur-sm',
-    ghost: 'text-gray-300 hover:bg-gray-800/50 backdrop-blur-sm',
-    cosmic: 'bg-gradient-to-r from-purple-600 via-cyan-500 to-pink-600 text-white shadow-2xl hover:shadow-cyan-500/30 animate-pulse',
-    legendary: 'bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 text-black shadow-2xl hover:shadow-yellow-500/30 animate-pulse'
+    primary: 'bg-white text-black border-white hover:bg-white/90 shadow-lg',
+    secondary: 'bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white hover:from-emerald-600 hover:via-teal-600 hover:to-cyan-600 shadow-2xl hover:shadow-emerald-500/25 border-transparent',
+    outline: 'border-white/20 text-white hover:bg-white/10 backdrop-blur-sm',
+    ghost: 'text-white/80 hover:bg-white/5 backdrop-blur-sm border-transparent hover:text-white',
+    cosmic: 'bg-gradient-to-r from-purple-600 via-cyan-500 to-pink-600 text-white shadow-2xl hover:shadow-cyan-500/30 border-transparent',
+    legendary: 'bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 text-black shadow-2xl hover:shadow-yellow-500/30 border-transparent',
+    vercel: 'bg-white text-black border-white hover:bg-white/90 shadow-lg'
   };
 
   const sizes = {
@@ -45,14 +46,14 @@ export function Button({
   const ButtonContent = (
     <motion.button
       className={cn(baseClasses, variants[variant], sizes[size], glowClasses, className)}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
       disabled={isLoading}
       {...props}
     >
       {isLoading ? (
         <div className="flex items-center space-x-2">
-          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+          <div className="w-4 h-4 border-2 border-current/30 border-t-current rounded-full animate-spin" />
           <span>Loading...</span>
         </div>
       ) : (
