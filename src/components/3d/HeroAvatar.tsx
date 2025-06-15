@@ -1,6 +1,6 @@
 import React, { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Sphere, Box, Cylinder, Text3D, OrbitControls, Environment } from '@react-three/drei';
+import { Sphere, Box, Cylinder, OrbitControls, Environment } from '@react-three/drei';
 import { motion } from 'framer-motion';
 import * as THREE from 'three';
 
@@ -95,18 +95,6 @@ function AnimatedHero({ spiritAnimal, level, isAnimating }: { spiritAnimal?: str
           </Sphere>
         </mesh>
       ))}
-
-      {/* Level Text */}
-      <Text3D
-        font="/fonts/helvetiker_regular.typeface.json"
-        size={0.3}
-        height={0.1}
-        position={[0, -1.2, 0]}
-        rotation={[-Math.PI / 2, 0, 0]}
-      >
-        {`LV ${level}`}
-        <meshStandardMaterial color="#ffffff" emissive="#00d4ff" emissiveIntensity={0.2} />
-      </Text3D>
     </group>
   );
 }
