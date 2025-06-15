@@ -1,5 +1,6 @@
 import React from 'react';
-import { Users, Award, BarChart3, Store } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Users, Award, BarChart3, Store, Sword, Map } from 'lucide-react';
 
 interface QuickActionsProps {
   onNavigate: (section: string) => void;
@@ -8,49 +9,68 @@ interface QuickActionsProps {
 export function QuickActions({ onNavigate }: QuickActionsProps) {
   const actions = [
     {
-      icon: Users,
-      label: 'Challenges',
-      description: 'Join social challenges',
-      color: 'text-green-600 bg-green-100',
-      action: 'social'
+      icon: Map,
+      label: 'Quests',
+      description: 'Epic story adventures',
+      color: 'from-indigo-500 to-purple-600',
+      bgColor: 'bg-indigo-500/20',
+      action: 'quests'
     },
     {
       icon: Award,
       label: 'Achievements',
-      description: 'View your badges',
-      color: 'text-purple-600 bg-purple-100',
+      description: 'Unlock cosmic badges',
+      color: 'from-purple-500 to-pink-600',
+      bgColor: 'bg-purple-500/20',
       action: 'achievements'
+    },
+    {
+      icon: Users,
+      label: 'Squad Battles',
+      description: 'Team up with friends',
+      color: 'from-green-500 to-emerald-600',
+      bgColor: 'bg-green-500/20',
+      action: 'social'
     },
     {
       icon: BarChart3,
       label: 'Analytics',
       description: 'Track your progress',
-      color: 'text-blue-600 bg-blue-100',
+      color: 'from-blue-500 to-cyan-600',
+      bgColor: 'bg-blue-500/20',
       action: 'analytics'
-    },
-    {
-      icon: Store,
-      label: 'Store',
-      description: 'Spend your coins',
-      color: 'text-orange-600 bg-orange-100',
-      action: 'store'
     }
   ];
 
   return (
     <div className="grid grid-cols-2 gap-4">
       {actions.map((action, index) => (
-        <button
+        <motion.button
           key={index}
           onClick={() => onNavigate(action.action)}
-          className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-shadow text-left"
+          className="bg-white/10 backdrop-blur-lg rounded-2xl p-4 border border-white/20 text-left relative overflow-hidden group"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: index * 0.1 }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
         >
-          <div className={`w-10 h-10 rounded-full flex items-center justify-center ${action.color} mb-3`}>
-            <action.icon className="w-5 h-5" />
-          </div>
-          <h3 className="font-semibold text-gray-800 mb-1">{action.label}</h3>
-          <p className="text-sm text-gray-600">{action.description}</p>
-        </button>
+          <motion.div
+            className={`w-12 h-12 rounded-full flex items-center justify-center bg-gradient-to-r ${action.color} mb-3 shadow-lg`}
+            whileHover={{ rotate: 360 }}
+            transition={{ duration: 0.6 }}
+          >
+            <action.icon className="w-6 h-6 text-white" />
+          </motion.div>
+          <h3 className="font-bold text-white text-lg mb-1">{action.label}</h3>
+          <p className="text-white/60 text-sm">{action.description}</p>
+          
+          {/* Hover effect */}
+          <motion.div
+            className={`absolute inset-0 ${action.bgColor} rounded-2xl opacity-0 group-hover:opacity-100`}
+            transition={{ duration: 0.3 }}
+          />
+        </motion.button>
       ))}
     </div>
   );

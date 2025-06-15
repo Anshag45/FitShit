@@ -1,5 +1,6 @@
 import React from 'react';
-import { Trophy, Flame, Clock, Target } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Trophy, Flame, Clock, Target, Star, Zap } from 'lucide-react';
 import { useApp } from '../../contexts/AppContext';
 
 export function StatsGrid() {
@@ -9,44 +10,73 @@ export function StatsGrid() {
   const stats = [
     {
       icon: Trophy,
-      label: 'Total Workouts',
+      label: 'Missions',
       value: userStats.totalWorkouts,
-      color: 'text-yellow-600 bg-yellow-100'
+      color: 'from-yellow-400 to-orange-500',
+      bgColor: 'bg-yellow-500/20'
     },
     {
       icon: Flame,
-      label: 'Day Streak',
+      label: 'Streak',
       value: userStats.streak,
-      color: 'text-red-600 bg-red-100'
+      color: 'from-red-400 to-pink-500',
+      bgColor: 'bg-red-500/20'
     },
     {
       icon: Clock,
-      label: 'Total Time',
+      label: 'Time',
       value: `${userStats.totalTime}m`,
-      color: 'text-blue-600 bg-blue-100'
+      color: 'from-blue-400 to-cyan-500',
+      bgColor: 'bg-blue-500/20'
     },
     {
       icon: Target,
       label: 'Level',
       value: userStats.level,
-      color: 'text-purple-600 bg-purple-100'
+      color: 'from-purple-400 to-indigo-500',
+      bgColor: 'bg-purple-500/20'
     }
   ];
 
   return (
     <div className="grid grid-cols-2 gap-4 mb-6">
       {stats.map((stat, index) => (
-        <div key={index} className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-          <div className="flex items-center space-x-3">
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${stat.color}`}>
-              <stat.icon className="w-5 h-5" />
-            </div>
+        <motion.div
+          key={index}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: index * 0.1 }}
+          whileHover={{ scale: 1.05 }}
+          className="bg-white/10 backdrop-blur-lg rounded-2xl p-4 border border-white/20 relative overflow-hidden"
+        >
+          <div className="flex items-center space-x-3 relative z-10">
+            <motion.div
+              className={`w-12 h-12 rounded-full flex items-center justify-center bg-gradient-to-r ${stat.color} shadow-lg`}
+              whileHover={{ rotate: 360 }}
+              transition={{ duration: 0.6 }}
+            >
+              <stat.icon className="w-6 h-6 text-white" />
+            </motion.div>
             <div>
-              <div className="text-2xl font-bold text-gray-800">{stat.value}</div>
-              <div className="text-sm text-gray-600">{stat.label}</div>
+              <motion.div
+                className="text-2xl font-bold text-white"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.2 + index * 0.1, type: "spring" }}
+              >
+                {stat.value}
+              </motion.div>
+              <div className="text-sm text-white/70 font-medium">{stat.label}</div>
             </div>
           </div>
-        </div>
+          
+          {/* Animated background glow */}
+          <motion.div
+            className={`absolute inset-0 ${stat.bgColor} rounded-2xl opacity-0`}
+            whileHover={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
+          />
+        </motion.div>
       ))}
     </div>
   );

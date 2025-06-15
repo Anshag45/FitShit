@@ -38,6 +38,14 @@ const initialState: AppState = {
     streak: 0,
     totalWorkouts: 0,
     totalTime: 0,
+    skillPoints: {
+      strength: 0,
+      endurance: 0,
+      flexibility: 0,
+      balance: 0
+    },
+    unlockedSkills: [],
+    questProgress: 0
   },
   achievements: [],
   workoutSessions: [],
@@ -55,7 +63,13 @@ function appReducer(state: AppState, action: AppAction): AppState {
     case 'SET_USER':
       return { ...state, user: action.payload };
     case 'UPDATE_STATS':
-      return { ...state, userStats: { ...state.userStats, ...action.payload } };
+      const newStats = { ...state.userStats, ...action.payload };
+      // Auto-level up based on XP
+      const newLevel = Math.floor(newStats.xp / 1000) + 1;
+      if (newLevel > newStats.level) {
+        newStats.level = newLevel;
+      }
+      return { ...state, userStats: newStats };
     case 'ADD_ACHIEVEMENT':
       return { ...state, achievements: [...state.achievements, action.payload] };
     case 'ADD_WORKOUT_SESSION':
@@ -108,9 +122,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   // Load data from localStorage on mount
   useEffect(() => {
-    const savedUser = localStorage.getItem('fitnessApp_user');
-    const savedStats = localStorage.getItem('fitnessApp_stats');
-    const savedOnboarded = localStorage.getItem('fitnessApp_onboarded');
+    const savedUser = localStorage.getItem('fitquest_user');
+    const savedStats = localStorage.getItem('fitquest_stats');
+    const savedOnboarded = localStorage.getItem('fitquest_onboarded');
 
     if (savedUser) {
       dispatch({ type: 'SET_USER', payload: JSON.parse(savedUser) });
@@ -126,10 +140,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   // Save data to localStorage when state changes
   useEffect(() => {
     if (state.user) {
-      localStorage.setItem('fitnessApp_user', JSON.stringify(state.user));
+      localStorage.setItem('fitquest_user', JSON.stringify(state.user));
     }
-    localStorage.setItem('fitnessApp_stats', JSON.stringify(state.userStats));
-    localStorage.setItem('fitnessApp_onboarded', JSON.stringify(state.isOnboarded));
+    localStorage.setItem('fitquest_stats', JSON.stringify(state.userStats));
+    localStorage.setItem('fitquest_onboarded', JSON.stringify(state.isOnboarded));
   }, [state.user, state.userStats, state.isOnboarded]);
 
   // Timer effect

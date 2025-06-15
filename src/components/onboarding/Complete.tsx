@@ -1,5 +1,6 @@
 import React from 'react';
-import { CheckCircle, Zap } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { CheckCircle, Zap, Star, Coins } from 'lucide-react';
 import { Button } from '../common/Button';
 
 interface CompleteProps {
@@ -9,44 +10,133 @@ interface CompleteProps {
 
 export function Complete({ onComplete, userName }: CompleteProps) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-600 via-blue-600 to-emerald-500 flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl p-8 text-center">
-        <div className="mb-8">
-          <div className="w-20 h-20 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4">
-            <CheckCircle className="w-10 h-10 text-white" />
-          </div>
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">
-            You're all set, {userName}!
-          </h1>
-          <p className="text-gray-600 mb-6">
-            Your personalized fitness journey is ready to begin
-          </p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 relative overflow-hidden">
+      {/* Celebration particles */}
+      <div className="absolute inset-0">
+        {[...Array(20)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-2 h-2 bg-yellow-400 rounded-full"
+            initial={{ 
+              x: Math.random() * window.innerWidth,
+              y: window.innerHeight + 20,
+              opacity: 0
+            }}
+            animate={{ 
+              y: -20,
+              opacity: [0, 1, 0],
+              scale: [0, 1, 0]
+            }}
+            transition={{ 
+              duration: 3,
+              delay: i * 0.1,
+              repeat: Infinity,
+              repeatDelay: 2
+            }}
+          />
+        ))}
+      </div>
 
-        <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-2xl p-6 mb-8">
-          <div className="flex items-center justify-center space-x-2 mb-4">
-            <Zap className="w-6 h-6 text-purple-600" />
-            <span className="text-lg font-semibold text-gray-800">Starting Rewards</span>
-          </div>
-          <div className="grid grid-cols-3 gap-4 text-center">
-            <div>
-              <div className="text-2xl font-bold text-purple-600">100</div>
-              <div className="text-sm text-gray-600">XP Points</div>
+      <div className="relative z-10 flex items-center justify-center min-h-screen p-4">
+        <div className="max-w-md w-full text-center">
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="mb-8"
+          >
+            <div className="w-24 h-24 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl">
+              <CheckCircle className="w-12 h-12 text-white" />
             </div>
-            <div>
-              <div className="text-2xl font-bold text-green-600">50</div>
-              <div className="text-sm text-gray-600">Coins</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-blue-600">1</div>
-              <div className="text-sm text-gray-600">Level</div>
-            </div>
-          </div>
-        </div>
+          </motion.div>
 
-        <Button onClick={onComplete} className="w-full" size="lg">
-          Start My Journey
-        </Button>
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="text-4xl font-bold text-white mb-2"
+          >
+            Welcome to the Galaxy, {userName}!
+          </motion.h1>
+          
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="text-white/80 mb-8 text-lg"
+          >
+            Your cosmic fitness adventure is ready to launch
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.7 }}
+            className="bg-gradient-to-r from-purple-600/20 to-pink-600/20 backdrop-blur-lg rounded-3xl p-6 mb-8 border border-white/20"
+          >
+            <div className="flex items-center justify-center space-x-2 mb-6">
+              <Zap className="w-6 h-6 text-yellow-400" />
+              <span className="text-xl font-bold text-white">Launch Rewards</span>
+            </div>
+            
+            <div className="grid grid-cols-3 gap-4">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.9 }}
+                className="text-center"
+              >
+                <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <Star className="w-6 h-6 text-white" />
+                </div>
+                <div className="text-2xl font-bold text-purple-400">100</div>
+                <div className="text-sm text-white/60">XP Points</div>
+              </motion.div>
+              
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.0 }}
+                className="text-center"
+              >
+                <div className="w-12 h-12 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <Coins className="w-6 h-6 text-white" />
+                </div>
+                <div className="text-2xl font-bold text-yellow-400">50</div>
+                <div className="text-sm text-white/60">Cosmic Coins</div>
+              </motion.div>
+              
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.1 }}
+                className="text-center"
+              >
+                <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <div className="text-white font-bold">1</div>
+                </div>
+                <div className="text-2xl font-bold text-blue-400">1</div>
+                <div className="text-sm text-white/60">Level</div>
+              </motion.div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.3 }}
+          >
+            <Button 
+              onClick={onComplete} 
+              size="xl" 
+              variant="legendary"
+              className="w-full"
+              glowEffect
+            >
+              Launch Into Space! 🚀
+            </Button>
+          </motion.div>
+        </div>
       </div>
     </div>
   );

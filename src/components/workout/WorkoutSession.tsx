@@ -1,7 +1,10 @@
 import React, { useEffect } from 'react';
-import { ArrowLeft, SkipForward, CheckCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowLeft, SkipForward, CheckCircle, Star } from 'lucide-react';
 import { Button } from '../common/Button';
 import { Timer } from '../common/Timer';
+import { ProgressBar } from '../common/ProgressBar';
+import { BackButton } from '../common/BackButton';
 import { useApp } from '../../contexts/AppContext';
 
 interface WorkoutSessionProps {
@@ -15,6 +18,7 @@ export function WorkoutSession({ onBack, onComplete }: WorkoutSessionProps) {
 
   const currentExercise = currentWorkout?.exercises[currentExerciseIndex];
   const isLastExercise = currentExerciseIndex === currentWorkout?.exercises.length - 1;
+  const progress = ((currentExerciseIndex + 1) / currentWorkout?.exercises.length) * 100;
 
   useEffect(() => {
     if (currentExercise && !timerActive && timerSeconds === 0) {
@@ -38,7 +42,6 @@ export function WorkoutSession({ onBack, onComplete }: WorkoutSessionProps) {
 
   const handleNextExercise = () => {
     if (isLastExercise) {
-      // Complete workout
       const xpEarned = 50;
       const coinsEarned = 10;
       
@@ -56,126 +59,200 @@ export function WorkoutSession({ onBack, onComplete }: WorkoutSessionProps) {
     }
   };
 
-  const handleSkipExercise = () => {
-    handleNextExercise();
-  };
-
   if (!currentWorkout || !currentExercise) {
     return null;
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div 
+      className="min-h-screen relative overflow-hidden"
+      style={{
+        background: `linear-gradient(135deg, ${currentWorkout.backgroundGradient.join(', ')})`
+      }}
+    >
+      {/* Animated background elements */}
+      <div className="absolute inset-0">
+        <motion.div
+          className="absolute top-20 right-20 w-32 h-32 bg-white/10 rounded-full blur-xl"
+          animate={{ 
+            scale: [1, 1.2, 1],
+            opacity: [0.3, 0.6, 0.3]
+          }}
+          transition={{ duration: 4, repeat: Infinity }}
+        />
+        <motion.div
+          className="absolute bottom-20 left-20 w-48 h-48 bg-white/5 rounded-full blur-2xl"
+          animate={{ 
+            scale: [1.2, 1, 1.2],
+            opacity: [0.2, 0.4, 0.2]
+          }}
+          transition={{ duration: 5, repeat: Infinity }}
+        />
+      </div>
+
       {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200 px-4 py-3">
+      <div className="relative z-10 bg-black/20 backdrop-blur-sm px-4 py-4">
         <div className="flex items-center justify-between">
-          <button
-            onClick={onBack}
-            className="flex items-center space-x-2 text-gray-600 hover:text-gray-800"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            <span>Back</span>
-          </button>
+          <BackButton onClick={onBack} />
           <div className="text-center">
-            <h1 className="font-semibold text-gray-800">{currentWorkout.name}</h1>
-            <p className="text-sm text-gray-600">
+            <h1 className="font-bold text-white text-lg">{currentWorkout.name}</h1>
+            <p className="text-white/70 text-sm">
               Exercise {currentExerciseIndex + 1} of {currentWorkout.exercises.length}
             </p>
           </div>
-          <div className="w-16"></div> {/* Spacer for centering */}
+          <div className="w-16"></div>
         </div>
       </div>
 
       {/* Progress Bar */}
-      <div className="bg-white px-4 py-2">
-        <div className="w-full bg-gray-200 rounded-full h-2">
-          <div
-            className="bg-gradient-to-r from-purple-500 to-blue-500 h-2 rounded-full transition-all duration-300"
-            style={{ width: `${((currentExerciseIndex + 1) / currentWorkout.exercises.length) * 100}%` }}
-          />
-        </div>
+      <div className="relative z-10 px-4 py-2 bg-black/10">
+        <ProgressBar
+          progress={progress}
+          color="cosmic"
+          animated
+          glowEffect
+        />
       </div>
 
       {/* Exercise Content */}
-      <div className="flex-1 p-4">
+      <div className="relative z-10 flex-1 p-4">
         <div className="max-w-md mx-auto">
-          {/* Exercise Image */}
-          <div className="bg-white rounded-2xl p-4 mb-6 shadow-sm">
-            <img
-              src={currentExercise.imageUrl}
-              alt={currentExercise.name}
-              className="w-full h-48 object-cover rounded-xl mb-4"
-            />
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">{currentExercise.name}</h2>
-            <p className="text-gray-600 mb-4">{currentExercise.description}</p>
-            
-            {/* Exercise Details */}
-            <div className="flex items-center justify-between text-sm text-gray-600 bg-gray-50 rounded-xl p-3">
-              {currentExercise.sets && (
-                <div className="text-center">
-                  <div className="font-semibold text-gray-800">{currentExercise.sets}</div>
-                  <div>Sets</div>
-                </div>
-              )}
-              {currentExercise.reps && (
-                <div className="text-center">
-                  <div className="font-semibold text-gray-800">{currentExercise.reps}</div>
-                  <div>Reps</div>
-                </div>
-              )}
-              <div className="text-center">
-                <div className="font-semibold text-gray-800">{currentExercise.duration}s</div>
-                <div>Duration</div>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentExerciseIndex}
+              initial={{ opacity: 0, x: 100 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -100 }}
+              transition={{ duration: 0.3 }}
+            >
+              {/* Exercise Image */}
+              <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-4 mb-6 border border-white/20">
+                <motion.img
+                  src={currentExercise.imageUrl}
+                  alt={currentExercise.name}
+                  className="w-full h-48 object-cover rounded-2xl mb-4"
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                />
+                <motion.h2
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="text-3xl font-bold text-white mb-2"
+                >
+                  {currentExercise.name}
+                </motion.h2>
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="text-white/80 mb-4"
+                >
+                  {currentExercise.description}
+                </motion.p>
+                
+                {/* Exercise Details */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
+                  className="flex items-center justify-between text-sm text-white/80 bg-white/10 rounded-2xl p-3"
+                >
+                  {currentExercise.sets && (
+                    <div className="text-center">
+                      <div className="font-bold text-white text-lg">{currentExercise.sets}</div>
+                      <div>Sets</div>
+                    </div>
+                  )}
+                  {currentExercise.reps && (
+                    <div className="text-center">
+                      <div className="font-bold text-white text-lg">{currentExercise.reps}</div>
+                      <div>Reps</div>
+                    </div>
+                  )}
+                  <div className="text-center">
+                    <div className="font-bold text-white text-lg">{currentExercise.duration}s</div>
+                    <div>Duration</div>
+                  </div>
+                </motion.div>
               </div>
-            </div>
-          </div>
 
-          {/* Timer */}
-          <div className="bg-white rounded-2xl p-6 mb-6 shadow-sm text-center">
-            <Timer
-              seconds={timerSeconds}
-              isActive={timerActive}
-              onStart={handleStartTimer}
-              onPause={handlePauseTimer}
-              onStop={handleStopTimer}
-              onReset={handleStopTimer}
-            />
-          </div>
+              {/* Timer */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.6 }}
+                className="bg-white/10 backdrop-blur-lg rounded-3xl p-6 mb-6 border border-white/20 text-center"
+              >
+                <Timer
+                  seconds={timerSeconds}
+                  isActive={timerActive}
+                  onStart={handleStartTimer}
+                  onPause={handlePauseTimer}
+                  onStop={handleStopTimer}
+                  onReset={handleStopTimer}
+                  maxSeconds={currentExercise.duration}
+                />
+              </motion.div>
 
-          {/* Instructions */}
-          <div className="bg-white rounded-2xl p-4 mb-6 shadow-sm">
-            <h3 className="font-semibold text-gray-800 mb-3">Instructions</h3>
-            <ol className="space-y-2">
-              {currentExercise.instructions.map((instruction, index) => (
-                <li key={index} className="flex items-start space-x-3">
-                  <span className="flex-shrink-0 w-6 h-6 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center text-sm font-medium">
-                    {index + 1}
-                  </span>
-                  <span className="text-gray-700">{instruction}</span>
-                </li>
-              ))}
-            </ol>
-          </div>
+              {/* Instructions */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.7 }}
+                className="bg-white/10 backdrop-blur-lg rounded-3xl p-4 mb-6 border border-white/20"
+              >
+                <h3 className="font-bold text-white text-lg mb-4 flex items-center">
+                  <Star className="w-5 h-5 mr-2 text-yellow-400" />
+                  Mission Instructions
+                </h3>
+                <ol className="space-y-3">
+                  {currentExercise.instructions.map((instruction, index) => (
+                    <motion.li
+                      key={index}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.8 + index * 0.1 }}
+                      className="flex items-start space-x-3"
+                    >
+                      <span className="flex-shrink-0 w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                        {index + 1}
+                      </span>
+                      <span className="text-white/90">{instruction}</span>
+                    </motion.li>
+                  ))}
+                </ol>
+              </motion.div>
 
-          {/* Action Buttons */}
-          <div className="flex space-x-3">
-            <Button
-              onClick={handleSkipExercise}
-              variant="outline"
-              className="flex-1 flex items-center justify-center space-x-2"
-            >
-              <SkipForward className="w-4 h-4" />
-              <span>Skip</span>
-            </Button>
-            
-            <Button
-              onClick={handleNextExercise}
-              className="flex-1 flex items-center justify-center space-x-2"
-            >
-              <CheckCircle className="w-4 h-4" />
-              <span>{isLastExercise ? 'Complete' : 'Next'}</span>
-            </Button>
-          </div>
+              {/* Action Buttons */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.0 }}
+                className="flex space-x-3"
+              >
+                <Button
+                  onClick={handleNextExercise}
+                  variant="outline"
+                  className="flex-1 flex items-center justify-center space-x-2"
+                >
+                  <SkipForward className="w-4 h-4" />
+                  <span>Skip</span>
+                </Button>
+                
+                <Button
+                  onClick={handleNextExercise}
+                  variant="legendary"
+                  className="flex-2 flex items-center justify-center space-x-2"
+                  glowEffect
+                >
+                  <CheckCircle className="w-4 h-4" />
+                  <span>{isLastExercise ? 'Complete Mission' : 'Next Exercise'}</span>
+                </Button>
+              </motion.div>
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
     </div>
