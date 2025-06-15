@@ -1,11 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Zap } from 'lucide-react';
 
 export function FloatingLogo() {
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-      {/* Main floating logo */}
+      {/* Main floating triangular logo */}
       <motion.div
         className="absolute"
         initial={{ x: -100, y: window.innerHeight / 2 }}
@@ -35,13 +34,27 @@ export function FloatingLogo() {
           ease: "linear"
         }}
       >
-        <div className="w-32 h-32 flex items-center justify-center opacity-[0.03]">
-          <Zap className="w-full h-full text-white" strokeWidth={0.5} />
-        </div>
+        <svg width="80" height="80" viewBox="0 0 80 80" className="opacity-[0.03]">
+          <defs>
+            <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#ffffff" stopOpacity="0.2" />
+            </linearGradient>
+          </defs>
+          <motion.path
+            d="M 40 5 L 75 65 L 5 65 Z"
+            fill="url(#logoGradient)"
+            stroke="#ffffff"
+            strokeWidth="1"
+            strokeOpacity="0.1"
+            animate={{ rotate: [0, 360] }}
+            transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
+          />
+        </svg>
       </motion.div>
 
-      {/* Secondary floating logos */}
-      {[...Array(3)].map((_, i) => (
+      {/* Secondary floating triangular elements */}
+      {[...Array(4)].map((_, i) => (
         <motion.div
           key={i}
           className="absolute"
@@ -70,15 +83,22 @@ export function FloatingLogo() {
             delay: i * 8
           }}
         >
-          <div className="w-16 h-16 flex items-center justify-center opacity-[0.02]">
-            <Zap className="w-full h-full text-white" strokeWidth={0.3} />
-          </div>
+          <svg width="40" height="40" viewBox="0 0 40 40" className="opacity-[0.02]">
+            <path
+              d="M 20 2 L 38 34 L 2 34 Z"
+              fill="#ffffff"
+              fillOpacity="0.3"
+              stroke="#ffffff"
+              strokeWidth="0.5"
+              strokeOpacity="0.2"
+            />
+          </svg>
         </motion.div>
       ))}
 
-      {/* Text logos */}
+      {/* Text logos floating */}
       <motion.div
-        className="absolute text-6xl font-light text-white opacity-[0.015] select-none"
+        className="absolute text-4xl font-light text-white opacity-[0.008] select-none tracking-wider"
         initial={{ x: window.innerWidth, y: window.innerHeight * 0.6 }}
         animate={{
           x: [-200, window.innerWidth + 200],
@@ -95,11 +115,11 @@ export function FloatingLogo() {
           ease: "linear"
         }}
       >
-        FitQuest
+        FITQUEST
       </motion.div>
 
       <motion.div
-        className="absolute text-4xl font-light text-white opacity-[0.01] select-none"
+        className="absolute text-2xl font-light text-white opacity-[0.005] select-none tracking-widest"
         initial={{ x: -300, y: window.innerHeight * 0.3 }}
         animate={{
           x: [window.innerWidth + 300, -300],
@@ -117,7 +137,7 @@ export function FloatingLogo() {
           delay: 10
         }}
       >
-        FITNESS GAMING
+        FITNESS × GAMING
       </motion.div>
     </div>
   );

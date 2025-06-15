@@ -1,8 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Zap } from 'lucide-react';
 import { Button } from '../common/Button';
-import { FloatingLogo } from '../effects/FloatingLogo';
+import { FloatingTriangles } from '../effects/FloatingTriangles';
 
 interface WelcomeProps {
   onNext: () => void;
@@ -11,98 +10,112 @@ interface WelcomeProps {
 export function Welcome({ onNext }: WelcomeProps) {
   return (
     <div className="min-h-screen bg-black relative overflow-hidden">
-      <FloatingLogo />
+      <FloatingTriangles />
       
-      {/* Subtle gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/[0.005] to-transparent" />
+      {/* Navigation */}
+      <nav className="fixed top-0 left-0 right-0 z-50 p-6">
+        <div className="flex items-center justify-between max-w-7xl mx-auto">
+          <div className="flex items-center space-x-8">
+            <div className="text-white/60 text-sm font-light tracking-wide">FEATURES</div>
+            <div className="text-white/60 text-sm font-light tracking-wide">WORKOUTS</div>
+            <div className="text-white/60 text-sm font-light tracking-wide">GAMES</div>
+          </div>
+          
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex items-center space-x-2"
+          >
+            <div className="w-6 h-6 bg-white rounded-sm flex items-center justify-center">
+              <div className="w-3 h-3 bg-black transform rotate-45"></div>
+            </div>
+            <span className="text-white font-light text-lg tracking-wide">FitQuest</span>
+            <div className="text-white/40 text-xs bg-white/10 px-2 py-1 rounded border border-white/20">25</div>
+          </motion.div>
+          
+          <div className="flex items-center space-x-8">
+            <div className="text-white/60 text-sm font-light tracking-wide">WATCH DEMO</div>
+            <div className="text-white/60 text-sm font-light tracking-wide">SIGN UP</div>
+            <div className="text-white/60 text-sm font-light tracking-wide">LOGIN</div>
+          </div>
+        </div>
+      </nav>
 
-      <div className="relative z-10 flex items-center justify-center min-h-screen p-4">
-        <div className="max-w-4xl w-full">
-          {/* Header */}
-          <div className="text-center mb-16">
-            <motion.div
-              initial={{ scale: 0, rotate: -180 }}
-              animate={{ scale: 1, rotate: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-              className="mb-12"
-            >
-              <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-8 shadow-2xl">
-                <Zap className="w-10 h-10 text-black" />
-              </div>
-            </motion.div>
-
+      {/* Main Content */}
+      <div className="relative z-10 flex items-center min-h-screen">
+        <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
+          {/* Left Content */}
+          <div>
             <motion.h1
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="text-8xl font-light text-white mb-8 tracking-tight"
+              className="text-7xl lg:text-8xl font-light text-white mb-8 leading-none tracking-tight"
             >
-              FitQuest
+              FitQuest's one-day
+              <br />
+              event for fitness
+              <br />
+              and gaming leaders
             </motion.h1>
             
-            <motion.p
+            {/* Event Details */}
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="text-2xl text-white/60 mb-20 font-light max-w-2xl mx-auto"
+              transition={{ delay: 0.6 }}
+              className="grid grid-cols-2 gap-8 mb-12"
             >
-              Your epic gaming fitness adventure begins now
-            </motion.p>
-          </div>
+              <div>
+                <div className="text-white/60 text-sm font-light tracking-wide mb-2">NEW YORK CITY</div>
+                <div className="text-white/60 text-sm font-light tracking-wide">AND ONLINE</div>
+              </div>
+              <div>
+                <div className="text-white/60 text-sm font-light tracking-wide mb-2">JUNE 25, 2025</div>
+                <div className="text-white/60 text-sm font-light tracking-wide">THE GLASSHOUSE</div>
+              </div>
+            </motion.div>
 
-          {/* Features Grid */}
-          <div className="grid md:grid-cols-3 gap-8 mb-20">
-            {[
-              {
-                title: 'AI-Powered Workouts',
-                description: 'Personalized routines that evolve with you',
-                delay: 0.7
-              },
-              {
-                title: 'Epic Rewards System',
-                description: 'Level up, earn coins, unlock achievements',
-                delay: 0.9
-              },
-              {
-                title: 'Immersive Quests',
-                description: 'Journey through space, become a ninja warrior',
-                delay: 1.1
-              }
-            ].map((feature, index) => (
+            {/* Pricing */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8 }}
+              className="flex items-end space-x-16 mb-12"
+            >
+              <div>
+                <div className="text-white/60 text-sm font-light tracking-wide mb-2">ONLINE</div>
+                <div className="text-white/60 text-sm font-light tracking-wide">FREE</div>
+              </div>
+              <div>
+                <div className="text-white/60 text-sm font-light tracking-wide mb-2">IN-PERSON TICKETS</div>
+                <div className="text-white/60 text-sm font-light tracking-wide">$600</div>
+              </div>
               <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: feature.delay }}
-                className="text-center"
+                whileHover={{ x: 5 }}
+                transition={{ duration: 0.2 }}
               >
-                <div className="bg-white/[0.02] backdrop-blur-sm rounded-2xl p-8 border border-white/[0.05] hover:border-white/10 transition-all duration-300">
-                  <h3 className="font-light text-white text-xl mb-4">{feature.title}</h3>
-                  <p className="text-white/60 text-base font-light leading-relaxed">{feature.description}</p>
-                </div>
+                <Button 
+                  onClick={onNext}
+                  variant="primary"
+                  className="bg-white text-black hover:bg-white/90 px-8 py-3 font-light tracking-wide flex items-center space-x-2"
+                >
+                  <span>BEGIN QUEST</span>
+                  <span>→</span>
+                </Button>
               </motion.div>
-            ))}
+            </motion.div>
           </div>
 
-          {/* CTA */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.3 }}
-            className="text-center"
-          >
-            <Button 
-              onClick={onNext} 
-              size="xl" 
-              variant="primary"
-              className="font-light text-lg py-6 px-12"
-              glowEffect
-            >
-              Begin Your Quest
-            </Button>
-          </motion.div>
+          {/* Right side - Triangle visualization area */}
+          <div className="relative h-96 lg:h-full">
+            {/* This space is for the floating triangles to be more prominent */}
+          </div>
         </div>
       </div>
+
+      {/* Bottom gradient */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/50 to-transparent pointer-events-none" />
     </div>
   );
 }

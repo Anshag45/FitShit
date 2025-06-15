@@ -18,7 +18,6 @@ import { QuestSystem } from './components/quests/QuestSystem';
 import { SquadBattles } from './components/social/SquadBattles';
 import { Analytics } from './components/analytics/Analytics';
 import { FitnessGames } from './components/games/FitnessGames';
-import { ColorShiftBackground } from './components/common/ColorShiftBackground';
 import { InteractiveCard } from './components/common/InteractiveCard';
 import { CursorTrail } from './components/effects/CursorTrail';
 import { InteractiveCursor } from './components/effects/InteractiveCursor';
