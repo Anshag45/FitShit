@@ -26,26 +26,27 @@ export function InteractiveCard({
 }: InteractiveCardProps) {
   const variants = {
     default: 'bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20',
-    vercel: 'bg-white/[0.02] backdrop-blur-sm rounded-2xl border border-white/10'
+    vercel: 'bg-white/[0.01] backdrop-blur-sm rounded-2xl border border-white/[0.05]'
   };
 
   const CardContent = (
     <motion.div
       className={cn(
         variants[variant],
-        'relative overflow-hidden',
+        'relative overflow-hidden transition-all duration-300',
         onClick && 'cursor-pointer',
-        glowEffect && 'shadow-lg hover:shadow-2xl hover:shadow-white/10',
+        glowEffect && 'hover:shadow-lg hover:shadow-white/5',
         className
       )}
       onClick={onClick}
       whileHover={{ 
         scale: hoverScale,
-        boxShadow: glowEffect ? '0 20px 40px rgba(255, 255, 255, 0.1)' : undefined
+        borderColor: 'rgba(255, 255, 255, 0.1)',
+        backgroundColor: 'rgba(255, 255, 255, 0.02)'
       }}
       whileTap={{ scale: 0.98 }}
       animate={pulseEffect ? {
-        scale: [1, 1.02, 1],
+        scale: [1, 1.01, 1],
         opacity: [0.8, 1, 0.8]
       } : {}}
       transition={{ 
@@ -55,10 +56,10 @@ export function InteractiveCard({
     >
       {children}
       
-      {/* Hover glow effect */}
+      {/* Subtle hover glow */}
       {glowEffect && (
         <motion.div
-          className="absolute inset-0 bg-gradient-to-r from-white/5 via-white/10 to-white/5 rounded-2xl opacity-0"
+          className="absolute inset-0 bg-gradient-to-r from-white/[0.02] via-white/[0.05] to-white/[0.02] rounded-2xl opacity-0"
           whileHover={{ opacity: 1 }}
           transition={{ duration: 0.3 }}
         />
@@ -68,7 +69,7 @@ export function InteractiveCard({
 
   if (magnetic && onClick) {
     return (
-      <MagneticEffect strength={0.15}>
+      <MagneticEffect strength={0.1}>
         {CardContent}
       </MagneticEffect>
     );

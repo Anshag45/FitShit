@@ -77,7 +77,6 @@ export function SquadBattles() {
     const battle = mockBattles.find(b => b.id === battleId);
     if (battle) {
       battle.isActive = true;
-      // Award some XP for joining
       dispatch({ type: 'UPDATE_STATS', payload: {
         xp: state.userStats.xp + 50,
         coins: state.userStats.coins + 25
@@ -86,10 +85,10 @@ export function SquadBattles() {
   };
 
   const renderBattles = () => (
-    <div className="space-y-4">
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-white mb-2">Active Squad Battles</h2>
-        <p className="text-gray-300">Compete with other squads in epic challenges</p>
+    <div className="space-y-6">
+      <div className="text-center mb-8">
+        <h2 className="text-3xl font-light text-white mb-3">Active Squad Battles</h2>
+        <p className="text-white/60 font-light">Compete with other squads in epic challenges</p>
       </div>
 
       {mockBattles.map((battle, index) => (
@@ -99,55 +98,56 @@ export function SquadBattles() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: index * 0.1 }}
         >
-          <InteractiveCard className="p-6 bg-gray-800/30 border-gray-600/30" glowEffect>
-            <div className="flex items-start justify-between mb-4">
+          <InteractiveCard className="p-8 bg-white/[0.02] border-white/[0.05]" glowEffect>
+            <div className="flex items-start justify-between mb-6">
               <div className="flex-1">
-                <div className="flex items-center space-x-2 mb-2">
-                  <h3 className="text-xl font-bold text-white">{battle.name}</h3>
+                <div className="flex items-center space-x-3 mb-3">
+                  <h3 className="text-2xl font-light text-white">{battle.name}</h3>
                   {battle.isLive && (
-                    <span className="px-2 py-1 bg-red-500 text-white text-xs rounded-full animate-pulse">
+                    <span className="px-3 py-1 bg-white/10 text-white text-xs rounded-full font-light">
                       LIVE
                     </span>
                   )}
                   {battle.isActive && (
-                    <span className="px-2 py-1 bg-green-500 text-white text-xs rounded-full">
+                    <span className="px-3 py-1 bg-white/20 text-white text-xs rounded-full font-light">
                       JOINED
                     </span>
                   )}
                 </div>
-                <p className="text-gray-300 mb-3">{battle.description}</p>
+                <p className="text-white/60 mb-4 font-light">{battle.description}</p>
                 
-                <div className="flex items-center space-x-4 text-sm text-gray-400 mb-4">
-                  <div className="flex items-center space-x-1">
+                <div className="flex items-center space-x-6 text-sm text-white/60 mb-6">
+                  <div className="flex items-center space-x-2">
                     <Users className="w-4 h-4" />
-                    <span>{battle.participants} squads</span>
+                    <span className="font-light">{battle.participants} squads</span>
                   </div>
-                  <div className="flex items-center space-x-1">
+                  <div className="flex items-center space-x-2">
                     <Target className="w-4 h-4" />
-                    <span>{battle.timeLeft} left</span>
+                    <span className="font-light">{battle.timeLeft} left</span>
                   </div>
                 </div>
 
-                <ProgressBar
-                  progress={battle.progress}
-                  color="cosmic"
-                  animated
-                  showLabel
-                  label={`${battle.progress}% Complete`}
-                />
+                <div className="w-full bg-white/[0.05] rounded-full h-2 overflow-hidden">
+                  <motion.div
+                    className="h-full bg-white/20 transition-all duration-500"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${battle.progress}%` }}
+                    transition={{ duration: 1, ease: "easeOut" }}
+                  />
+                </div>
               </div>
               
-              <div className="ml-4 text-right">
-                <div className="text-gray-400 text-sm mb-1">Rewards</div>
-                <div className="text-cyan-400 font-bold">{battle.reward.xp} XP</div>
-                <div className="text-green-400 font-bold">{battle.reward.coins} Coins</div>
+              <div className="ml-8 text-right">
+                <div className="text-white/60 text-sm mb-2 font-light">Rewards</div>
+                <div className="text-white font-light">{battle.reward.xp} XP</div>
+                <div className="text-white font-light">{battle.reward.coins} Coins</div>
                 
                 {!battle.isActive && (
                   <Button
                     onClick={() => handleJoinBattle(battle.id)}
-                    variant="cosmic"
+                    variant="primary"
                     size="sm"
-                    className="mt-2 flex items-center space-x-1"
+                    className="mt-4 flex items-center space-x-2 font-light"
                   >
                     <Play className="w-3 h-3" />
                     <span>Join Battle</span>
@@ -162,34 +162,34 @@ export function SquadBattles() {
   );
 
   const renderSquad = () => (
-    <div className="space-y-4">
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-white mb-2">Your Squad</h2>
-        <p className="text-gray-300">Cyber Warriors - Rank #1</p>
+    <div className="space-y-6">
+      <div className="text-center mb-8">
+        <h2 className="text-3xl font-light text-white mb-3">Your Squad</h2>
+        <p className="text-white/60 font-light">Cyber Warriors - Rank #1</p>
       </div>
 
-      <InteractiveCard className="p-6 mb-6 bg-gray-800/30 border-gray-600/30" glowEffect>
+      <InteractiveCard className="p-8 mb-8 bg-white/[0.02] border-white/[0.05]" glowEffect>
         <div className="text-center">
-          <div className="text-6xl mb-4">⚡</div>
-          <h3 className="text-2xl font-bold text-white mb-2">Cyber Warriors</h3>
-          <div className="flex items-center justify-center space-x-6 text-sm">
+          <div className="text-6xl mb-6">⚡</div>
+          <h3 className="text-3xl font-light text-white mb-6">Cyber Warriors</h3>
+          <div className="flex items-center justify-center space-x-12 text-sm">
             <div className="text-center">
-              <div className="text-2xl font-bold text-cyan-400">12,450</div>
-              <div className="text-gray-400">Total Calories</div>
+              <div className="text-3xl font-light text-white">12,450</div>
+              <div className="text-white/60 font-light">Total Calories</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-green-400">5</div>
-              <div className="text-gray-400">Members</div>
+              <div className="text-3xl font-light text-white">5</div>
+              <div className="text-white/60 font-light">Members</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-purple-400">#1</div>
-              <div className="text-gray-400">Rank</div>
+              <div className="text-3xl font-light text-white">#1</div>
+              <div className="text-white/60 font-light">Rank</div>
             </div>
           </div>
         </div>
       </InteractiveCard>
 
-      <div className="space-y-3">
+      <div className="space-y-4">
         {mockMembers.map((member, index) => (
           <motion.div
             key={index}
@@ -197,25 +197,25 @@ export function SquadBattles() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: index * 0.1 }}
           >
-            <InteractiveCard className="p-4 bg-gray-800/30 border-gray-600/30" hoverScale={1.02}>
+            <InteractiveCard className="p-6 bg-white/[0.02] border-white/[0.05]" hoverScale={1.01}>
               <div className="flex items-center space-x-4">
                 <div className="relative">
                   <div className="text-2xl">{member.avatar}</div>
                   {member.isOnline && (
-                    <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-gray-800" />
+                    <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-white rounded-full border-2 border-black" />
                   )}
                 </div>
                 <div className="flex-1">
-                  <div className="flex items-center space-x-2">
-                    <span className="font-bold text-white">{member.name}</span>
-                    <span className="text-xs bg-cyan-500/30 text-cyan-300 px-2 py-1 rounded-full">
+                  <div className="flex items-center space-x-3">
+                    <span className="font-light text-white">{member.name}</span>
+                    <span className="text-xs bg-white/10 text-white/60 px-2 py-1 rounded-full font-light">
                       Lv.{member.level}
                     </span>
                   </div>
-                  <div className="text-sm text-gray-400">{member.calories} calories this week</div>
+                  <div className="text-sm text-white/60 font-light">{member.calories} calories this week</div>
                 </div>
                 {member.name === 'You' && (
-                  <Crown className="w-5 h-5 text-cyan-400" />
+                  <Crown className="w-5 h-5 text-white/60" />
                 )}
               </div>
             </InteractiveCard>
@@ -223,7 +223,7 @@ export function SquadBattles() {
         ))}
       </div>
 
-      <Button variant="outline" className="w-full flex items-center justify-center space-x-2">
+      <Button variant="outline" className="w-full flex items-center justify-center space-x-2 font-light">
         <Plus className="w-4 h-4" />
         <span>Invite Friends</span>
       </Button>
@@ -231,10 +231,10 @@ export function SquadBattles() {
   );
 
   const renderLeaderboard = () => (
-    <div className="space-y-4">
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold text-white mb-2">Squad Leaderboard</h2>
-        <p className="text-gray-300">Top performing squads this week</p>
+    <div className="space-y-6">
+      <div className="text-center mb-8">
+        <h2 className="text-3xl font-light text-white mb-3">Squad Leaderboard</h2>
+        <p className="text-white/60 font-light">Top performing squads this week</p>
       </div>
 
       {mockSquads.map((squad, index) => (
@@ -245,16 +245,16 @@ export function SquadBattles() {
           transition={{ delay: index * 0.1 }}
         >
           <InteractiveCard 
-            className={`p-4 bg-gray-800/30 border-gray-600/30 ${squad.isUserSquad ? 'ring-2 ring-cyan-400/50' : ''}`}
+            className={`p-6 bg-white/[0.02] border-white/[0.05] ${squad.isUserSquad ? 'ring-1 ring-white/20' : ''}`}
             glowEffect={squad.isUserSquad}
           >
             <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-3">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
-                  squad.rank === 1 ? 'bg-yellow-500 text-black' :
-                  squad.rank === 2 ? 'bg-gray-400 text-white' :
-                  squad.rank === 3 ? 'bg-orange-500 text-white' :
-                  'bg-gray-600 text-white'
+              <div className="flex items-center space-x-4">
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-light ${
+                  squad.rank === 1 ? 'bg-white text-black' :
+                  squad.rank === 2 ? 'bg-white/20 text-white' :
+                  squad.rank === 3 ? 'bg-white/15 text-white' :
+                  'bg-white/10 text-white'
                 }`}>
                   {squad.rank}
                 </div>
@@ -262,20 +262,20 @@ export function SquadBattles() {
               </div>
               
               <div className="flex-1">
-                <div className="flex items-center space-x-2">
-                  <span className="font-bold text-white">{squad.name}</span>
+                <div className="flex items-center space-x-3">
+                  <span className="font-light text-white">{squad.name}</span>
                   {squad.isUserSquad && (
-                    <span className="text-xs bg-cyan-500/30 text-cyan-300 px-2 py-1 rounded-full">
+                    <span className="text-xs bg-white/10 text-white/60 px-2 py-1 rounded-full font-light">
                       Your Squad
                     </span>
                   )}
                 </div>
-                <div className="text-sm text-gray-400">{squad.members} members</div>
+                <div className="text-sm text-white/60 font-light">{squad.members} members</div>
               </div>
               
               <div className="text-right">
-                <div className="text-lg font-bold text-white">{squad.totalCalories.toLocaleString()}</div>
-                <div className="text-xs text-gray-400">calories</div>
+                <div className="text-lg font-light text-white">{squad.totalCalories.toLocaleString()}</div>
+                <div className="text-xs text-white/60 font-light">calories</div>
               </div>
             </div>
           </InteractiveCard>
@@ -292,20 +292,20 @@ export function SquadBattles() {
         className="max-w-4xl mx-auto"
       >
         {/* Header */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-12">
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            className="w-20 h-20 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl"
+            className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-8 shadow-2xl"
           >
-            <Sword className="w-10 h-10 text-white" />
+            <Sword className="w-10 h-10 text-black" />
           </motion.div>
-          <h1 className="text-4xl font-bold text-white mb-2">Squad Battles</h1>
-          <p className="text-gray-300">Team up and dominate the digital realm together</p>
+          <h1 className="text-6xl font-light text-white mb-4">Squad Battles</h1>
+          <p className="text-white/60 font-light text-xl">Team up and dominate the digital realm together</p>
         </div>
 
         {/* Tabs */}
-        <div className="flex space-x-2 mb-6">
+        <div className="flex space-x-2 mb-8">
           {[
             { id: 'battles', label: 'Battles', icon: Sword },
             { id: 'squad', label: 'My Squad', icon: Users },
@@ -314,8 +314,8 @@ export function SquadBattles() {
             <Button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              variant={activeTab === tab.id ? 'cosmic' : 'ghost'}
-              className="flex-1 flex items-center justify-center space-x-2"
+              variant={activeTab === tab.id ? 'primary' : 'ghost'}
+              className="flex-1 flex items-center justify-center space-x-2 font-light"
             >
               <tab.icon className="w-4 h-4" />
               <span>{tab.label}</span>

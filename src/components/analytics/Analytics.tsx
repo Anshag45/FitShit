@@ -38,28 +38,28 @@ export function Analytics() {
       label: 'Total Workouts',
       value: state.userStats.totalWorkouts,
       change: '+12%',
-      color: 'from-yellow-400 to-orange-500'
+      color: 'from-white/20 to-white/10'
     },
     {
       icon: Flame,
       label: 'Calories Burned',
       value: '12,450',
       change: '+8%',
-      color: 'from-red-400 to-pink-500'
+      color: 'from-white/20 to-white/10'
     },
     {
       icon: Clock,
       label: 'Total Time',
       value: `${state.userStats.totalTime}m`,
       change: '+15%',
-      color: 'from-cyan-400 to-blue-500'
+      color: 'from-white/20 to-white/10'
     },
     {
       icon: Zap,
       label: 'Avg Intensity',
       value: '8.2/10',
       change: '+5%',
-      color: 'from-purple-400 to-indigo-500'
+      color: 'from-white/20 to-white/10'
     }
   ];
 
@@ -74,18 +74,18 @@ export function Analytics() {
     const maxValue = Math.max(...data);
     
     return (
-      <div className="space-y-2">
-        <h4 className="text-white font-medium text-sm">{label}</h4>
-        <div className="flex items-end space-x-2 h-32">
+      <div className="space-y-4">
+        <h4 className="text-white font-light text-lg">{label}</h4>
+        <div className="flex items-end space-x-3 h-40">
           {data.map((value, index) => (
             <div key={index} className="flex-1 flex flex-col items-center">
               <motion.div
-                className={`w-full bg-gradient-to-t ${color} rounded-t-lg`}
+                className="w-full bg-white/20 rounded-t-lg"
                 initial={{ height: 0 }}
                 animate={{ height: `${(value / maxValue) * 100}%` }}
                 transition={{ delay: index * 0.1, duration: 0.6 }}
               />
-              <span className="text-xs text-gray-400 mt-1">{currentData.labels[index]}</span>
+              <span className="text-xs text-white/60 mt-2 font-light">{currentData.labels[index]}</span>
             </div>
           ))}
         </div>
@@ -101,28 +101,28 @@ export function Analytics() {
         className="max-w-6xl mx-auto"
       >
         {/* Header */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-12">
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            className="w-20 h-20 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl"
+            className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-8 shadow-2xl"
           >
-            <BarChart3 className="w-10 h-10 text-white" />
+            <BarChart3 className="w-10 h-10 text-black" />
           </motion.div>
-          <h1 className="text-4xl font-bold text-white mb-2">Gaming Analytics</h1>
-          <p className="text-gray-300">Deep insights into your fitness gaming journey</p>
+          <h1 className="text-6xl font-light text-white mb-4">Gaming Analytics</h1>
+          <p className="text-white/60 font-light text-xl">Deep insights into your fitness gaming journey</p>
         </div>
 
         {/* Time Range Selector */}
-        <div className="flex justify-center space-x-2 mb-8">
+        <div className="flex justify-center space-x-2 mb-12">
           {(['week', 'month', 'year'] as const).map((range) => (
             <motion.button
               key={range}
               onClick={() => setTimeRange(range)}
-              className={`px-6 py-2 rounded-full font-medium transition-all ${
+              className={`px-8 py-3 rounded-full font-light transition-all ${
                 timeRange === range
-                  ? 'bg-gradient-to-r from-cyan-500 to-purple-500 text-white'
-                  : 'bg-gray-800/50 text-gray-300 hover:bg-gray-700/50'
+                  ? 'bg-white text-black'
+                  : 'bg-white/5 text-white/60 hover:bg-white/10'
               }`}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -133,7 +133,7 @@ export function Analytics() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {stats.map((stat, index) => (
             <motion.div
               key={index}
@@ -141,19 +141,19 @@ export function Analytics() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
             >
-              <InteractiveCard className="p-4 bg-gray-800/30 border-gray-600/30" glowEffect>
-                <div className="flex items-center space-x-3">
+              <InteractiveCard className="p-6 bg-white/[0.02] border-white/[0.05]" glowEffect>
+                <div className="flex items-center space-x-4">
                   <motion.div
-                    className={`w-12 h-12 rounded-full flex items-center justify-center bg-gradient-to-r ${stat.color}`}
+                    className="w-12 h-12 rounded-full flex items-center justify-center bg-white/10"
                     whileHover={{ rotate: 360, scale: 1.1 }}
                     transition={{ duration: 0.6 }}
                   >
                     <stat.icon className="w-6 h-6 text-white" />
                   </motion.div>
                   <div>
-                    <div className="text-2xl font-bold text-white">{stat.value}</div>
-                    <div className="text-sm text-gray-400">{stat.label}</div>
-                    <div className="text-xs text-green-400">{stat.change}</div>
+                    <div className="text-2xl font-light text-white">{stat.value}</div>
+                    <div className="text-sm text-white/60 font-light">{stat.label}</div>
+                    <div className="text-xs text-white/40 font-light">{stat.change}</div>
                   </div>
                 </div>
               </InteractiveCard>
@@ -162,72 +162,74 @@ export function Analytics() {
         </div>
 
         {/* Charts */}
-        <div className="grid lg:grid-cols-3 gap-6 mb-8">
-          <InteractiveCard className="p-6 bg-gray-800/30 border-gray-600/30" glowEffect>
-            {renderChart(currentData.workouts, 'Workouts Completed', 'from-cyan-500 to-purple-500')}
+        <div className="grid lg:grid-cols-3 gap-8 mb-12">
+          <InteractiveCard className="p-8 bg-white/[0.02] border-white/[0.05]" glowEffect>
+            {renderChart(currentData.workouts, 'Workouts Completed', 'from-white/20 to-white/10')}
           </InteractiveCard>
           
-          <InteractiveCard className="p-6 bg-gray-800/30 border-gray-600/30" glowEffect>
-            {renderChart(currentData.calories, 'Calories Burned', 'from-red-500 to-orange-500')}
+          <InteractiveCard className="p-8 bg-white/[0.02] border-white/[0.05]" glowEffect>
+            {renderChart(currentData.calories, 'Calories Burned', 'from-white/20 to-white/10')}
           </InteractiveCard>
           
-          <InteractiveCard className="p-6 bg-gray-800/30 border-gray-600/30" glowEffect>
-            {renderChart(currentData.duration, 'Workout Duration (min)', 'from-blue-500 to-cyan-500')}
+          <InteractiveCard className="p-8 bg-white/[0.02] border-white/[0.05]" glowEffect>
+            {renderChart(currentData.duration, 'Workout Duration (min)', 'from-white/20 to-white/10')}
           </InteractiveCard>
         </div>
 
         {/* Achievement Progress */}
-        <InteractiveCard className="p-6 mb-8 bg-gray-800/30 border-gray-600/30" glowEffect>
-          <h3 className="text-xl font-bold text-white mb-6 flex items-center">
-            <Target className="w-6 h-6 mr-2 text-cyan-400" />
+        <InteractiveCard className="p-8 mb-12 bg-white/[0.02] border-white/[0.05]" glowEffect>
+          <h3 className="text-2xl font-light text-white mb-8 flex items-center">
+            <Target className="w-6 h-6 mr-3 text-white/60" />
             Achievement Progress
           </h3>
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-2 gap-8">
             {achievements.map((achievement, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="space-y-2"
+                className="space-y-3"
               >
                 <div className="flex justify-between text-sm">
-                  <span className="text-white font-medium">{achievement.name}</span>
-                  <span className="text-gray-400">{achievement.progress}/{achievement.target}</span>
+                  <span className="text-white font-light">{achievement.name}</span>
+                  <span className="text-white/60 font-light">{achievement.progress}/{achievement.target}</span>
                 </div>
-                <ProgressBar
-                  progress={achievement.progress}
-                  color="cosmic"
-                  animated
-                  glowEffect
-                />
+                <div className="w-full bg-white/[0.05] rounded-full h-2 overflow-hidden">
+                  <motion.div
+                    className="h-full bg-white/20 transition-all duration-500"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${achievement.progress}%` }}
+                    transition={{ duration: 1, ease: "easeOut" }}
+                  />
+                </div>
               </motion.div>
             ))}
           </div>
         </InteractiveCard>
 
         {/* Insights */}
-        <InteractiveCard className="p-6 bg-gray-800/30 border-gray-600/30" glowEffect>
-          <h3 className="text-xl font-bold text-white mb-4 flex items-center">
-            <TrendingUp className="w-6 h-6 mr-2 text-green-400" />
+        <InteractiveCard className="p-8 bg-white/[0.02] border-white/[0.05]" glowEffect>
+          <h3 className="text-2xl font-light text-white mb-6 flex items-center">
+            <TrendingUp className="w-6 h-6 mr-3 text-white/60" />
             AI Insights
           </h3>
-          <div className="space-y-4">
-            <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-4">
-              <div className="text-green-400 font-bold mb-1">🎯 Great Progress!</div>
-              <div className="text-gray-300 text-sm">
+          <div className="space-y-6">
+            <div className="bg-white/[0.02] border border-white/[0.05] rounded-xl p-6">
+              <div className="text-white/80 font-light mb-2">🎯 Great Progress!</div>
+              <div className="text-white/60 text-sm font-light">
                 You've increased your workout frequency by 15% this month. Keep up the momentum!
               </div>
             </div>
-            <div className="bg-cyan-500/20 border border-cyan-500/30 rounded-lg p-4">
-              <div className="text-cyan-400 font-bold mb-1">💡 Optimization Tip</div>
-              <div className="text-gray-300 text-sm">
+            <div className="bg-white/[0.02] border border-white/[0.05] rounded-xl p-6">
+              <div className="text-white/80 font-light mb-2">💡 Optimization Tip</div>
+              <div className="text-white/60 text-sm font-light">
                 Your best performance days are Tuesday and Thursday. Consider scheduling intense workouts then.
               </div>
             </div>
-            <div className="bg-purple-500/20 border border-purple-500/30 rounded-lg p-4">
-              <div className="text-purple-400 font-bold mb-1">🚀 Next Goal</div>
-              <div className="text-gray-300 text-sm">
+            <div className="bg-white/[0.02] border border-white/[0.05] rounded-xl p-6">
+              <div className="text-white/80 font-light mb-2">🚀 Next Goal</div>
+              <div className="text-white/60 text-sm font-light">
                 You're 3 workouts away from unlocking the "Consistency Master" achievement!
               </div>
             </div>

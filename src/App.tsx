@@ -19,21 +19,21 @@ import { SquadBattles } from './components/social/SquadBattles';
 import { Analytics } from './components/analytics/Analytics';
 import { FitnessGames } from './components/games/FitnessGames';
 import { ColorShiftBackground } from './components/common/ColorShiftBackground';
-import { LiquidGlass } from './components/common/LiquidGlass';
+import { InteractiveCard } from './components/common/InteractiveCard';
 import { CursorTrail } from './components/effects/CursorTrail';
 import { InteractiveCursor } from './components/effects/InteractiveCursor';
+import { FloatingLogo } from './components/effects/FloatingLogo';
 import { achievements } from './data/achievements';
 import type { User } from './types';
 
 function OnboardingFlow() {
   const { dispatch } = useApp();
-  const [step, setStep] = useState(-1); // Start with Welcome screen
+  const [step, setStep] = useState(-1);
   const [userData, setUserData] = useState<Partial<User>>({});
 
   const handleUserInfo = (data: { name: string; age: number; email: string; rememberMe: boolean }) => {
     setUserData({ ...userData, name: data.name, age: data.age, email: data.email });
     
-    // Store remember me preference
     if (data.rememberMe) {
       localStorage.setItem('fitquest_remember_user', JSON.stringify({
         name: data.name,
@@ -134,93 +134,99 @@ function Dashboard() {
         );
       case 'achievements':
         return (
-          <ColorShiftBackground variant="vercel" intensity="subtle">
-            <Header 
-              showBackButton 
-              onBack={() => setCurrentSection('home')} 
-              title="🏆 Achievement Gallery"
-            />
-            <div className="p-4">
-              <div className="grid grid-cols-2 gap-4">
-                {achievements.map((achievement, index) => (
-                  <motion.div
-                    key={achievement.id}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: index * 0.1 }}
-                  >
-                    <LiquidGlass intensity="medium" colorShift animated>
-                      <AchievementBadge
-                        achievement={achievement}
-                        unlocked={Math.random() > 0.7}
-                      />
-                    </LiquidGlass>
-                  </motion.div>
-                ))}
+          <div className="min-h-screen bg-black relative overflow-hidden">
+            <FloatingLogo />
+            <div className="relative z-10">
+              <Header 
+                showBackButton 
+                onBack={() => setCurrentSection('home')} 
+                title="🏆 Achievement Gallery"
+              />
+              <div className="p-4">
+                <div className="grid grid-cols-2 gap-4">
+                  {achievements.map((achievement, index) => (
+                    <motion.div
+                      key={achievement.id}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: index * 0.1 }}
+                    >
+                      <InteractiveCard className="bg-white/[0.02] border-white/[0.05]" glowEffect>
+                        <AchievementBadge
+                          achievement={achievement}
+                          unlocked={Math.random() > 0.7}
+                        />
+                      </InteractiveCard>
+                    </motion.div>
+                  ))}
+                </div>
               </div>
             </div>
-          </ColorShiftBackground>
+          </div>
         );
       case 'quests':
         return (
-          <ColorShiftBackground variant="vercel" intensity="subtle">
-            <Header 
-              showBackButton 
-              onBack={() => setCurrentSection('home')} 
-              title="🚀 Epic Quests"
-            />
-            <QuestSystem />
-          </ColorShiftBackground>
+          <div className="min-h-screen bg-black relative overflow-hidden">
+            <FloatingLogo />
+            <div className="relative z-10">
+              <Header 
+                showBackButton 
+                onBack={() => setCurrentSection('home')} 
+                title="🚀 Epic Quests"
+              />
+              <QuestSystem />
+            </div>
+          </div>
         );
       case 'social':
         return (
-          <ColorShiftBackground variant="vercel" intensity="subtle">
-            <Header 
-              showBackButton 
-              onBack={() => setCurrentSection('home')} 
-              title="⚔️ Squad Battles"
-            />
-            <SquadBattles />
-          </ColorShiftBackground>
+          <div className="min-h-screen bg-black relative overflow-hidden">
+            <FloatingLogo />
+            <div className="relative z-10">
+              <Header 
+                showBackButton 
+                onBack={() => setCurrentSection('home')} 
+                title="⚔️ Squad Battles"
+              />
+              <SquadBattles />
+            </div>
+          </div>
         );
       case 'analytics':
         return (
-          <ColorShiftBackground variant="vercel" intensity="subtle">
-            <Header 
-              showBackButton 
-              onBack={() => setCurrentSection('home')} 
-              title="📊 Mission Analytics"
-            />
-            <Analytics />
-          </ColorShiftBackground>
+          <div className="min-h-screen bg-black relative overflow-hidden">
+            <FloatingLogo />
+            <div className="relative z-10">
+              <Header 
+                showBackButton 
+                onBack={() => setCurrentSection('home')} 
+                title="📊 Mission Analytics"
+              />
+              <Analytics />
+            </div>
+          </div>
         );
       case 'games':
-        return (
-          <ColorShiftBackground variant="vercel" intensity="subtle">
-            <Header 
-              showBackButton 
-              onBack={() => setCurrentSection('home')} 
-              title="🎮 Fitness Games"
-            />
-            <FitnessGames />
-          </ColorShiftBackground>
-        );
+        return <FitnessGames />;
       default:
         return (
-          <ColorShiftBackground variant="vercel" intensity="subtle">
-            <Header />
-            <div className="p-4">
-              <LiquidGlass intensity="medium" colorShift animated className="mb-6">
-                <WorkoutCarousel onStartWorkout={handleStartWorkout} />
-              </LiquidGlass>
-              <LiquidGlass intensity="light" className="mb-6">
-                <StatsGrid />
-              </LiquidGlass>
-              <LiquidGlass intensity="medium" animated>
-                <QuickActions onNavigate={setCurrentSection} />
-              </LiquidGlass>
+          <div className="min-h-screen bg-black relative overflow-hidden">
+            <FloatingLogo />
+            <div className="relative z-10">
+              <Header />
+              <div className="p-4">
+                <InteractiveCard className="mb-6 bg-white/[0.02] border-white/[0.05]" glowEffect>
+                  <WorkoutCarousel onStartWorkout={handleStartWorkout} />
+                </InteractiveCard>
+                <InteractiveCard className="mb-6 bg-white/[0.02] border-white/[0.05]">
+                  <StatsGrid />
+                </InteractiveCard>
+                <InteractiveCard className="bg-white/[0.02] border-white/[0.05]">
+                  <QuickActions onNavigate={setCurrentSection} />
+                </InteractiveCard>
+              </div>
             </div>
-          </ColorShiftBackground>
+          </div>
         );
     }
   };

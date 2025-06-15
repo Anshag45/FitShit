@@ -13,14 +13,14 @@ export function InteractiveCursor() {
 
     const handleMouseEnter = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (target instanceof Element && (target.tagName === 'BUTTON' || target.closest('button') || target.classList.contains('cursor-pointer'))) {
+      if (target && (target.tagName === 'BUTTON' || target.closest('button') || target.classList.contains('cursor-pointer'))) {
         setIsHovering(true);
       }
     };
 
     const handleMouseLeave = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (target instanceof Element && (target.tagName === 'BUTTON' || target.closest('button') || target.classList.contains('cursor-pointer'))) {
+      if (target && (target.tagName === 'BUTTON' || target.closest('button') || target.classList.contains('cursor-pointer'))) {
         setIsHovering(false);
       }
     };
@@ -33,7 +33,6 @@ export function InteractiveCursor() {
       };
       setClickRipples(prev => [...prev, newRipple]);
       
-      // Remove ripple after animation
       setTimeout(() => {
         setClickRipples(prev => prev.filter(ripple => ripple.id !== newRipple.id));
       }, 600);
@@ -54,7 +53,7 @@ export function InteractiveCursor() {
 
   return (
     <>
-      {/* Custom cursor - Vercel style */}
+      {/* Custom cursor */}
       <motion.div
         className="fixed w-2 h-2 pointer-events-none z-50"
         style={{
@@ -62,28 +61,28 @@ export function InteractiveCursor() {
           top: mousePosition.y - 4,
         }}
         animate={{
-          scale: isHovering ? 2.5 : 1,
+          scale: isHovering ? 3 : 1,
         }}
         transition={{ duration: 0.2 }}
       >
         <div className="w-full h-full rounded-full bg-white shadow-lg" />
       </motion.div>
 
-      {/* Cursor ring - minimal Vercel style */}
+      {/* Cursor ring */}
       <motion.div
-        className="fixed w-6 h-6 border border-white/40 rounded-full pointer-events-none z-50"
+        className="fixed w-8 h-8 border border-white/30 rounded-full pointer-events-none z-50"
         style={{
-          left: mousePosition.x - 12,
-          top: mousePosition.y - 12,
+          left: mousePosition.x - 16,
+          top: mousePosition.y - 16,
         }}
         animate={{
-          scale: isHovering ? 2 : 1,
+          scale: isHovering ? 2.5 : 1,
           opacity: isHovering ? 0.8 : 0.3,
         }}
         transition={{ duration: 0.3, ease: "easeOut" }}
       />
 
-      {/* Click ripples - clean white */}
+      {/* Click ripples */}
       {clickRipples.map((ripple) => (
         <motion.div
           key={ripple.id}
@@ -93,7 +92,7 @@ export function InteractiveCursor() {
             top: ripple.y - 4,
           }}
           initial={{ scale: 0, opacity: 1 }}
-          animate={{ scale: 12, opacity: 0 }}
+          animate={{ scale: 15, opacity: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
         />
       ))}

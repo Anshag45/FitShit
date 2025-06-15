@@ -22,16 +22,16 @@ export function Button({
   magnetic = true,
   ...props 
 }: ButtonProps) {
-  const baseClasses = 'font-medium rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden cursor-pointer border';
+  const baseClasses = 'font-light rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden cursor-pointer border';
   
   const variants = {
     primary: 'bg-white text-black border-white hover:bg-white/90 shadow-lg',
-    secondary: 'bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white hover:from-emerald-600 hover:via-teal-600 hover:to-cyan-600 shadow-2xl hover:shadow-emerald-500/25 border-transparent',
-    outline: 'border-white/20 text-white hover:bg-white/10 backdrop-blur-sm',
+    secondary: 'bg-white/5 text-white border-white/10 hover:bg-white/10 hover:border-white/20',
+    outline: 'border-white/20 text-white hover:bg-white/5 backdrop-blur-sm',
     ghost: 'text-white/80 hover:bg-white/5 backdrop-blur-sm border-transparent hover:text-white',
-    cosmic: 'bg-gradient-to-r from-purple-600 via-cyan-500 to-pink-600 text-white shadow-2xl hover:shadow-cyan-500/30 border-transparent',
-    legendary: 'bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 text-black shadow-2xl hover:shadow-yellow-500/30 border-transparent',
-    vercel: 'bg-white text-black border-white hover:bg-white/90 shadow-lg'
+    cosmic: 'bg-white/10 text-white border-white/20 hover:bg-white/20',
+    legendary: 'bg-white text-black border-white hover:bg-white/90',
+    vercel: 'bg-white text-black border-white hover:bg-white/90 font-light'
   };
 
   const sizes = {
@@ -41,7 +41,7 @@ export function Button({
     xl: 'px-12 py-6 text-xl'
   };
 
-  const glowClasses = glowEffect ? 'before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent before:translate-x-[-100%] hover:before:translate-x-[100%] before:transition-transform before:duration-700' : '';
+  const glowClasses = glowEffect ? 'before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent before:translate-x-[-100%] hover:before:translate-x-[100%] before:transition-transform before:duration-700' : '';
 
   const ButtonContent = (
     <motion.button
@@ -64,7 +64,7 @@ export function Button({
 
   if (magnetic) {
     return (
-      <MagneticEffect strength={0.2}>
+      <MagneticEffect strength={0.15}>
         {ButtonContent}
       </MagneticEffect>
     );
