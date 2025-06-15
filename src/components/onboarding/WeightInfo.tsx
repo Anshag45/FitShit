@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Scale, Target } from 'lucide-react';
+import { Scale } from 'lucide-react';
 import { Button } from '../common/Button';
 import { BackButton } from '../common/BackButton';
 import { InteractiveCard } from '../common/InteractiveCard';
@@ -31,6 +31,18 @@ export function WeightInfo({ onNext, onBack }: WeightInfoProps) {
         weightGoal: weightData.weightGoal
       });
     }
+  };
+
+  const handleCurrentWeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setWeightData({ ...weightData, currentWeight: e.target.value });
+  };
+
+  const handleTargetWeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setWeightData({ ...weightData, targetWeight: e.target.value });
+  };
+
+  const handleGoalSelect = (goalId: 'lose' | 'gain' | 'maintain') => {
+    setWeightData({ ...weightData, weightGoal: goalId });
   };
 
   return (
@@ -100,17 +112,16 @@ export function WeightInfo({ onNext, onBack }: WeightInfoProps) {
                 <label className="block text-sm font-medium text-gray-300 mb-2">
                   Current Weight (kg)
                 </label>
-                <motion.input
+                <input
                   type="number"
                   value={weightData.currentWeight}
-                  onChange={(e) => setWeightData({ ...weightData, currentWeight: e.target.value })}
+                  onChange={handleCurrentWeightChange}
                   className="w-full px-4 py-3 bg-gray-900/80 border border-cyan-500/30 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-cyan-500 focus:border-transparent backdrop-blur-sm transition-all duration-300"
                   placeholder="Enter your current weight"
                   min="30"
                   max="300"
                   step="0.1"
                   required
-                  whileFocus={{ scale: 1.02 }}
                 />
               </motion.div>
 
@@ -122,17 +133,16 @@ export function WeightInfo({ onNext, onBack }: WeightInfoProps) {
                 <label className="block text-sm font-medium text-gray-300 mb-2">
                   Target Weight (kg)
                 </label>
-                <motion.input
+                <input
                   type="number"
                   value={weightData.targetWeight}
-                  onChange={(e) => setWeightData({ ...weightData, targetWeight: e.target.value })}
+                  onChange={handleTargetWeightChange}
                   className="w-full px-4 py-3 bg-gray-900/80 border border-cyan-500/30 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-cyan-500 focus:border-transparent backdrop-blur-sm transition-all duration-300"
                   placeholder="Enter your target weight"
                   min="30"
                   max="300"
                   step="0.1"
                   required
-                  whileFocus={{ scale: 1.02 }}
                 />
               </motion.div>
 
@@ -153,8 +163,8 @@ export function WeightInfo({ onNext, onBack }: WeightInfoProps) {
                       transition={{ delay: 0.8 + index * 0.1 }}
                     >
                       <InteractiveCard
-                        onClick={() => setWeightData({ ...weightData, weightGoal: goal.id as any })}
-                        className={`p-4 transition-all duration-300 ${
+                        onClick={() => handleGoalSelect(goal.id as 'lose' | 'gain' | 'maintain')}
+                        className={`p-4 transition-all duration-300 cursor-pointer ${
                           weightData.weightGoal === goal.id
                             ? 'border-cyan-400/50 bg-cyan-500/20 shadow-2xl ring-2 ring-cyan-400/50'
                             : 'border-gray-600/30 bg-gray-800/30 hover:border-cyan-400/30 hover:bg-gray-700/30'
