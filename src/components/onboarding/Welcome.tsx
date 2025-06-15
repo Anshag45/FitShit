@@ -13,66 +13,52 @@ export function Welcome({ onNext }: WelcomeProps) {
     <div className="min-h-screen bg-black relative overflow-hidden">
       <FloatingTriangles />
       
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 p-6">
-        <div className="flex items-center justify-between max-w-7xl mx-auto">
-          <div className="flex items-center space-x-8">
-            <div className="text-white/60 text-sm font-light tracking-wide hover:text-white transition-colors cursor-pointer">FEATURES</div>
-            <div className="text-white/60 text-sm font-light tracking-wide hover:text-white transition-colors cursor-pointer">WORKOUTS</div>
-            <div className="text-white/60 text-sm font-light tracking-wide hover:text-white transition-colors cursor-pointer">GAMES</div>
-          </div>
-          
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex items-center space-x-3"
-          >
-            <motion.div
-              className="w-8 h-8 bg-white rounded-lg flex items-center justify-center"
-              whileHover={{ rotate: 180, scale: 1.1 }}
-              transition={{ duration: 0.6 }}
-            >
-              <Zap className="w-5 h-5 text-black" />
-            </motion.div>
-            <span className="text-white font-light text-xl tracking-wide">FitQuest</span>
-            <div className="text-white/40 text-xs bg-white/10 px-2 py-1 rounded border border-white/20">25</div>
-          </motion.div>
-          
-          <div className="flex items-center space-x-8">
-            <div className="text-white/60 text-sm font-light tracking-wide hover:text-white transition-colors cursor-pointer">WATCH DEMO</div>
-            <div className="text-white/60 text-sm font-light tracking-wide hover:text-white transition-colors cursor-pointer">SIGN UP</div>
-            <div className="text-white/60 text-sm font-light tracking-wide hover:text-white transition-colors cursor-pointer">LOGIN</div>
-          </div>
-        </div>
-      </nav>
-
       {/* Main Content */}
       <div className="relative z-10 flex items-center min-h-screen">
         <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
           {/* Left Content */}
           <div>
+            {/* Logo */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.1 }}
+              className="flex items-center space-x-4 mb-12"
+            >
+              <motion.div
+                className="w-12 h-12 bg-white rounded-xl flex items-center justify-center"
+                whileHover={{ rotate: 180, scale: 1.1 }}
+                transition={{ duration: 0.6 }}
+              >
+                <Zap className="w-7 h-7 text-black" />
+              </motion.div>
+              <span className="text-white font-light text-3xl tracking-wide">FitQuest</span>
+              <div className="text-white/40 text-sm bg-white/10 px-3 py-1 rounded border border-white/20">25</div>
+            </motion.div>
+
             <motion.h1
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
               className="text-7xl lg:text-8xl font-light text-white mb-8 leading-none tracking-tight"
             >
-              FitQuest's one-day
+              Transform your
               <br />
-              event for fitness
+              fitness into an
               <br />
-              and gaming leaders
+              <span className="bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">
+                epic adventure
+              </span>
             </motion.h1>
             
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
-              className="text-xl text-white/70 font-light mb-12 leading-relaxed"
+              className="text-2xl text-white/70 font-light mb-12 leading-relaxed max-w-2xl"
             >
-              Transform your fitness journey into an epic gaming adventure. 
-              Level up, earn rewards, and compete with friends in the ultimate 
-              gamified fitness experience.
+              Level up your workouts with AI-powered routines, earn rewards, 
+              compete with friends, and turn every exercise into an engaging game.
             </motion.p>
 
             {/* Features Grid */}
@@ -86,7 +72,7 @@ export function Welcome({ onNext }: WelcomeProps) {
                 {
                   icon: Target,
                   title: 'AI-Powered Workouts',
-                  description: 'Personalized routines that evolve with you'
+                  description: 'Personalized routines that evolve with your progress'
                 },
                 {
                   icon: Trophy,
@@ -109,51 +95,51 @@ export function Welcome({ onNext }: WelcomeProps) {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.8 + index * 0.1 }}
-                  className="flex items-start space-x-4 bg-white/[0.02] backdrop-blur-sm rounded-xl p-4 border border-white/[0.05] hover:bg-white/[0.04] transition-all duration-300"
+                  className="flex items-start space-x-4 bg-white/[0.02] backdrop-blur-sm rounded-xl p-6 border border-white/[0.05] hover:bg-white/[0.04] transition-all duration-300 group"
                 >
-                  <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <feature.icon className="w-5 h-5 text-white" />
-                  </div>
+                  <motion.div 
+                    className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center flex-shrink-0"
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <feature.icon className="w-6 h-6 text-white" />
+                  </motion.div>
                   <div>
-                    <h3 className="font-light text-white text-lg mb-1">{feature.title}</h3>
-                    <p className="text-white/60 text-sm font-light">{feature.description}</p>
+                    <h3 className="font-light text-white text-xl mb-2">{feature.title}</h3>
+                    <p className="text-white/60 text-sm font-light leading-relaxed">{feature.description}</p>
                   </div>
                 </motion.div>
               ))}
             </motion.div>
             
-            {/* Event Details */}
+            {/* Stats */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.2 }}
-              className="grid grid-cols-2 gap-8 mb-12"
+              className="grid grid-cols-3 gap-8 mb-12"
             >
-              <div>
-                <div className="text-white/60 text-sm font-light tracking-wide mb-2">NEW YORK CITY</div>
-                <div className="text-white/60 text-sm font-light tracking-wide">AND ONLINE</div>
+              <div className="text-center">
+                <div className="text-3xl font-light text-white mb-2">10K+</div>
+                <div className="text-white/60 text-sm font-light">Active Players</div>
               </div>
-              <div>
-                <div className="text-white/60 text-sm font-light tracking-wide mb-2">JUNE 25, 2025</div>
-                <div className="text-white/60 text-sm font-light tracking-wide">THE GLASSHOUSE</div>
+              <div className="text-center">
+                <div className="text-3xl font-light text-white mb-2">50M+</div>
+                <div className="text-white/60 text-sm font-light">Workouts Completed</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-light text-white mb-2">4.9★</div>
+                <div className="text-white/60 text-sm font-light">User Rating</div>
               </div>
             </motion.div>
 
-            {/* Pricing & CTA */}
+            {/* CTA */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.4 }}
-              className="flex items-end space-x-16"
+              className="flex items-center space-x-6"
             >
-              <div>
-                <div className="text-white/60 text-sm font-light tracking-wide mb-2">ONLINE</div>
-                <div className="text-white/60 text-sm font-light tracking-wide">FREE</div>
-              </div>
-              <div>
-                <div className="text-white/60 text-sm font-light tracking-wide mb-2">IN-PERSON TICKETS</div>
-                <div className="text-white/60 text-sm font-light tracking-wide">$600</div>
-              </div>
               <motion.div
                 whileHover={{ x: 5 }}
                 transition={{ duration: 0.2 }}
@@ -161,18 +147,29 @@ export function Welcome({ onNext }: WelcomeProps) {
                 <Button 
                   onClick={onNext}
                   variant="primary"
-                  size="lg"
-                  className="bg-white text-black hover:bg-white/90 px-8 py-4 font-light tracking-wide flex items-center space-x-3"
+                  size="xl"
+                  className="bg-white text-black hover:bg-white/90 px-12 py-6 font-light tracking-wide flex items-center space-x-4 text-xl"
                   glowEffect
                 >
-                  <span>BEGIN YOUR QUEST</span>
+                  <span>Begin Your Quest</span>
                   <motion.span
                     animate={{ x: [0, 5, 0] }}
                     transition={{ duration: 1.5, repeat: Infinity }}
+                    className="text-2xl"
                   >
                     →
                   </motion.span>
                 </Button>
+              </motion.div>
+              
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.6 }}
+                className="text-white/60 font-light"
+              >
+                <div className="text-sm">Free to start</div>
+                <div className="text-xs">No credit card required</div>
               </motion.div>
             </motion.div>
           </div>
@@ -187,7 +184,7 @@ export function Welcome({ onNext }: WelcomeProps) {
             >
               {/* Central logo/icon */}
               <motion.div
-                className="w-32 h-32 bg-white/5 backdrop-blur-sm rounded-3xl border border-white/10 flex items-center justify-center"
+                className="w-40 h-40 bg-white/[0.03] backdrop-blur-sm rounded-3xl border border-white/10 flex items-center justify-center relative overflow-hidden"
                 animate={{ 
                   rotate: [0, 360],
                   scale: [1, 1.05, 1]
@@ -197,19 +194,21 @@ export function Welcome({ onNext }: WelcomeProps) {
                   scale: { duration: 4, repeat: Infinity, ease: "easeInOut" }
                 }}
               >
-                <Zap className="w-16 h-16 text-white" />
+                {/* Inner glow */}
+                <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-3xl" />
+                <Zap className="w-20 h-20 text-white relative z-10" />
               </motion.div>
 
               {/* Orbiting elements */}
               {[
-                { icon: Target, delay: 0, radius: 80 },
-                { icon: Trophy, delay: 1, radius: 80 },
-                { icon: Gamepad2, delay: 2, radius: 80 },
-                { icon: Users, delay: 3, radius: 80 }
+                { icon: Target, delay: 0, radius: 100, size: 16 },
+                { icon: Trophy, delay: 1, radius: 100, size: 16 },
+                { icon: Gamepad2, delay: 2, radius: 100, size: 16 },
+                { icon: Users, delay: 3, radius: 100, size: 16 }
               ].map((item, index) => (
                 <motion.div
                   key={index}
-                  className="absolute w-12 h-12 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 flex items-center justify-center"
+                  className="absolute w-16 h-16 bg-white/[0.05] backdrop-blur-sm rounded-xl border border-white/20 flex items-center justify-center"
                   animate={{
                     rotate: [0, 360],
                     x: [
@@ -236,12 +235,43 @@ export function Welcome({ onNext }: WelcomeProps) {
                   style={{
                     left: '50%',
                     top: '50%',
-                    marginLeft: '-24px',
-                    marginTop: '-24px'
+                    marginLeft: '-32px',
+                    marginTop: '-32px'
                   }}
                 >
-                  <item.icon className="w-6 h-6 text-white" />
+                  <item.icon className={`w-${item.size/4} h-${item.size/4} text-white`} />
                 </motion.div>
+              ))}
+
+              {/* Outer ring particles */}
+              {[...Array(12)].map((_, i) => (
+                <motion.div
+                  key={`outer-${i}`}
+                  className="absolute w-2 h-2 bg-white/20 rounded-full"
+                  animate={{
+                    rotate: [0, 360],
+                    x: [
+                      Math.cos((i * 30) * Math.PI / 180) * 160,
+                      Math.cos((i * 30 + 360) * Math.PI / 180) * 160
+                    ],
+                    y: [
+                      Math.sin((i * 30) * Math.PI / 180) * 160,
+                      Math.sin((i * 30 + 360) * Math.PI / 180) * 160
+                    ]
+                  }}
+                  transition={{
+                    duration: 25,
+                    repeat: Infinity,
+                    ease: "linear",
+                    delay: i * 0.5
+                  }}
+                  style={{
+                    left: '50%',
+                    top: '50%',
+                    marginLeft: '-4px',
+                    marginTop: '-4px'
+                  }}
+                />
               ))}
             </motion.div>
           </div>
