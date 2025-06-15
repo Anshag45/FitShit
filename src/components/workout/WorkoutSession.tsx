@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SkipForward, CheckCircle, Star } from 'lucide-react';
 import { Button } from '../common/Button';
-import { Timer } from '../common/Timer';
-import { ProgressBar } from '../common/ProgressBar';
 import { BackButton } from '../common/BackButton';
 import { InteractiveCard } from '../common/InteractiveCard';
+import { InteractiveWorkout } from '../games/InteractiveWorkout';
+import { ParticleSystem } from '../effects/ParticleSystem';
 import { useApp } from '../../contexts/AppContext';
 
 interface WorkoutSessionProps {
@@ -15,36 +15,17 @@ interface WorkoutSessionProps {
 
 export function WorkoutSession({ onBack, onComplete }: WorkoutSessionProps) {
   const { state, dispatch } = useApp();
-  const { currentWorkout, currentExerciseIndex, timerActive, timerSeconds } = state;
+  const { currentWorkout, currentExerciseIndex } = state;
+  const [useInteractiveMode, setUseInteractiveMode] = useState(true);
 
   const currentExercise = currentWorkout?.exercises[currentExerciseIndex];
   const isLastExercise = currentExerciseIndex === currentWorkout?.exercises.length - 1;
   const progress = ((currentExerciseIndex + 1) / currentWorkout?.exercises.length) * 100;
 
-  useEffect(() => {
-    if (currentExercise && !timerActive && timerSeconds === 0) {
-      dispatch({ type: 'START_TIMER', payload: currentExercise.duration });
-    }
-  }, [currentExercise, timerActive, timerSeconds, dispatch]);
-
-  const handleStartTimer = () => {
-    if (currentExercise) {
-      dispatch({ type: 'START_TIMER', payload: currentExercise.duration });
-    }
-  };
-
-  const handlePauseTimer = () => {
-    dispatch({ type: 'STOP_TIMER' });
-  };
-
-  const handleStopTimer = () => {
-    dispatch({ type: 'RESET_TIMER' });
-  };
-
-  const handleNextExercise = () => {
+  const handleCompleteExercise = (score?: number) => {
     if (isLastExercise) {
-      const xpEarned = 50;
-      const coinsEarned = 10;
+      const xpEarned = score ? Math.floor(score / 100) : 50;
+      const coinsEarned = score ? Math.floor(score / 200) : 10;
       
       dispatch({ type: 'UPDATE_STATS', payload: {
         xp: state.userStats.xp + xpEarned,
@@ -60,8 +41,22 @@ export function WorkoutSession({ onBack, onComplete }: WorkoutSessionProps) {
     }
   };
 
+  const handleSkipExercise = () => {
+    handleCompleteExercise();
+  };
+
   if (!currentWorkout || !currentExercise) {
     return null;
+  }
+
+  if (useInteractiveMode) {
+    return (
+      <InteractiveWorkout
+        exercise={currentExercise}
+        onComplete={handleCompleteExercise}
+        onSkip={handleSkipExercise}
+      />
+    );
   }
 
   return (
@@ -71,6 +66,8 @@ export function WorkoutSession({ onBack, onComplete }: WorkoutSessionProps) {
         background: `linear-gradient(135deg, ${currentWorkout.backgroundGradient.join(', ')})`
       }}
     >
+      <ParticleSystem count={300} color="#00d4ff" speed={1} />
+      
       {/* Animated background elements */}
       <div className="absolute inset-0">
         <motion.div
@@ -107,7 +104,7 @@ export function WorkoutSession({ onBack, onComplete }: WorkoutSessionProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-white/70 text-sm"
+            className="text-gray-300 text-sm"
           >
             Exercise {currentExerciseIndex + 1} of {currentWorkout.exercises.length}
           </motion.p>
@@ -116,12 +113,14 @@ export function WorkoutSession({ onBack, onComplete }: WorkoutSessionProps) {
 
       {/* Progress Bar */}
       <div className="relative z-10 px-4 py-2 bg-black/10">
-        <ProgressBar
-          progress={progress}
-          color="cosmic"
-          animated
-          glowEffect
-        />
+        <div className="w-full bg-gray-800/30 rounded-full h-4 overflow-hidden backdrop-blur-sm">
+          <motion.div
+            className="h-full bg-gradient-to-r from-cyan-400 to-cyan-600 transition-all duration-500"
+            initial={{ width: 0 }}
+            animate={{ width: `${progress}%` }}
+            transition={{ duration: 1, ease: "easeOut" }}
+          />
+        </div>
       </div>
 
       {/* Exercise Content */}
@@ -136,7 +135,7 @@ export function WorkoutSession({ onBack, onComplete }: WorkoutSessionProps) {
               transition={{ duration: 0.3 }}
             >
               {/* Exercise Image */}
-              <InteractiveCard className="p-4 mb-6 border border-white/20" glowEffect>
+              <InteractiveCard className="p-4 mb-6 border border-gray-600/30 bg-gray-800/30" glowEffect>
                 <motion.img
                   src={currentExercise.imageUrl}
                   alt={currentExercise.name}
@@ -157,7 +156,7 @@ export function WorkoutSession({ onBack, onComplete }: WorkoutSessionProps) {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
-                  className="text-white/80 mb-4"
+                  className="text-gray-300 mb-4"
                 >
                   {currentExercise.description}
                 </motion.p>
@@ -167,7 +166,7 @@ export function WorkoutSession({ onBack, onComplete }: WorkoutSessionProps) {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 }}
-                  className="flex items-center justify-between text-sm text-white/80 bg-white/10 rounded-2xl p-3"
+                  className="flex items-center justify-between text-sm text-gray-300 bg-gray-900/50 rounded-2xl p-3"
                 >
                   {currentExercise.sets && (
                     <div className="text-center">
@@ -188,34 +187,15 @@ export function WorkoutSession({ onBack, onComplete }: WorkoutSessionProps) {
                 </motion.div>
               </InteractiveCard>
 
-              {/* Timer */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.6 }}
-              >
-                <InteractiveCard className="p-6 mb-6 border border-white/20 text-center" glowEffect>
-                  <Timer
-                    seconds={timerSeconds}
-                    isActive={timerActive}
-                    onStart={handleStartTimer}
-                    onPause={handlePauseTimer}
-                    onStop={handleStopTimer}
-                    onReset={handleStopTimer}
-                    maxSeconds={currentExercise.duration}
-                  />
-                </InteractiveCard>
-              </motion.div>
-
               {/* Instructions */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.7 }}
               >
-                <InteractiveCard className="p-4 mb-6 border border-white/20" glowEffect>
+                <InteractiveCard className="p-4 mb-6 border border-gray-600/30 bg-gray-800/30" glowEffect>
                   <h3 className="font-bold text-white text-lg mb-4 flex items-center">
-                    <Star className="w-5 h-5 mr-2 text-yellow-400" />
+                    <Star className="w-5 h-5 mr-2 text-cyan-400" />
                     Mission Instructions
                   </h3>
                   <ol className="space-y-3">
@@ -227,13 +207,39 @@ export function WorkoutSession({ onBack, onComplete }: WorkoutSessionProps) {
                         transition={{ delay: 0.8 + index * 0.1 }}
                         className="flex items-start space-x-3"
                       >
-                        <span className="flex-shrink-0 w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                        <span className="flex-shrink-0 w-6 h-6 bg-gradient-to-r from-cyan-500 to-purple-500 text-white rounded-full flex items-center justify-center text-sm font-bold">
                           {index + 1}
                         </span>
-                        <span className="text-white/90">{instruction}</span>
+                        <span className="text-gray-300">{instruction}</span>
                       </motion.li>
                     ))}
                   </ol>
+                </InteractiveCard>
+              </motion.div>
+
+              {/* Mode Toggle */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.0 }}
+                className="mb-6"
+              >
+                <InteractiveCard className="p-4 border border-gray-600/30 bg-gray-800/30" glowEffect>
+                  <div className="flex items-center justify-between">
+                    <span className="text-white font-medium">Interactive Gaming Mode</span>
+                    <button
+                      onClick={() => setUseInteractiveMode(!useInteractiveMode)}
+                      className={`relative w-12 h-6 rounded-full transition-colors ${
+                        useInteractiveMode ? 'bg-cyan-500' : 'bg-gray-600'
+                      }`}
+                    >
+                      <motion.div
+                        className="absolute top-1 w-4 h-4 bg-white rounded-full"
+                        animate={{ x: useInteractiveMode ? 26 : 2 }}
+                        transition={{ duration: 0.2 }}
+                      />
+                    </button>
+                  </div>
                 </InteractiveCard>
               </motion.div>
 
@@ -241,11 +247,11 @@ export function WorkoutSession({ onBack, onComplete }: WorkoutSessionProps) {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.0 }}
+                transition={{ delay: 1.2 }}
                 className="flex space-x-3"
               >
                 <Button
-                  onClick={handleNextExercise}
+                  onClick={handleSkipExercise}
                   variant="outline"
                   className="flex-1 flex items-center justify-center space-x-2"
                 >
@@ -254,7 +260,7 @@ export function WorkoutSession({ onBack, onComplete }: WorkoutSessionProps) {
                 </Button>
                 
                 <Button
-                  onClick={handleNextExercise}
+                  onClick={() => handleCompleteExercise()}
                   variant="legendary"
                   className="flex-2 flex items-center justify-center space-x-2"
                   glowEffect
