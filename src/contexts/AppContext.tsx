@@ -13,6 +13,8 @@ interface AppState {
   isWorkoutActive: boolean;
   timerActive: boolean;
   timerSeconds: number;
+  currentQuest: string | null;
+  questProgress: number;
 }
 
 type AppAction =
@@ -27,7 +29,9 @@ type AppAction =
   | { type: 'START_TIMER'; payload: number }
   | { type: 'STOP_TIMER' }
   | { type: 'TICK_TIMER' }
-  | { type: 'RESET_TIMER' };
+  | { type: 'RESET_TIMER' }
+  | { type: 'START_QUEST'; payload: string }
+  | { type: 'UPDATE_QUEST_PROGRESS'; payload: number };
 
 const initialState: AppState = {
   user: null,
@@ -56,6 +60,8 @@ const initialState: AppState = {
   isWorkoutActive: false,
   timerActive: false,
   timerSeconds: 0,
+  currentQuest: null,
+  questProgress: 0,
 };
 
 function appReducer(state: AppState, action: AppAction): AppState {
@@ -107,6 +113,10 @@ function appReducer(state: AppState, action: AppAction): AppState {
       return { ...state, timerSeconds: Math.max(0, state.timerSeconds - 1) };
     case 'RESET_TIMER':
       return { ...state, timerActive: false, timerSeconds: 0 };
+    case 'START_QUEST':
+      return { ...state, currentQuest: action.payload, questProgress: 0 };
+    case 'UPDATE_QUEST_PROGRESS':
+      return { ...state, questProgress: action.payload };
     default:
       return state;
   }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Users, Award, BarChart3, Map } from 'lucide-react';
+import { Users, Award, BarChart3, Map, Gamepad2 } from 'lucide-react';
 import { InteractiveCard } from '../common/InteractiveCard';
 
 interface QuickActionsProps {
@@ -40,17 +40,26 @@ export function QuickActions({ onNavigate }: QuickActionsProps) {
       color: 'from-blue-500 to-cyan-600',
       bgColor: 'bg-blue-500/20',
       action: 'analytics'
+    },
+    {
+      icon: Gamepad2,
+      label: 'Fitness Games',
+      description: 'Gamified workouts',
+      color: 'from-orange-500 to-red-600',
+      bgColor: 'bg-orange-500/20',
+      action: 'games'
     }
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-2 gap-4 p-4">
       {actions.map((action, index) => (
         <motion.div
           key={index}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: index * 0.1 }}
+          className={index === 4 ? 'col-span-2' : ''}
         >
           <InteractiveCard
             onClick={() => onNavigate(action.action)}

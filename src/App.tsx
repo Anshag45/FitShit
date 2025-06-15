@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { AppProvider, useApp } from './contexts/AppContext';
 import { Welcome } from './components/onboarding/Welcome';
 import { UserInfo } from './components/onboarding/UserInfo';
+import { WeightInfo } from './components/onboarding/WeightInfo';
 import { FitnessLevel } from './components/onboarding/FitnessLevel';
 import { Goals } from './components/onboarding/Goals';
 import { AICoachIntro } from './components/onboarding/AICoachIntro';
@@ -13,6 +14,12 @@ import { StatsGrid } from './components/dashboard/StatsGrid';
 import { QuickActions } from './components/dashboard/QuickActions';
 import { WorkoutSession } from './components/workout/WorkoutSession';
 import { AchievementBadge } from './components/achievements/AchievementBadge';
+import { QuestSystem } from './components/quests/QuestSystem';
+import { SquadBattles } from './components/social/SquadBattles';
+import { Analytics } from './components/analytics/Analytics';
+import { FitnessGames } from './components/games/FitnessGames';
+import { ColorShiftBackground } from './components/common/ColorShiftBackground';
+import { LiquidGlass } from './components/common/LiquidGlass';
 import { achievements } from './data/achievements';
 import type { User } from './types';
 
@@ -36,14 +43,19 @@ function OnboardingFlow() {
     setStep(1);
   };
 
+  const handleWeightInfo = (data: { currentWeight: number; targetWeight: number; weightGoal: 'lose' | 'gain' | 'maintain' }) => {
+    setUserData({ ...userData, ...data });
+    setStep(2);
+  };
+
   const handleFitnessLevel = (fitnessLevel: 'beginner' | 'intermediate' | 'advanced') => {
     setUserData({ ...userData, fitnessLevel });
-    setStep(2);
+    setStep(3);
   };
 
   const handleGoals = (goals: string[]) => {
     setUserData({ ...userData, goals });
-    setStep(3);
+    setStep(4);
   };
 
   const handleAICoach = (data: { spiritAnimal: string; workoutStyle: string; motivation: string }) => {
@@ -53,7 +65,7 @@ function OnboardingFlow() {
       workoutStyle: data.workoutStyle as any,
       motivation: data.motivation as any
     });
-    setStep(4);
+    setStep(5);
   };
 
   const handleComplete = () => {
@@ -67,7 +79,10 @@ function OnboardingFlow() {
       preferences: [],
       spiritAnimal: userData.spiritAnimal,
       workoutStyle: userData.workoutStyle,
-      motivation: userData.motivation
+      motivation: userData.motivation,
+      currentWeight: userData.currentWeight,
+      targetWeight: userData.targetWeight,
+      weightGoal: userData.weightGoal
     };
 
     dispatch({ type: 'SET_USER', payload: newUser });
@@ -81,12 +96,14 @@ function OnboardingFlow() {
     case 0:
       return <UserInfo onNext={handleUserInfo} onBack={() => setStep(-1)} />;
     case 1:
-      return <FitnessLevel onNext={handleFitnessLevel} onBack={() => setStep(0)} />;
+      return <WeightInfo onNext={handleWeightInfo} onBack={() => setStep(0)} />;
     case 2:
-      return <Goals onNext={handleGoals} onBack={() => setStep(1)} />;
+      return <FitnessLevel onNext={handleFitnessLevel} onBack={() => setStep(1)} />;
     case 3:
-      return <AICoachIntro onNext={handleAICoach} onBack={() => setStep(2)} />;
+      return <Goals onNext={handleGoals} onBack={() => setStep(2)} />;
     case 4:
+      return <AICoachIntro onNext={handleAICoach} onBack={() => setStep(3)} />;
+    case 5:
       return <Complete onComplete={handleComplete} userName={userData.name!} />;
     default:
       return <Welcome onNext={() => setStep(0)} />;
@@ -115,7 +132,7 @@ function Dashboard() {
         );
       case 'achievements':
         return (
-          <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
+          <ColorShiftBackground variant="cosmic" intensity="medium">
             <Header 
               showBackButton 
               onBack={() => setCurrentSection('home')} 
@@ -130,77 +147,78 @@ function Dashboard() {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: index * 0.1 }}
                   >
-                    <AchievementBadge
-                      achievement={achievement}
-                      unlocked={Math.random() > 0.7}
-                    />
+                    <LiquidGlass intensity="medium" colorShift animated>
+                      <AchievementBadge
+                        achievement={achievement}
+                        unlocked={Math.random() > 0.7}
+                      />
+                    </LiquidGlass>
                   </motion.div>
                 ))}
               </div>
             </div>
-          </div>
+          </ColorShiftBackground>
         );
       case 'quests':
         return (
-          <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
+          <ColorShiftBackground variant="galaxy" intensity="medium">
             <Header 
               showBackButton 
               onBack={() => setCurrentSection('home')} 
               title="🚀 Epic Quests"
             />
-            <div className="p-4">
-              <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-6 text-center border border-white/20">
-                <div className="text-6xl mb-4">🌌</div>
-                <h3 className="text-2xl font-bold text-white mb-2">Quest System Coming Soon!</h3>
-                <p className="text-white/70">Embark on epic adventures through space, become a ninja warrior, and unlock legendary rewards.</p>
-              </div>
-            </div>
-          </div>
+            <QuestSystem />
+          </ColorShiftBackground>
         );
       case 'social':
         return (
-          <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
+          <ColorShiftBackground variant="aurora" intensity="medium">
             <Header 
               showBackButton 
               onBack={() => setCurrentSection('home')} 
               title="⚔️ Squad Battles"
             />
-            <div className="p-4">
-              <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-6 text-center border border-white/20">
-                <div className="text-6xl mb-4">👥</div>
-                <h3 className="text-2xl font-bold text-white mb-2">Squad Battles Coming Soon!</h3>
-                <p className="text-white/70">Team up with friends, compete in live challenges, and dominate the leaderboards together.</p>
-              </div>
-            </div>
-          </div>
+            <SquadBattles />
+          </ColorShiftBackground>
         );
       case 'analytics':
         return (
-          <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
+          <ColorShiftBackground variant="nebula" intensity="medium">
             <Header 
               showBackButton 
               onBack={() => setCurrentSection('home')} 
               title="📊 Mission Analytics"
             />
-            <div className="p-4">
-              <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-6 text-center border border-white/20">
-                <div className="text-6xl mb-4">📈</div>
-                <h3 className="text-2xl font-bold text-white mb-2">Advanced Analytics Coming Soon!</h3>
-                <p className="text-white/70">Deep insights into your fitness journey with AI-powered recommendations and progress tracking.</p>
-              </div>
-            </div>
-          </div>
+            <Analytics />
+          </ColorShiftBackground>
+        );
+      case 'games':
+        return (
+          <ColorShiftBackground variant="cosmic" intensity="intense">
+            <Header 
+              showBackButton 
+              onBack={() => setCurrentSection('home')} 
+              title="🎮 Fitness Games"
+            />
+            <FitnessGames />
+          </ColorShiftBackground>
         );
       default:
         return (
-          <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
+          <ColorShiftBackground variant="cosmic" intensity="subtle">
             <Header />
             <div className="p-4">
-              <WorkoutCarousel onStartWorkout={handleStartWorkout} />
-              <StatsGrid />
-              <QuickActions onNavigate={setCurrentSection} />
+              <LiquidGlass intensity="medium" colorShift animated className="mb-6">
+                <WorkoutCarousel onStartWorkout={handleStartWorkout} />
+              </LiquidGlass>
+              <LiquidGlass intensity="light" className="mb-6">
+                <StatsGrid />
+              </LiquidGlass>
+              <LiquidGlass intensity="medium" animated>
+                <QuickActions onNavigate={setCurrentSection} />
+              </LiquidGlass>
             </div>
-          </div>
+          </ColorShiftBackground>
         );
     }
   };

@@ -10,6 +10,9 @@ export interface User {
   spiritAnimal?: 'cheetah' | 'turtle' | 'eagle' | 'bear';
   workoutStyle?: 'intense' | 'balanced' | 'zen';
   motivation?: 'competition' | 'personal' | 'social';
+  currentWeight?: number;
+  targetWeight?: number;
+  weightGoal?: 'lose' | 'gain' | 'maintain';
 }
 
 export interface UserStats {
@@ -74,7 +77,7 @@ export interface Achievement {
   requirement: number;
   type: 'streak' | 'workouts' | 'time' | 'level' | 'special' | 'skill';
   unlockedAt?: string;
-  rarity: 'common' | 'rare' | 'epic' | 'legendary';
+  rarity?: 'common' | 'rare' | 'epic' | 'legendary';
   skillPoints?: number;
 }
 
