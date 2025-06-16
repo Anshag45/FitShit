@@ -123,6 +123,47 @@ export const exercises: Exercise[] = [
       'Move with the grace of stardust'
     ],
     imageUrl: 'https://images.pexels.com/photos/4164516/pexels-photo-4164516.jpeg?auto=compress&cs=tinysrgb&w=800'
+  },
+  {
+    id: '7',
+    name: 'Quantum Lunges',
+    description: 'Step between dimensions with these powerful lunges',
+    duration: 40,
+    sets: 3,
+    reps: 12,
+    restTime: 30,
+    difficulty: 'medium',
+    muscleGroups: ['quadriceps', 'glutes', 'calves'],
+    equipment: ['bodyweight'],
+    intensity: 'medium',
+    skillType: 'strength',
+    instructions: [
+      'Step forward into another dimension',
+      'Lower with quantum precision',
+      'Push back to your original reality',
+      'Feel the multiverse energy'
+    ],
+    imageUrl: 'https://images.pexels.com/photos/4164516/pexels-photo-4164516.jpeg?auto=compress&cs=tinysrgb&w=800'
+  },
+  {
+    id: '8',
+    name: 'Cosmic Yoga Flow',
+    description: 'Flow through poses like celestial bodies in motion',
+    duration: 300,
+    sets: 1,
+    restTime: 0,
+    difficulty: 'easy',
+    muscleGroups: ['full body'],
+    equipment: ['bodyweight'],
+    intensity: 'low',
+    skillType: 'flexibility',
+    instructions: [
+      'Begin in mountain pose like a cosmic pillar',
+      'Flow through poses like planets in orbit',
+      'Breathe with the rhythm of the universe',
+      'End in savasana, one with the cosmos'
+    ],
+    imageUrl: 'https://images.pexels.com/photos/3757376/pexels-photo-3757376.jpeg?auto=compress&cs=tinysrgb&w=800'
   }
 ];
 
@@ -178,7 +219,7 @@ export const workouts: Workout[] = [
     description: 'Find balance in the cosmic void',
     duration: 12,
     difficulty: 'medium',
-    exercises: [exercises[3], exercises[5]],
+    exercises: [exercises[3], exercises[7]],
     targetMuscles: ['core'],
     equipment: ['bodyweight'],
     calories: 90,
@@ -201,6 +242,21 @@ export const workouts: Workout[] = [
     theme: 'space',
     thumbnailUrl: 'https://images.pexels.com/photos/586063/pexels-photo-586063.jpeg?auto=compress&cs=tinysrgb&w=800',
     backgroundGradient: ['#a8edea', '#fed6e3', '#d299c2']
+  },
+  {
+    id: '6',
+    name: 'Quantum Warrior',
+    description: 'Master the art of dimensional fitness',
+    duration: 30,
+    difficulty: 'hard',
+    exercises: [exercises[6], exercises[0], exercises[2], exercises[5]],
+    targetMuscles: ['full body'],
+    equipment: ['bodyweight'],
+    calories: 250,
+    intensity: 'high',
+    theme: 'quantum',
+    thumbnailUrl: 'https://images.pexels.com/photos/2150/sky-space-dark-galaxy.jpg?auto=compress&cs=tinysrgb&w=800',
+    backgroundGradient: ['#8360c3', '#2ebf91', '#ffecd2']
   }
 ];
 
