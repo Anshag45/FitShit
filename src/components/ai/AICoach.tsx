@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bot, MessageCircle, Zap, Target, TrendingUp, Heart, Brain, Camera, Mic } from 'lucide-react';
+import { Bot, MessageCircle, Zap, Target, TrendingUp, Heart, Brain, Camera, Mic, Send, Sparkles } from 'lucide-react';
 import { InteractiveCard } from '../common/InteractiveCard';
 import { useApp } from '../../contexts/AppContext';
+import GeminiAIService from '../../services/geminiAI';
 
 interface AICoachProps {
   isVisible: boolean;
@@ -12,10 +13,13 @@ interface AICoachProps {
 export function AICoach({ isVisible, onClose }: AICoachProps) {
   const { state } = useApp();
   const [messages, setMessages] = useState<Array<{ type: 'ai' | 'user'; content: string; timestamp: Date }>>([]);
-  const [currentTip, setCurrentTip] = useState('');
-  const [isListening, setIsListening] = useState(false);
   const [userInput, setUserInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isListening, setIsListening] = useState(false);
   const [coachMode, setCoachMode] = useState<'chat' | 'analysis' | 'motivation'>('chat');
+  const [aiService, setAiService] = useState<GeminiAIService | null>(null);
+  const [apiKey, setApiKey] = useState('');
+  const [isConfigured, setIsConfigured] = useState(false);
 
   const aiPersonalities = {
     cheetah: {
@@ -46,39 +50,37 @@ export function AICoach({ isVisible, onClose }: AICoachProps) {
 
   const currentCoach = aiPersonalities[state.user?.spiritAnimal || 'cheetah'];
 
-  const aiTips = [
-    "💡 AI Analysis: Your heart rate recovery has improved 23% this month. Your cardiovascular fitness is excellent!",
-    "🎯 Smart Insight: I notice you're strongest in the morning. Consider scheduling strength training then.",
-    "📊 Performance Data: Your workout intensity is perfect for your fitness level. Maintain this pace for optimal results.",
-    "🔥 Motivation Boost: You're in the top 15% of users with your consistency. Keep pushing those limits!",
-    "⚡ Energy Optimization: Your performance peaks 2 hours after your last meal. Time your workouts accordingly!",
-    "🧠 Neural Pattern: Your focus improves 40% during evening workouts. Consider meditation sessions then.",
-    "💪 Muscle Memory: Your form has improved significantly. I can see the neural pathways strengthening!"
-  ];
-
-  const smartResponses = [
-    "Based on your biometric data, I recommend increasing your protein intake by 15g post-workout for optimal recovery.",
-    "Your sleep patterns show you're getting quality REM sleep. This is boosting your workout performance by 18%!",
-    "I've analyzed your movement patterns - your left side is 8% weaker. Let's add some unilateral exercises.",
-    "Your stress levels are elevated today. I suggest a yoga session instead of high-intensity training.",
-    "Perfect! Your consistency is triggering positive neuroplasticity. Your brain is literally rewiring for fitness success!",
-    "I've detected micro-improvements in your balance. Your proprioception is enhancing - keep up the stability work!",
-    "Your workout timing aligns perfectly with your circadian rhythm. This is why you're seeing such great results!"
-  ];
-
   useEffect(() => {
-    if (isVisible) {
-      const interval = setInterval(() => {
-        setCurrentTip(aiTips[Math.floor(Math.random() * aiTips.length)]);
-      }, 8000);
-      
-      setCurrentTip(aiTips[0]);
-      return () => clearInterval(interval);
+    if (isVisible && !isConfigured) {
+      // Check if API key is stored
+      const storedKey = localStorage.getItem('gemini_api_key');
+      if (storedKey) {
+        setApiKey(storedKey);
+        initializeAI(storedKey);
+      }
     }
   }, [isVisible]);
 
-  const handleSendMessage = () => {
-    if (!userInput.trim()) return;
+  const initializeAI = (key: string) => {
+    try {
+      const service = new GeminiAIService(key);
+      setAiService(service);
+      setIsConfigured(true);
+      localStorage.setItem('gemini_api_key', key);
+      
+      // Add welcome message
+      setMessages([{
+        type: 'ai',
+        content: `🚀 AI Coach ${currentCoach.name} is now online! I'm powered by advanced AI and ready to help you dominate your fitness journey. What would you like to work on today?`,
+        timestamp: new Date()
+      }]);
+    } catch (error) {
+      console.error('Failed to initialize AI:', error);
+    }
+  };
+
+  const handleSendMessage = async () => {
+    if (!userInput.trim() || !aiService || isLoading) return;
 
     const userMessage = {
       type: 'user' as const,
@@ -86,56 +88,146 @@ export function AICoach({ isVisible, onClose }: AICoachProps) {
       timestamp: new Date()
     };
 
-    const aiResponse = {
-      type: 'ai' as const,
-      content: smartResponses[Math.floor(Math.random() * smartResponses.length)],
-      timestamp: new Date()
-    };
-
-    setMessages(prev => [...prev, userMessage, aiResponse]);
+    setMessages(prev => [...prev, userMessage]);
     setUserInput('');
+    setIsLoading(true);
+
+    try {
+      const context = {
+        biometrics: {
+          heartRate: 75 + Math.random() * 20,
+          calories: Math.random() * 100,
+          steps: Math.random() * 1000,
+          stress: Math.random() * 50,
+          energy: 70 + Math.random() * 30,
+          focus: 60 + Math.random() * 40,
+          workoutIntensity: state.isWorkoutActive ? 60 + Math.random() * 40 : undefined,
+          formAccuracy: state.isWorkoutActive ? 80 + Math.random() * 20 : undefined
+        },
+        workout: {
+          currentExercise: state.currentWorkout?.exercises[state.currentExerciseIndex]?.name,
+          exerciseType: state.currentWorkout?.exercises[state.currentExerciseIndex]?.skillType,
+          duration: state.currentWorkout?.duration,
+          difficulty: state.currentWorkout?.difficulty,
+          userFitnessLevel: state.user?.fitnessLevel,
+          goals: state.user?.goals,
+          spiritAnimal: state.user?.spiritAnimal
+        },
+        userStats: state.userStats,
+        mode: coachMode
+      };
+
+      const aiResponse = await aiService.sendMessage(userInput, context);
+
+      const aiMessage = {
+        type: 'ai' as const,
+        content: aiResponse,
+        timestamp: new Date()
+      };
+
+      setMessages(prev => [...prev, aiMessage]);
+    } catch (error) {
+      console.error('AI response error:', error);
+      const errorMessage = {
+        type: 'ai' as const,
+        content: "I'm having trouble connecting right now, but I'm still here to support you! Let's keep pushing forward! 💪",
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleVoiceInput = () => {
     setIsListening(!isListening);
-    // Simulate voice recognition
-    if (!isListening) {
+    if (!isListening && 'webkitSpeechRecognition' in window) {
+      const recognition = new (window as any).webkitSpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = 'en-US';
+
+      recognition.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        setUserInput(transcript);
+        setIsListening(false);
+      };
+
+      recognition.onerror = () => {
+        setIsListening(false);
+      };
+
+      recognition.start();
+    } else {
+      // Fallback for demo
       setTimeout(() => {
-        setUserInput("How can I improve my squat form?");
+        setUserInput("How can I improve my workout performance?");
         setIsListening(false);
       }, 2000);
     }
   };
 
-  const handleQuickAction = (action: string) => {
-    const responses = {
-      'analyze': `🧠 AI Analysis Complete: Your performance metrics show 15% improvement in strength, 22% in endurance. Your neural adaptation is accelerating!`,
-      'motivate': `🔥 LEGENDARY STATUS ACTIVATED! You're not just working out - you're evolving! Every rep is rewriting your DNA for greatness!`,
-      'optimize': `⚡ Optimization Protocol: Based on your biometrics, I've adjusted your next workout. Focus on compound movements with 85% intensity.`,
-      'predict': `🔮 AI Prediction: If you maintain current trajectory, you'll achieve your goal 3.2 weeks early. Your consistency is your superpower!`,
-      'form': `📹 Form Analysis: I've detected slight knee valgus in your squats. Activate your glutes more and focus on external rotation.`,
-      'recovery': `💤 Recovery Optimization: Your HRV suggests you need 7.5 hours sleep tonight. I'll adjust tomorrow's intensity accordingly.`
+  const handleQuickAction = async (action: string) => {
+    if (!aiService) return;
+
+    const quickActions = {
+      'analyze': 'Analyze my current performance and biometrics',
+      'motivate': 'Give me high-energy motivation for my workout!',
+      'optimize': 'How can I optimize my training for better results?',
+      'predict': 'Predict my performance and suggest optimal training times',
+      'form': 'Check my exercise form and provide feedback',
+      'recovery': 'Analyze my recovery and suggest improvements'
     };
 
-    const newMessage = {
-      type: 'ai' as const,
-      content: responses[action as keyof typeof responses],
-      timestamp: new Date()
-    };
-
-    setMessages(prev => [...prev, newMessage]);
+    const message = quickActions[action as keyof typeof quickActions];
+    if (message) {
+      setUserInput(message);
+      await handleSendMessage();
+    }
   };
 
+  if (!isVisible) return null;
+
   return (
-    <AnimatePresence>
-      {isVisible && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8, y: 50 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.8, y: 50 }}
-          className="fixed bottom-4 right-4 z-50 w-96"
-        >
-          <InteractiveCard className="p-6 bg-gray-900/95 border-cyan-500/50 backdrop-blur-xl" glowEffect>
+    <motion.div
+      initial={{ opacity: 0, scale: 0.8, y: 50 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.8, y: 50 }}
+      className="fixed bottom-4 right-4 z-50 w-96"
+    >
+      <InteractiveCard className="p-6 bg-gray-900/95 border-cyan-500/50 backdrop-blur-xl" glowEffect>
+        {!isConfigured ? (
+          <div className="space-y-4">
+            <div className="text-center">
+              <Sparkles className="w-12 h-12 text-cyan-400 mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-white mb-2">Activate AI Coach</h3>
+              <p className="text-gray-300 text-sm mb-4">Enter your Gemini API key to unlock advanced AI coaching</p>
+            </div>
+            <input
+              type="password"
+              value={apiKey}
+              onChange={(e) => setApiKey(e.target.value)}
+              placeholder="Enter Gemini API Key"
+              className="w-full px-3 py-2 bg-gray-800/50 border border-gray-600/30 rounded-lg text-white text-sm focus:outline-none focus:border-cyan-500/50"
+            />
+            <div className="flex space-x-2">
+              <button
+                onClick={() => initializeAI(apiKey)}
+                disabled={!apiKey.trim()}
+                className="flex-1 px-4 py-2 bg-cyan-500/20 text-cyan-400 rounded-lg hover:bg-cyan-500/30 transition-all disabled:opacity-50"
+              >
+                Activate AI
+              </button>
+              <button
+                onClick={onClose}
+                className="px-4 py-2 bg-gray-600/20 text-gray-400 rounded-lg hover:bg-gray-600/30 transition-all"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : (
+          <>
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-3">
@@ -156,7 +248,7 @@ export function AICoach({ isVisible, onClose }: AICoachProps) {
                 </motion.div>
                 <div>
                   <h3 className="font-bold text-white">{currentCoach.name}</h3>
-                  <p className="text-xs text-gray-400">AI Fitness Coach • Online</p>
+                  <p className="text-xs text-gray-400">AI Coach • Powered by Gemini</p>
                   <div className="flex items-center space-x-1 mt-1">
                     <Brain className="w-3 h-3 text-cyan-400" />
                     <span className="text-xs text-cyan-400">Neural Mode Active</span>
@@ -193,16 +285,6 @@ export function AICoach({ isVisible, onClose }: AICoachProps) {
               ))}
             </div>
 
-            {/* Current Tip */}
-            <motion.div
-              key={currentTip}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-cyan-500/20 border border-cyan-500/30 rounded-lg p-3 mb-4"
-            >
-              <p className="text-cyan-300 text-sm">{currentTip}</p>
-            </motion.div>
-
             {/* Messages */}
             <div className="max-h-48 overflow-y-auto mb-4 space-y-2">
               {messages.map((message, index) => (
@@ -219,6 +301,22 @@ export function AICoach({ isVisible, onClose }: AICoachProps) {
                   {message.content}
                 </motion.div>
               ))}
+              {isLoading && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="p-3 bg-gray-800/50 text-gray-300 border-l-2 border-cyan-500 rounded-lg text-sm"
+                >
+                  <div className="flex items-center space-x-2">
+                    <div className="flex space-x-1">
+                      <div className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" />
+                      <div className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
+                      <div className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
+                    </div>
+                    <span>AI is thinking...</span>
+                  </div>
+                </motion.div>
+              )}
             </div>
 
             {/* Input Area */}
@@ -227,9 +325,10 @@ export function AICoach({ isVisible, onClose }: AICoachProps) {
                 type="text"
                 value={userInput}
                 onChange={(e) => setUserInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                onKeyPress={(e) => e.key === 'Enter' && !isLoading && handleSendMessage()}
                 placeholder="Ask your AI coach anything..."
                 className="flex-1 px-3 py-2 bg-gray-800/50 border border-gray-600/30 rounded-lg text-white text-sm focus:outline-none focus:border-cyan-500/50"
+                disabled={isLoading}
               />
               <button
                 onClick={handleVoiceInput}
@@ -243,9 +342,10 @@ export function AICoach({ isVisible, onClose }: AICoachProps) {
               </button>
               <button
                 onClick={handleSendMessage}
-                className="p-2 bg-cyan-500/20 text-cyan-400 rounded-lg hover:bg-cyan-500/30 transition-all"
+                disabled={isLoading || !userInput.trim()}
+                className="p-2 bg-cyan-500/20 text-cyan-400 rounded-lg hover:bg-cyan-500/30 transition-all disabled:opacity-50"
               >
-                <MessageCircle className="w-4 h-4" />
+                <Send className="w-4 h-4" />
               </button>
             </div>
 
@@ -265,15 +365,16 @@ export function AICoach({ isVisible, onClose }: AICoachProps) {
                   className="flex flex-col items-center space-y-1 p-2 bg-gray-800/50 hover:bg-gray-700/50 rounded-lg transition-colors text-xs text-gray-300"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
+                  disabled={isLoading}
                 >
                   <action.icon className="w-4 h-4" />
                   <span>{action.label}</span>
                 </motion.button>
               ))}
             </div>
-          </InteractiveCard>
-        </motion.div>
-      )}
-    </AnimatePresence>
+          </>
+        )}
+      </InteractiveCard>
+    </motion.div>
   );
 }

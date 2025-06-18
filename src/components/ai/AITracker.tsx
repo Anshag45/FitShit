@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Activity, Heart, Brain, Eye, Zap, TrendingUp, Target, AlertCircle } from 'lucide-react';
+import { Activity, Heart, Brain, Eye, Zap, TrendingUp, Target, AlertCircle, Cpu, BarChart3 } from 'lucide-react';
 import { InteractiveCard } from '../common/InteractiveCard';
 import { useApp } from '../../contexts/AppContext';
+import GeminiAIService from '../../services/geminiAI';
 
 export function AITracker() {
   const { state } = useApp();
@@ -32,6 +33,17 @@ export function AITracker() {
     "🎯 Form consistency improved by 23% this week"
   ]);
 
+  const [aiService, setAiService] = useState<GeminiAIService | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+
+  useEffect(() => {
+    // Initialize AI service if API key exists
+    const apiKey = localStorage.getItem('gemini_api_key');
+    if (apiKey) {
+      setAiService(new GeminiAIService(apiKey));
+    }
+  }, []);
+
   useEffect(() => {
     // Simulate real-time biometric updates
     const interval = setInterval(() => {
@@ -49,13 +61,33 @@ export function AITracker() {
         setRealTimeData(prev => ({
           ...prev,
           intensity: Math.max(0, Math.min(100, prev.intensity + (Math.random() - 0.5) * 10)),
-          formAccuracy: Math.max(70, Math.min(100, prev.formAccuracy + (Math.random() - 0.5) * 5))
+          formAccuracy: Math.max(70, Math.min(100, prev.formAccuracy + (Math.random() - 0.5) * 5)),
+          reps: prev.reps + (Math.random() > 0.7 ? 1 : 0)
         }));
       }
     }, 1000);
 
     return () => clearInterval(interval);
   }, [state.isWorkoutActive]);
+
+  useEffect(() => {
+    // Generate AI insights every 30 seconds
+    if (aiService) {
+      const insightInterval = setInterval(async () => {
+        setIsAnalyzing(true);
+        try {
+          const insight = await aiService.provideBiometricInsights(biometrics);
+          setAiInsights(prev => [insight, ...prev.slice(0, 3)]);
+        } catch (error) {
+          console.error('AI insight error:', error);
+        } finally {
+          setIsAnalyzing(false);
+        }
+      }, 30000);
+
+      return () => clearInterval(insightInterval);
+    }
+  }, [aiService, biometrics]);
 
   const getHeartRateZone = (hr: number) => {
     if (hr < 100) return { zone: 'Rest', color: 'text-blue-400', bg: 'bg-blue-500/20' };
@@ -67,6 +99,33 @@ export function AITracker() {
 
   const hrZone = getHeartRateZone(biometrics.heartRate);
 
+  const generateAIRecommendation = async () => {
+    if (!aiService) return;
+    
+    setIsAnalyzing(true);
+    try {
+      const recommendation = await aiService.sendMessage(
+        "Based on my current biometrics and workout data, what specific recommendations do you have for optimizing my performance right now?",
+        {
+          biometrics,
+          workout: {
+            currentExercise: state.currentWorkout?.exercises[state.currentExerciseIndex]?.name,
+            exerciseType: state.currentWorkout?.exercises[state.currentExerciseIndex]?.skillType,
+            userFitnessLevel: state.user?.fitnessLevel
+          },
+          userStats: state.userStats,
+          mode: 'analysis'
+        }
+      );
+      
+      setAiInsights(prev => [`🤖 AI Recommendation: ${recommendation}`, ...prev.slice(0, 2)]);
+    } catch (error) {
+      console.error('AI recommendation error:', error);
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Real-time Biometrics */}
@@ -77,8 +136,19 @@ export function AITracker() {
           </div>
           <div>
             <h3 className="text-xl font-light text-white">AI Biometric Tracker</h3>
-            <p className="text-white/60 text-sm font-light">Real-time health monitoring</p>
+            <p className="text-white/60 text-sm font-light">Real-time health monitoring with AI insights</p>
           </div>
+          {aiService && (
+            <motion.button
+              onClick={generateAIRecommendation}
+              disabled={isAnalyzing}
+              className="ml-auto p-2 bg-cyan-500/20 text-cyan-400 rounded-lg hover:bg-cyan-500/30 transition-all disabled:opacity-50"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Cpu className={`w-5 h-5 ${isAnalyzing ? 'animate-spin' : ''}`} />
+            </motion.button>
+          )}
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
@@ -161,6 +231,13 @@ export function AITracker() {
         <h3 className="text-xl font-light text-white mb-4 flex items-center">
           <TrendingUp className="w-6 h-6 mr-3 text-cyan-400" />
           AI Performance Insights
+          {isAnalyzing && (
+            <motion.div
+              className="ml-2 w-4 h-4 border-2 border-cyan-400 border-t-transparent rounded-full"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+            />
+          )}
         </h3>
         <div className="space-y-3">
           {aiInsights.map((insight, index) => (
@@ -178,7 +255,46 @@ export function AITracker() {
         </div>
       </InteractiveCard>
 
-      {/* Recovery Metrics */}
+      {/* Performance Metrics */}
+      <InteractiveCard className="p-6 bg-white/[0.02] border-white/[0.05]" glowEffect>
+        <h3 className="text-xl font-light text-white mb-4 flex items-center">
+          <BarChart3 className="w-6 h-6 mr-3 text-cyan-400" />
+          Performance Analytics
+        </h3>
+        <div className="grid grid-cols-2 gap-6">
+          <div>
+            <div className="flex justify-between text-sm mb-2">
+              <span className="text-white/80 font-light">Workout Intensity</span>
+              <span className="text-white/60 font-light">{realTimeData.intensity}%</span>
+            </div>
+            <div className="w-full bg-white/[0.05] rounded-full h-2">
+              <motion.div
+                className="h-full bg-gradient-to-r from-orange-400 to-red-500 rounded-full"
+                initial={{ width: 0 }}
+                animate={{ width: `${realTimeData.intensity}%` }}
+                transition={{ duration: 1 }}
+              />
+            </div>
+          </div>
+          
+          <div>
+            <div className="flex justify-between text-sm mb-2">
+              <span className="text-white/80 font-light">Form Accuracy</span>
+              <span className="text-white/60 font-light">{Math.round(realTimeData.formAccuracy)}%</span>
+            </div>
+            <div className="w-full bg-white/[0.05] rounded-full h-2">
+              <motion.div
+                className="h-full bg-gradient-to-r from-green-400 to-emerald-500 rounded-full"
+                initial={{ width: 0 }}
+                animate={{ width: `${realTimeData.formAccuracy}%` }}
+                transition={{ duration: 1 }}
+              />
+            </div>
+          </div>
+        </div>
+      </InteractiveCard>
+
+      {/* Recovery Analysis */}
       <InteractiveCard className="p-6 bg-white/[0.02] border-white/[0.05]" glowEffect>
         <h3 className="text-xl font-light text-white mb-4">Recovery Analysis</h3>
         <div className="space-y-4">

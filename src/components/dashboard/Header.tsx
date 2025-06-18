@@ -5,6 +5,7 @@ import { useApp } from '../../contexts/AppContext';
 import { ProgressBar } from '../common/ProgressBar';
 import { InteractiveCard } from '../common/InteractiveCard';
 import { AICoach } from '../ai/AICoach';
+import { AITracker } from '../ai/AITracker';
 
 interface HeaderProps {
   showBackButton?: boolean;
@@ -165,27 +166,7 @@ export function Header({ showBackButton = false, onBack, title }: HeaderProps) {
                 ✕
               </button>
             </div>
-            <div className="space-y-6">
-              {/* Real-time metrics would go here */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="p-4 bg-white/[0.02] border border-white/10 rounded-xl">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <Activity className="w-5 h-5 text-cyan-400" />
-                    <span className="text-white/80 text-sm font-light">Heart Rate</span>
-                  </div>
-                  <div className="text-2xl font-light text-cyan-400">72 BPM</div>
-                  <div className="text-xs text-white/60 font-light">Resting Zone</div>
-                </div>
-                <div className="p-4 bg-white/[0.02] border border-white/10 rounded-xl">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <Brain className="w-5 h-5 text-purple-400" />
-                    <span className="text-white/80 text-sm font-light">Focus</span>
-                  </div>
-                  <div className="text-2xl font-light text-purple-400">85%</div>
-                  <div className="text-xs text-white/60 font-light">Optimal</div>
-                </div>
-              </div>
-            </div>
+            <AITracker />
           </motion.div>
         </motion.div>
       )}
