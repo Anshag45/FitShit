@@ -36,7 +36,7 @@ class GeminiAIService {
 
   constructor(apiKey?: string) {
     // Use provided API key or fallback to environment variable
-    const key = apiKey || import.meta.env.VITE_GEMINI_API_KEY || 'YOUR_GEMINI_API_KEY_HERE';
+    const key = apiKey || import.meta.env.VITE_GEMINI_API_KEY || 'AIzaSyD3CIbAcTm14iQLVSHIDjex5K8EIC_iBiY';
     
     this.config = {
       apiKey: key,
