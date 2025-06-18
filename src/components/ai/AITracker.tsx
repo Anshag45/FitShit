@@ -37,11 +37,8 @@ export function AITracker() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   useEffect(() => {
-    // Initialize AI service if API key exists
-    const apiKey = localStorage.getItem('gemini_api_key');
-    if (apiKey) {
-      setAiService(new GeminiAIService(apiKey));
-    }
+    // Initialize AI service automatically
+    setAiService(new GeminiAIService());
   }, []);
 
   useEffect(() => {

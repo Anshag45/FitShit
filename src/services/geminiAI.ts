@@ -34,9 +34,12 @@ class GeminiAIService {
   private baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models';
   private conversationHistory: ChatMessage[] = [];
 
-  constructor(apiKey: string) {
+  constructor(apiKey?: string) {
+    // Use provided API key or fallback to environment variable
+    const key = apiKey || import.meta.env.VITE_GEMINI_API_KEY || 'YOUR_GEMINI_API_KEY_HERE';
+    
     this.config = {
-      apiKey,
+      apiKey: key,
       model: 'gemini-1.5-flash'
     };
     this.initializeCoach();
@@ -46,7 +49,7 @@ class GeminiAIService {
     this.conversationHistory = [{
       role: 'model',
       parts: [{
-        text: `I'm your AI Fitness Coach! I'm here to help you on your fitness gaming journey. I can:
+        text: `🚀 AI Coach is now online! I'm powered by advanced AI and ready to help you dominate your fitness journey. I can:
 
 🏋️ Analyze your workouts and provide real-time feedback
 📊 Interpret your biometric data and suggest optimizations  
@@ -107,7 +110,7 @@ I'm powered by advanced AI and I learn from every interaction to better support 
 
       const data = await response.json();
       const aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || 
-        "I'm having trouble processing that right now. Let's keep pushing forward with your fitness journey!";
+        "I'm having trouble connecting right now, but I'm still here to support you! Let's keep pushing forward! 💪";
 
       // Update conversation history
       this.conversationHistory.push(

@@ -18,8 +18,6 @@ export function AICoach({ isVisible, onClose }: AICoachProps) {
   const [isListening, setIsListening] = useState(false);
   const [coachMode, setCoachMode] = useState<'chat' | 'analysis' | 'motivation'>('chat');
   const [aiService, setAiService] = useState<GeminiAIService | null>(null);
-  const [apiKey, setApiKey] = useState('');
-  const [isConfigured, setIsConfigured] = useState(false);
 
   const aiPersonalities = {
     cheetah: {
@@ -51,22 +49,10 @@ export function AICoach({ isVisible, onClose }: AICoachProps) {
   const currentCoach = aiPersonalities[state.user?.spiritAnimal || 'cheetah'];
 
   useEffect(() => {
-    if (isVisible && !isConfigured) {
-      // Check if API key is stored
-      const storedKey = localStorage.getItem('gemini_api_key');
-      if (storedKey) {
-        setApiKey(storedKey);
-        initializeAI(storedKey);
-      }
-    }
-  }, [isVisible]);
-
-  const initializeAI = (key: string) => {
-    try {
-      const service = new GeminiAIService(key);
+    if (isVisible) {
+      // Initialize AI service automatically
+      const service = new GeminiAIService();
       setAiService(service);
-      setIsConfigured(true);
-      localStorage.setItem('gemini_api_key', key);
       
       // Add welcome message
       setMessages([{
@@ -74,10 +60,8 @@ export function AICoach({ isVisible, onClose }: AICoachProps) {
         content: `🚀 AI Coach ${currentCoach.name} is now online! I'm powered by advanced AI and ready to help you dominate your fitness journey. What would you like to work on today?`,
         timestamp: new Date()
       }]);
-    } catch (error) {
-      console.error('Failed to initialize AI:', error);
     }
-  };
+  }, [isVisible, currentCoach.name]);
 
   const handleSendMessage = async () => {
     if (!userInput.trim() || !aiService || isLoading) return;
@@ -195,185 +179,151 @@ export function AICoach({ isVisible, onClose }: AICoachProps) {
       exit={{ opacity: 0, scale: 0.8, y: 50 }}
       className="fixed bottom-4 right-4 z-50 w-96"
     >
-      <InteractiveCard className="p-6 bg-gray-900/95 border-cyan-500/50 backdrop-blur-xl" glowEffect>
-        {!isConfigured ? (
-          <div className="space-y-4">
-            <div className="text-center">
-              <Sparkles className="w-12 h-12 text-cyan-400 mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-white mb-2">Activate AI Coach</h3>
-              <p className="text-gray-300 text-sm mb-4">Enter your Gemini API key to unlock advanced AI coaching</p>
-            </div>
-            <input
-              type="password"
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-              placeholder="Enter Gemini API Key"
-              className="w-full px-3 py-2 bg-gray-800/50 border border-gray-600/30 rounded-lg text-white text-sm focus:outline-none focus:border-cyan-500/50"
-            />
-            <div className="flex space-x-2">
-              <button
-                onClick={() => initializeAI(apiKey)}
-                disabled={!apiKey.trim()}
-                className="flex-1 px-4 py-2 bg-cyan-500/20 text-cyan-400 rounded-lg hover:bg-cyan-500/30 transition-all disabled:opacity-50"
-              >
-                Activate AI
-              </button>
-              <button
-                onClick={onClose}
-                className="px-4 py-2 bg-gray-600/20 text-gray-400 rounded-lg hover:bg-gray-600/30 transition-all"
-              >
-                Cancel
-              </button>
+      <InteractiveCard className="p-6 bg-black/95 border-cyan-500/50 backdrop-blur-xl" glowEffect>
+        {/* Header */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center space-x-3">
+            <motion.div
+              className={`w-14 h-14 bg-gradient-to-r ${currentCoach.color} rounded-full flex items-center justify-center text-2xl relative`}
+              animate={{ 
+                scale: [1, 1.1, 1],
+                rotate: [0, 5, -5, 0]
+              }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              {currentCoach.avatar}
+              <motion.div
+                className="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-gray-900"
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 1, repeat: Infinity }}
+              />
+            </motion.div>
+            <div>
+              <h3 className="font-bold text-white">{currentCoach.name}</h3>
+              <p className="text-xs text-gray-400">AI Coach • Powered by Gemini</p>
+              <div className="flex items-center space-x-1 mt-1">
+                <Brain className="w-3 h-3 text-cyan-400" />
+                <span className="text-xs text-cyan-400">Neural Mode Active</span>
+              </div>
             </div>
           </div>
-        ) : (
-          <>
-            {/* Header */}
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center space-x-3">
-                <motion.div
-                  className={`w-14 h-14 bg-gradient-to-r ${currentCoach.color} rounded-full flex items-center justify-center text-2xl relative`}
-                  animate={{ 
-                    scale: [1, 1.1, 1],
-                    rotate: [0, 5, -5, 0]
-                  }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  {currentCoach.avatar}
-                  <motion.div
-                    className="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-gray-900"
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ duration: 1, repeat: Infinity }}
-                  />
-                </motion.div>
-                <div>
-                  <h3 className="font-bold text-white">{currentCoach.name}</h3>
-                  <p className="text-xs text-gray-400">AI Coach • Powered by Gemini</p>
-                  <div className="flex items-center space-x-1 mt-1">
-                    <Brain className="w-3 h-3 text-cyan-400" />
-                    <span className="text-xs text-cyan-400">Neural Mode Active</span>
-                  </div>
+          <button 
+            onClick={onClose}
+            className="text-gray-400 hover:text-white transition-colors"
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Mode Selector */}
+        <div className="flex space-x-2 mb-4">
+          {[
+            { id: 'chat', label: 'Chat', icon: MessageCircle },
+            { id: 'analysis', label: 'Analysis', icon: TrendingUp },
+            { id: 'motivation', label: 'Boost', icon: Zap }
+          ].map((mode) => (
+            <button
+              key={mode.id}
+              onClick={() => setCoachMode(mode.id as any)}
+              className={`flex-1 flex items-center justify-center space-x-1 p-2 rounded-lg text-xs transition-all ${
+                coachMode === mode.id 
+                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' 
+                  : 'bg-gray-800/50 text-gray-400 hover:bg-gray-700/50'
+              }`}
+            >
+              <mode.icon className="w-3 h-3" />
+              <span>{mode.label}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Messages */}
+        <div className="max-h-48 overflow-y-auto mb-4 space-y-2">
+          {messages.map((message, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, x: message.type === 'ai' ? -20 : 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className={`p-3 rounded-lg text-sm ${
+                message.type === 'ai' 
+                  ? 'bg-gray-800/50 text-gray-300 border-l-2 border-cyan-500' 
+                  : 'bg-cyan-500/20 text-cyan-300 ml-8 border-l-2 border-cyan-400'
+              }`}
+            >
+              {message.content}
+            </motion.div>
+          ))}
+          {isLoading && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="p-3 bg-gray-800/50 text-gray-300 border-l-2 border-cyan-500 rounded-lg text-sm"
+            >
+              <div className="flex items-center space-x-2">
+                <div className="flex space-x-1">
+                  <div className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" />
+                  <div className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
+                  <div className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
                 </div>
+                <span>AI is thinking...</span>
               </div>
-              <button 
-                onClick={onClose}
-                className="text-gray-400 hover:text-white transition-colors"
-              >
-                ✕
-              </button>
-            </div>
+            </motion.div>
+          )}
+        </div>
 
-            {/* Mode Selector */}
-            <div className="flex space-x-2 mb-4">
-              {[
-                { id: 'chat', label: 'Chat', icon: MessageCircle },
-                { id: 'analysis', label: 'Analysis', icon: TrendingUp },
-                { id: 'motivation', label: 'Boost', icon: Zap }
-              ].map((mode) => (
-                <button
-                  key={mode.id}
-                  onClick={() => setCoachMode(mode.id as any)}
-                  className={`flex-1 flex items-center justify-center space-x-1 p-2 rounded-lg text-xs transition-all ${
-                    coachMode === mode.id 
-                      ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30' 
-                      : 'bg-gray-800/50 text-gray-400 hover:bg-gray-700/50'
-                  }`}
-                >
-                  <mode.icon className="w-3 h-3" />
-                  <span>{mode.label}</span>
-                </button>
-              ))}
-            </div>
+        {/* Input Area */}
+        <div className="flex space-x-2 mb-4">
+          <input
+            type="text"
+            value={userInput}
+            onChange={(e) => setUserInput(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && !isLoading && handleSendMessage()}
+            placeholder="Ask your AI coach anything..."
+            className="flex-1 px-3 py-2 bg-gray-800/50 border border-gray-600/30 rounded-lg text-white text-sm focus:outline-none focus:border-cyan-500/50"
+            disabled={isLoading}
+          />
+          <button
+            onClick={handleVoiceInput}
+            className={`p-2 rounded-lg transition-all ${
+              isListening 
+                ? 'bg-red-500/20 text-red-400 animate-pulse' 
+                : 'bg-gray-800/50 text-gray-400 hover:text-white'
+            }`}
+          >
+            <Mic className="w-4 h-4" />
+          </button>
+          <button
+            onClick={handleSendMessage}
+            disabled={isLoading || !userInput.trim()}
+            className="p-2 bg-cyan-500/20 text-cyan-400 rounded-lg hover:bg-cyan-500/30 transition-all disabled:opacity-50"
+          >
+            <Send className="w-4 h-4" />
+          </button>
+        </div>
 
-            {/* Messages */}
-            <div className="max-h-48 overflow-y-auto mb-4 space-y-2">
-              {messages.map((message, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, x: message.type === 'ai' ? -20 : 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  className={`p-3 rounded-lg text-sm ${
-                    message.type === 'ai' 
-                      ? 'bg-gray-800/50 text-gray-300 border-l-2 border-cyan-500' 
-                      : 'bg-cyan-500/20 text-cyan-300 ml-8 border-l-2 border-cyan-400'
-                  }`}
-                >
-                  {message.content}
-                </motion.div>
-              ))}
-              {isLoading && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="p-3 bg-gray-800/50 text-gray-300 border-l-2 border-cyan-500 rounded-lg text-sm"
-                >
-                  <div className="flex items-center space-x-2">
-                    <div className="flex space-x-1">
-                      <div className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" />
-                      <div className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
-                      <div className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
-                    </div>
-                    <span>AI is thinking...</span>
-                  </div>
-                </motion.div>
-              )}
-            </div>
-
-            {/* Input Area */}
-            <div className="flex space-x-2 mb-4">
-              <input
-                type="text"
-                value={userInput}
-                onChange={(e) => setUserInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && !isLoading && handleSendMessage()}
-                placeholder="Ask your AI coach anything..."
-                className="flex-1 px-3 py-2 bg-gray-800/50 border border-gray-600/30 rounded-lg text-white text-sm focus:outline-none focus:border-cyan-500/50"
-                disabled={isLoading}
-              />
-              <button
-                onClick={handleVoiceInput}
-                className={`p-2 rounded-lg transition-all ${
-                  isListening 
-                    ? 'bg-red-500/20 text-red-400 animate-pulse' 
-                    : 'bg-gray-800/50 text-gray-400 hover:text-white'
-                }`}
-              >
-                <Mic className="w-4 h-4" />
-              </button>
-              <button
-                onClick={handleSendMessage}
-                disabled={isLoading || !userInput.trim()}
-                className="p-2 bg-cyan-500/20 text-cyan-400 rounded-lg hover:bg-cyan-500/30 transition-all disabled:opacity-50"
-              >
-                <Send className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* Quick Actions */}
-            <div className="grid grid-cols-3 gap-2">
-              {[
-                { id: 'analyze', label: 'Analyze', icon: TrendingUp },
-                { id: 'motivate', label: 'Motivate', icon: Zap },
-                { id: 'optimize', label: 'Optimize', icon: Target },
-                { id: 'form', label: 'Form Check', icon: Camera },
-                { id: 'recovery', label: 'Recovery', icon: Heart },
-                { id: 'predict', label: 'Predict', icon: Bot }
-              ].map((action) => (
-                <motion.button
-                  key={action.id}
-                  onClick={() => handleQuickAction(action.id)}
-                  className="flex flex-col items-center space-y-1 p-2 bg-gray-800/50 hover:bg-gray-700/50 rounded-lg transition-colors text-xs text-gray-300"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  disabled={isLoading}
-                >
-                  <action.icon className="w-4 h-4" />
-                  <span>{action.label}</span>
-                </motion.button>
-              ))}
-            </div>
-          </>
-        )}
+        {/* Quick Actions */}
+        <div className="grid grid-cols-3 gap-2">
+          {[
+            { id: 'analyze', label: 'Analyze', icon: TrendingUp },
+            { id: 'motivate', label: 'Motivate', icon: Zap },
+            { id: 'optimize', label: 'Optimize', icon: Target },
+            { id: 'form', label: 'Form Check', icon: Camera },
+            { id: 'recovery', label: 'Recovery', icon: Heart },
+            { id: 'predict', label: 'Predict', icon: Bot }
+          ].map((action) => (
+            <motion.button
+              key={action.id}
+              onClick={() => handleQuickAction(action.id)}
+              className="flex flex-col items-center space-y-1 p-2 bg-gray-800/50 hover:bg-gray-700/50 rounded-lg transition-colors text-xs text-gray-300"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              disabled={isLoading}
+            >
+              <action.icon className="w-4 h-4" />
+              <span>{action.label}</span>
+            </motion.button>
+          ))}
+        </div>
       </InteractiveCard>
     </motion.div>
   );
