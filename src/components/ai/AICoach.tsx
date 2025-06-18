@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bot, MessageCircle, Zap, Target, TrendingUp, Heart, Brain, Camera, Mic, Send, Sparkles } from 'lucide-react';
+import { Bot, MessageCircle, Zap, Target, TrendingUp, Heart, Brain, Camera, Mic, Send, Sparkles, X } from 'lucide-react';
 import { InteractiveCard } from '../common/InteractiveCard';
 import { useApp } from '../../contexts/AppContext';
 import GeminiAIService from '../../services/geminiAI';
@@ -50,7 +50,7 @@ export function AICoach({ isVisible, onClose }: AICoachProps) {
 
   useEffect(() => {
     if (isVisible) {
-      // Initialize AI service automatically
+      // Initialize AI service
       const service = new GeminiAIService();
       setAiService(service);
       
@@ -73,6 +73,7 @@ export function AICoach({ isVisible, onClose }: AICoachProps) {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const currentInput = userInput;
     setUserInput('');
     setIsLoading(true);
 
@@ -101,7 +102,9 @@ export function AICoach({ isVisible, onClose }: AICoachProps) {
         mode: coachMode
       };
 
-      const aiResponse = await aiService.sendMessage(userInput, context);
+      console.log('Sending message to AI:', currentInput, context);
+      const aiResponse = await aiService.sendMessage(currentInput, context);
+      console.log('AI Response received:', aiResponse);
 
       const aiMessage = {
         type: 'ai' as const,
@@ -114,7 +117,7 @@ export function AICoach({ isVisible, onClose }: AICoachProps) {
       console.error('AI response error:', error);
       const errorMessage = {
         type: 'ai' as const,
-        content: "I'm having trouble connecting right now, but I'm still here to support you! Let's keep pushing forward! 💪",
+        content: "🔥 I'm having trouble connecting right now, but I'm still here to support you! Let's keep pushing forward! 💪",
         timestamp: new Date()
       };
       setMessages(prev => [...prev, errorMessage]);
@@ -166,7 +169,10 @@ export function AICoach({ isVisible, onClose }: AICoachProps) {
     const message = quickActions[action as keyof typeof quickActions];
     if (message) {
       setUserInput(message);
-      await handleSendMessage();
+      // Auto-send the message
+      setTimeout(() => {
+        handleSendMessage();
+      }, 100);
     }
   };
 
@@ -209,9 +215,9 @@ export function AICoach({ isVisible, onClose }: AICoachProps) {
           </div>
           <button 
             onClick={onClose}
-            className="text-gray-400 hover:text-white transition-colors"
+            className="text-gray-400 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-full"
           >
-            ✕
+            <X className="w-4 h-4" />
           </button>
         </div>
 

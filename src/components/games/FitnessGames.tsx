@@ -1,12 +1,252 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Gamepad2, Target, Zap, Trophy, Star, Play, Pause, RotateCcw, Users, Crown, Flame } from 'lucide-react';
+import { Gamepad2, Target, Zap, Trophy, Star, Play, Pause, RotateCcw, Users, Crown, Flame, ArrowLeft } from 'lucide-react';
 import { Button } from '../common/Button';
 import { InteractiveCard } from '../common/InteractiveCard';
 import { InteractiveWorkout } from './InteractiveWorkout';
 import { useApp } from '../../contexts/AppContext';
 import { exercises } from '../../data/workouts';
 import { FloatingLogo } from '../effects/FloatingLogo';
+
+// Simple Fitness Games
+function SquatCounter({ onComplete }: { onComplete: (score: number) => void }) {
+  const [count, setCount] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(60);
+  const [isActive, setIsActive] = useState(false);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isActive && timeLeft > 0) {
+      interval = setInterval(() => {
+        setTimeLeft(prev => prev - 1);
+      }, 1000);
+    } else if (timeLeft === 0) {
+      setIsActive(false);
+      onComplete(count * 10);
+    }
+    return () => clearInterval(interval);
+  }, [isActive, timeLeft, count, onComplete]);
+
+  const handleSquat = () => {
+    if (isActive) {
+      setCount(prev => prev + 1);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 to-blue-900 flex items-center justify-center p-4">
+      <InteractiveCard className="p-8 max-w-md w-full text-center bg-black/50" glowEffect>
+        <h2 className="text-3xl font-light text-white mb-6">Squat Challenge</h2>
+        
+        <div className="mb-8">
+          <div className="text-6xl font-light text-cyan-400 mb-2">{count}</div>
+          <div className="text-white/60 font-light">Squats</div>
+        </div>
+
+        <div className="mb-6">
+          <div className="text-2xl font-light text-white mb-2">{timeLeft}s</div>
+          <div className="w-full bg-white/20 rounded-full h-2">
+            <div 
+              className="bg-cyan-400 h-2 rounded-full transition-all duration-1000"
+              style={{ width: `${(timeLeft / 60) * 100}%` }}
+            />
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          {!isActive && timeLeft > 0 && (
+            <Button onClick={() => setIsActive(true)} variant="primary" size="lg" className="w-full">
+              Start Challenge
+            </Button>
+          )}
+          
+          {isActive && (
+            <Button onClick={handleSquat} variant="primary" size="lg" className="w-full">
+              Squat! 💪
+            </Button>
+          )}
+
+          {timeLeft === 0 && (
+            <div className="text-center">
+              <div className="text-green-400 font-light mb-4">Challenge Complete!</div>
+              <div className="text-white/80 font-light">Score: {count * 10} points</div>
+            </div>
+          )}
+        </div>
+      </InteractiveCard>
+    </div>
+  );
+}
+
+function PunchingGame({ onComplete }: { onComplete: (score: number) => void }) {
+  const [score, setScore] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(30);
+  const [isActive, setIsActive] = useState(false);
+  const [targets, setTargets] = useState<Array<{ id: number; x: number; y: number }>>([]);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isActive && timeLeft > 0) {
+      interval = setInterval(() => {
+        setTimeLeft(prev => prev - 1);
+      }, 1000);
+    } else if (timeLeft === 0) {
+      setIsActive(false);
+      onComplete(score);
+    }
+    return () => clearInterval(interval);
+  }, [isActive, timeLeft, score, onComplete]);
+
+  useEffect(() => {
+    if (isActive) {
+      const targetInterval = setInterval(() => {
+        const newTarget = {
+          id: Date.now(),
+          x: Math.random() * 80 + 10,
+          y: Math.random() * 60 + 20
+        };
+        setTargets(prev => [...prev.slice(-2), newTarget]);
+      }, 1500);
+
+      return () => clearInterval(targetInterval);
+    }
+  }, [isActive]);
+
+  const hitTarget = (targetId: number) => {
+    setTargets(prev => prev.filter(t => t.id !== targetId));
+    setScore(prev => prev + 50);
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-red-900 to-orange-900 relative overflow-hidden">
+      <div className="absolute top-4 left-4 right-4 z-20">
+        <div className="flex justify-between text-white">
+          <div>Score: {score}</div>
+          <div>Time: {timeLeft}s</div>
+        </div>
+      </div>
+
+      {targets.map(target => (
+        <motion.button
+          key={target.id}
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          exit={{ scale: 0 }}
+          className="absolute w-16 h-16 bg-red-500 rounded-full flex items-center justify-center text-2xl"
+          style={{ left: `${target.x}%`, top: `${target.y}%` }}
+          onClick={() => hitTarget(target.id)}
+        >
+          🎯
+        </motion.button>
+      ))}
+
+      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-20">
+        <InteractiveCard className="p-4 bg-black/50">
+          {!isActive && timeLeft > 0 && (
+            <Button onClick={() => setIsActive(true)} variant="primary">
+              Start Punching!
+            </Button>
+          )}
+          {timeLeft === 0 && (
+            <div className="text-center text-white">
+              <div>Game Over!</div>
+              <div>Final Score: {score}</div>
+            </div>
+          )}
+        </InteractiveCard>
+      </div>
+    </div>
+  );
+}
+
+function BalanceGame({ onComplete }: { onComplete: (score: number) => void }) {
+  const [balance, setBalance] = useState(50);
+  const [score, setScore] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(45);
+  const [isActive, setIsActive] = useState(false);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isActive && timeLeft > 0) {
+      interval = setInterval(() => {
+        setTimeLeft(prev => prev - 1);
+        // Random balance changes
+        setBalance(prev => {
+          const change = (Math.random() - 0.5) * 10;
+          const newBalance = Math.max(0, Math.min(100, prev + change));
+          if (newBalance > 40 && newBalance < 60) {
+            setScore(s => s + 5);
+          }
+          return newBalance;
+        });
+      }, 1000);
+    } else if (timeLeft === 0) {
+      setIsActive(false);
+      onComplete(score);
+    }
+    return () => clearInterval(interval);
+  }, [isActive, timeLeft, score, onComplete]);
+
+  const adjustBalance = (direction: 'left' | 'right') => {
+    if (isActive) {
+      setBalance(prev => {
+        const adjustment = direction === 'left' ? -5 : 5;
+        return Math.max(0, Math.min(100, prev + adjustment));
+      });
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-green-900 to-teal-900 flex items-center justify-center p-4">
+      <InteractiveCard className="p-8 max-w-md w-full text-center bg-black/50" glowEffect>
+        <h2 className="text-3xl font-light text-white mb-6">Balance Challenge</h2>
+        
+        <div className="mb-8">
+          <div className="text-4xl font-light text-green-400 mb-2">{score}</div>
+          <div className="text-white/60 font-light">Points</div>
+        </div>
+
+        <div className="mb-6">
+          <div className="text-xl font-light text-white mb-2">{timeLeft}s</div>
+          <div className="relative w-full h-4 bg-white/20 rounded-full mb-4">
+            <div 
+              className="absolute top-0 w-2 h-4 bg-cyan-400 rounded-full transition-all duration-300"
+              style={{ left: `${balance}%`, transform: 'translateX(-50%)' }}
+            />
+            <div className="absolute top-0 left-1/2 w-1 h-4 bg-green-400 transform -translate-x-1/2" />
+          </div>
+          <div className="text-sm text-white/60 font-light">Keep the bar in the center!</div>
+        </div>
+
+        <div className="space-y-4">
+          {!isActive && timeLeft > 0 && (
+            <Button onClick={() => setIsActive(true)} variant="primary" size="lg" className="w-full">
+              Start Balance Challenge
+            </Button>
+          )}
+          
+          {isActive && (
+            <div className="flex space-x-4">
+              <Button onClick={() => adjustBalance('left')} variant="outline" className="flex-1">
+                ← Left
+              </Button>
+              <Button onClick={() => adjustBalance('right')} variant="outline" className="flex-1">
+                Right →
+              </Button>
+            </div>
+          )}
+
+          {timeLeft === 0 && (
+            <div className="text-center">
+              <div className="text-green-400 font-light mb-4">Challenge Complete!</div>
+              <div className="text-white/80 font-light">Final Score: {score} points</div>
+            </div>
+          )}
+        </div>
+      </InteractiveCard>
+    </div>
+  );
+}
 
 export function FitnessGames() {
   const { state, dispatch } = useApp();
@@ -17,41 +257,38 @@ export function FitnessGames() {
     {
       id: 'squat-challenge',
       name: 'Squat Challenge',
-      description: 'Hit targets by doing squats in rhythm',
+      description: 'Count your squats in 60 seconds',
       icon: '🏋️‍♀️',
       difficulty: 'Medium',
-      duration: '3 min',
+      duration: '1 min',
       calories: 45,
       color: 'from-white/10 to-white/5',
-      exerciseId: '2',
-      players: 1,
-      type: 'solo'
+      type: 'simple',
+      players: 1
     },
     {
       id: 'punch-master',
       name: 'Punch Master',
-      description: 'Throw punches to defeat cyber enemies',
+      description: 'Hit targets with punching motions',
       icon: '👊',
       difficulty: 'Hard',
-      duration: '5 min',
+      duration: '30 sec',
       calories: 80,
       color: 'from-white/10 to-white/5',
-      exerciseId: '1',
-      players: 1,
-      type: 'solo'
+      type: 'simple',
+      players: 1
     },
     {
       id: 'balance-beam',
-      name: 'Balance Beam',
-      description: 'Navigate through digital obstacles with balance poses',
+      name: 'Balance Master',
+      description: 'Keep your balance in the center',
       icon: '🧘‍♀️',
       difficulty: 'Easy',
-      duration: '4 min',
+      duration: '45 sec',
       calories: 35,
       color: 'from-white/10 to-white/5',
-      exerciseId: '4',
-      players: 1,
-      type: 'solo'
+      type: 'simple',
+      players: 1
     },
     {
       id: 'cardio-runner',
@@ -63,8 +300,8 @@ export function FitnessGames() {
       calories: 120,
       color: 'from-white/10 to-white/5',
       exerciseId: '5',
-      players: 1,
-      type: 'solo'
+      type: 'interactive',
+      players: 1
     },
     {
       id: 'yoga-flow',
@@ -75,9 +312,9 @@ export function FitnessGames() {
       duration: '8 min',
       calories: 60,
       color: 'from-white/10 to-white/5',
-      exerciseId: '3',
-      players: 1,
-      type: 'solo'
+      exerciseId: '8',
+      type: 'interactive',
+      players: 1
     },
     {
       id: 'hiit-blaster',
@@ -88,9 +325,9 @@ export function FitnessGames() {
       duration: '10 min',
       calories: 150,
       color: 'from-white/10 to-white/5',
-      exerciseId: '6',
-      players: 1,
-      type: 'solo'
+      exerciseId: '2',
+      type: 'interactive',
+      players: 1
     }
   ];
 
@@ -167,21 +404,19 @@ export function FitnessGames() {
   ];
 
   const handleStartGame = (gameId: string) => {
-    const game = [...soloGames, ...multiplayerGames].find(g => g.id === gameId);
-    if (game && game.exerciseId) {
-      setSelectedGame(gameId);
-    } else if (game?.type === 'multiplayer') {
-      // Handle multiplayer game logic
-      dispatch({ type: 'UPDATE_STATS', payload: {
-        xp: state.userStats.xp + 75,
-        coins: state.userStats.coins + 35
-      }});
+    const game = soloGames.find(g => g.id === gameId);
+    if (game) {
+      if (game.type === 'interactive' && game.exerciseId) {
+        setSelectedGame(gameId);
+      } else if (game.type === 'simple') {
+        setSelectedGame(gameId);
+      }
     }
   };
 
   const handleGameComplete = (score: number) => {
-    const xpEarned = Math.floor(score / 100) || 50;
-    const coinsEarned = Math.floor(score / 200) || 25;
+    const xpEarned = Math.floor(score / 10) || 50;
+    const coinsEarned = Math.floor(score / 20) || 25;
     
     dispatch({ type: 'UPDATE_STATS', payload: {
       xp: state.userStats.xp + xpEarned,
@@ -196,18 +431,32 @@ export function FitnessGames() {
     setSelectedGame(null);
   };
 
+  // Render specific games
   if (selectedGame) {
     const game = soloGames.find(g => g.id === selectedGame);
-    const exercise = exercises.find(e => e.id === game?.exerciseId);
     
-    if (exercise) {
-      return (
-        <InteractiveWorkout
-          exercise={exercise}
-          onComplete={handleGameComplete}
-          onSkip={handleBackToGames}
-        />
-      );
+    if (game?.type === 'simple') {
+      switch (selectedGame) {
+        case 'squat-challenge':
+          return <SquatCounter onComplete={handleGameComplete} />;
+        case 'punch-master':
+          return <PunchingGame onComplete={handleGameComplete} />;
+        case 'balance-beam':
+          return <BalanceGame onComplete={handleGameComplete} />;
+      }
+    }
+    
+    if (game?.type === 'interactive' && game.exerciseId) {
+      const exercise = exercises.find(e => e.id === game.exerciseId);
+      if (exercise) {
+        return (
+          <InteractiveWorkout
+            exercise={exercise}
+            onComplete={handleGameComplete}
+            onSkip={handleBackToGames}
+          />
+        );
+      }
     }
   }
 
@@ -319,7 +568,13 @@ export function FitnessGames() {
                 </div>
               </div>
               <Button
-                onClick={() => handleStartGame(game.id)}
+                onClick={() => {
+                  // Simulate joining multiplayer game
+                  dispatch({ type: 'UPDATE_STATS', payload: {
+                    xp: state.userStats.xp + 75,
+                    coins: state.userStats.coins + 35
+                  }});
+                }}
                 variant={game.status === 'live' ? 'primary' : 'outline'}
                 className="flex items-center space-x-2 font-light"
               >
@@ -382,8 +637,15 @@ export function FitnessGames() {
                 variant="outline"
                 size="sm"
                 className="font-light"
+                onClick={() => {
+                  // Simulate challenge participation
+                  dispatch({ type: 'UPDATE_STATS', payload: {
+                    xp: state.userStats.xp + 25,
+                    coins: state.userStats.coins + 10
+                  }});
+                }}
               >
-                View Details
+                Participate
               </Button>
             </div>
           </InteractiveCard>
@@ -456,8 +718,8 @@ export function FitnessGames() {
               {[
                 { name: 'Alex', score: 2450, game: 'Squat Challenge', avatar: '🏆' },
                 { name: 'Sarah', score: 2200, game: 'Punch Master', avatar: '🥈' },
-                { name: 'Mike', score: 1980, game: 'Cardio Runner', avatar: '🥉' },
-                { name: 'You', score: state.userStats.xp || 1750, game: 'Balance Beam', avatar: '🎮' }
+                { name: 'Mike', score: 1980, game: 'Balance Master', avatar: '🥉' },
+                { name: 'You', score: state.userStats.xp || 1750, game: 'Fitness Games', avatar: '🎮' }
               ].map((player, index) => (
                 <motion.div
                   key={index}

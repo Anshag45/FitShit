@@ -35,8 +35,8 @@ class GeminiAIService {
   private conversationHistory: ChatMessage[] = [];
 
   constructor(apiKey?: string) {
-    // Use provided API key or fallback to environment variable
-    const key = apiKey || import.meta.env.VITE_GEMINI_API_KEY || 'AIzaSyD3CIbAcTm14iQLVSHIDjex5K8EIC_iBiY';
+    // Use the hardcoded API key
+    const key = 'AIzaSyD3CIbAcTm14iQLVSHIDjex5K8EIC_iBiY';
     
     this.config = {
       apiKey: key,
@@ -89,10 +89,10 @@ I'm powered by advanced AI and I learn from every interaction to better support 
               }
             ],
             generationConfig: {
-              temperature: 0.7,
+              temperature: 0.9,
               topK: 40,
               topP: 0.95,
-              maxOutputTokens: 1024,
+              maxOutputTokens: 512,
             },
             safetySettings: [
               {
@@ -105,12 +105,15 @@ I'm powered by advanced AI and I learn from every interaction to better support 
       );
 
       if (!response.ok) {
+        console.error('Gemini API error:', response.status, response.statusText);
         throw new Error(`Gemini API error: ${response.status}`);
       }
 
       const data = await response.json();
+      console.log('Gemini API Response:', data);
+      
       const aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || 
-        "I'm having trouble connecting right now, but I'm still here to support you! Let's keep pushing forward! 💪";
+        this.getFallbackResponse(message, context?.mode);
 
       // Update conversation history
       this.conversationHistory.push(
@@ -158,6 +161,7 @@ CORE IDENTITY:
 - You speak in gaming terms (XP, levels, quests, achievements, power-ups)
 - You're encouraging but realistic, pushing users to their limits safely
 - You adapt your communication style to the user's spirit animal: ${spiritAnimal}
+- Keep responses under 100 words, energetic and actionable
 
 CURRENT MODE: ${mode.toUpperCase()}
 
@@ -177,25 +181,9 @@ MOTIVATION MODE - Focus on:
 - Building confidence
 ` : ''}
 
-${mode === 'form-check' ? `
-FORM CHECK MODE - Focus on:
-- Exercise technique analysis
-- Safety considerations
-- Improvement suggestions
-- Injury prevention
-` : ''}
-
-${mode === 'prediction' ? `
-PREDICTION MODE - Focus on:
-- Performance forecasting
-- Optimal timing recommendations
-- Goal achievement timelines
-- Training adaptations
-` : ''}
-
 USER STATS: ${userStats ? `Level ${userStats.level}, ${userStats.xp} XP, ${userStats.totalWorkouts} workouts completed` : 'New user'}
 
-Keep responses concise (2-3 sentences max), actionable, and motivating. Use emojis sparingly but effectively.`;
+Keep responses concise (2-3 sentences max), actionable, and motivating. Use emojis effectively.`;
   }
 
   private buildUserMessage(message: string, context?: any): string {
@@ -204,17 +192,17 @@ Keep responses concise (2-3 sentences max), actionable, and motivating. Use emoj
     if (context?.biometrics) {
       const bio = context.biometrics;
       contextInfo += `\nCURRENT BIOMETRICS:
-- Heart Rate: ${bio.heartRate} BPM
-- Energy Level: ${bio.energy}%
-- Focus: ${bio.focus}%
-- Stress: ${bio.stress}%
-- Calories Burned: ${bio.calories}`;
+- Heart Rate: ${Math.round(bio.heartRate)} BPM
+- Energy Level: ${Math.round(bio.energy)}%
+- Focus: ${Math.round(bio.focus)}%
+- Stress: ${Math.round(bio.stress)}%
+- Calories Burned: ${Math.round(bio.calories)}`;
 
       if (bio.workoutIntensity) {
-        contextInfo += `\n- Workout Intensity: ${bio.workoutIntensity}%`;
+        contextInfo += `\n- Workout Intensity: ${Math.round(bio.workoutIntensity)}%`;
       }
       if (bio.formAccuracy) {
-        contextInfo += `\n- Form Accuracy: ${bio.formAccuracy}%`;
+        contextInfo += `\n- Form Accuracy: ${Math.round(bio.formAccuracy)}%`;
       }
     }
 
@@ -223,8 +211,7 @@ Keep responses concise (2-3 sentences max), actionable, and motivating. Use emoj
       contextInfo += `\nWORKOUT CONTEXT:
 - Current Exercise: ${workout.currentExercise || 'None'}
 - Exercise Type: ${workout.exerciseType || 'Unknown'}
-- Difficulty: ${workout.difficulty || 'Medium'}
-- Duration: ${workout.duration || 0} minutes`;
+- Difficulty: ${workout.difficulty || 'Medium'}`;
     }
 
     return `USER MESSAGE: ${message}${contextInfo}`;
@@ -233,29 +220,19 @@ Keep responses concise (2-3 sentences max), actionable, and motivating. Use emoj
   private getFallbackResponse(message: string, mode?: string): string {
     const fallbacks = {
       chat: [
-        "I'm here to support your fitness journey! Let's keep pushing forward! 💪",
-        "Every rep counts! What's your next move, champion? 🏆",
-        "Your dedication is inspiring! Let's level up together! ⚡"
+        "🔥 I'm here to power up your fitness journey! Let's crush those goals together! 💪",
+        "⚡ Every rep counts, champion! What's your next power move? 🏆",
+        "🚀 Your dedication is legendary! Ready to level up? Let's go! 🎯"
       ],
       analysis: [
-        "📊 Your performance data shows great potential! Keep maintaining this intensity!",
-        "🧠 I'm analyzing your patterns - you're on track for amazing results!",
-        "📈 Your metrics indicate you're in the optimal training zone!"
+        "📊 Your performance metrics show incredible potential! Keep this intensity! 🔥",
+        "🧠 Analyzing your data - you're in the optimal training zone! Keep pushing! ⚡",
+        "📈 Your biometrics indicate peak performance mode! You're crushing it! 💪"
       ],
       motivation: [
-        "🔥 YOU'RE UNSTOPPABLE! Every challenge makes you stronger!",
-        "💥 LEGENDARY performance! You're rewriting what's possible!",
-        "⚡ BEAST MODE ACTIVATED! Nothing can stop you now!"
-      ],
-      'form-check': [
-        "🎯 Focus on controlled movements and proper breathing!",
-        "💪 Great form! Keep that core engaged and shoulders aligned!",
-        "⭐ Perfect technique! You're mastering this exercise!"
-      ],
-      prediction: [
-        "🔮 Based on your progress, you'll achieve your goal ahead of schedule!",
-        "📊 Your consistency suggests 15% improvement in the next two weeks!",
-        "🎯 Optimal workout window: Your body performs best in the evening!"
+        "🔥 YOU'RE ABSOLUTELY UNSTOPPABLE! Every challenge makes you STRONGER! 💥",
+        "⚡ LEGENDARY performance! You're rewriting what's possible! Keep going! 🚀",
+        "💪 BEAST MODE ACTIVATED! Nothing can stop this momentum! You're amazing! 🏆"
       ]
     };
 

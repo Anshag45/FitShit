@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { BarChart3, TrendingUp, Calendar, Target, Flame, Clock, Trophy, Zap } from 'lucide-react';
+import { BarChart3, TrendingUp, Calendar, Target, Flame, Clock, Trophy, Zap, ChevronLeft, ChevronRight } from 'lucide-react';
 import { InteractiveCard } from '../common/InteractiveCard';
 import { ProgressBar } from '../common/ProgressBar';
 import { useApp } from '../../contexts/AppContext';
@@ -8,6 +8,7 @@ import { useApp } from '../../contexts/AppContext';
 export function Analytics() {
   const { state } = useApp();
   const [timeRange, setTimeRange] = useState<'week' | 'month' | 'year'>('week');
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   const mockData = {
     week: {
@@ -70,6 +71,27 @@ export function Analytics() {
     { name: 'Streak Legend', progress: 65, target: 100 }
   ];
 
+  // Calendar functionality
+  const getDaysInMonth = (date: Date) => {
+    return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+  };
+
+  const getFirstDayOfMonth = (date: Date) => {
+    return new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+  };
+
+  const navigateMonth = (direction: 'prev' | 'next') => {
+    setSelectedDate(prev => {
+      const newDate = new Date(prev);
+      if (direction === 'prev') {
+        newDate.setMonth(prev.getMonth() - 1);
+      } else {
+        newDate.setMonth(prev.getMonth() + 1);
+      }
+      return newDate;
+    });
+  };
+
   const renderChart = (data: number[], label: string, color: string) => {
     const maxValue = Math.max(...data);
     
@@ -89,6 +111,54 @@ export function Analytics() {
             </div>
           ))}
         </div>
+      </div>
+    );
+  };
+
+  const renderCalendar = () => {
+    const daysInMonth = getDaysInMonth(selectedDate);
+    const firstDay = getFirstDayOfMonth(selectedDate);
+    const days = [];
+
+    // Empty cells for days before the first day of the month
+    for (let i = 0; i < firstDay; i++) {
+      days.push(<div key={`empty-${i}`} className="h-10" />);
+    }
+
+    // Days of the month
+    for (let day = 1; day <= daysInMonth; day++) {
+      const hasWorkout = Math.random() > 0.7; // Simulate workout days
+      const isToday = day === new Date().getDate() && 
+                     selectedDate.getMonth() === new Date().getMonth() &&
+                     selectedDate.getFullYear() === new Date().getFullYear();
+
+      days.push(
+        <motion.div
+          key={day}
+          className={`h-10 flex items-center justify-center text-sm font-light rounded-lg cursor-pointer transition-all ${
+            isToday ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' :
+            hasWorkout ? 'bg-green-500/20 text-green-400' :
+            'text-white/60 hover:bg-white/5'
+          }`}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          {day}
+          {hasWorkout && !isToday && (
+            <div className="absolute w-1 h-1 bg-green-400 rounded-full mt-6" />
+          )}
+        </motion.div>
+      );
+    }
+
+    return (
+      <div className="grid grid-cols-7 gap-2">
+        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+          <div key={day} className="h-8 flex items-center justify-center text-xs text-white/40 font-light">
+            {day}
+          </div>
+        ))}
+        {days}
       </div>
     );
   };
@@ -161,18 +231,55 @@ export function Analytics() {
           ))}
         </div>
 
-        {/* Charts */}
-        <div className="grid lg:grid-cols-3 gap-8 mb-12">
+        {/* Charts and Calendar */}
+        <div className="grid lg:grid-cols-2 gap-8 mb-12">
+          {/* Charts */}
+          <div className="space-y-8">
+            <InteractiveCard className="p-8 bg-white/[0.02] border-white/[0.05]" glowEffect>
+              {renderChart(currentData.workouts, 'Workouts Completed', 'from-white/20 to-white/10')}
+            </InteractiveCard>
+            
+            <InteractiveCard className="p-8 bg-white/[0.02] border-white/[0.05]" glowEffect>
+              {renderChart(currentData.calories, 'Calories Burned', 'from-white/20 to-white/10')}
+            </InteractiveCard>
+          </div>
+
+          {/* Calendar */}
           <InteractiveCard className="p-8 bg-white/[0.02] border-white/[0.05]" glowEffect>
-            {renderChart(currentData.workouts, 'Workouts Completed', 'from-white/20 to-white/10')}
-          </InteractiveCard>
-          
-          <InteractiveCard className="p-8 bg-white/[0.02] border-white/[0.05]" glowEffect>
-            {renderChart(currentData.calories, 'Calories Burned', 'from-white/20 to-white/10')}
-          </InteractiveCard>
-          
-          <InteractiveCard className="p-8 bg-white/[0.02] border-white/[0.05]" glowEffect>
-            {renderChart(currentData.duration, 'Workout Duration (min)', 'from-white/20 to-white/10')}
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-light text-white flex items-center">
+                <Calendar className="w-6 h-6 mr-3 text-cyan-400" />
+                Workout Calendar
+              </h3>
+              <div className="flex items-center space-x-4">
+                <button
+                  onClick={() => navigateMonth('prev')}
+                  className="p-2 text-white/60 hover:text-white transition-colors"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+                <span className="text-white font-light">
+                  {selectedDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                </span>
+                <button
+                  onClick={() => navigateMonth('next')}
+                  className="p-2 text-white/60 hover:text-white transition-colors"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+            {renderCalendar()}
+            <div className="flex items-center space-x-4 mt-4 text-xs text-white/60">
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 bg-green-500/20 rounded border border-green-500/30" />
+                <span>Workout Day</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 bg-cyan-500/20 rounded border border-cyan-500/30" />
+                <span>Today</span>
+              </div>
+            </div>
           </InteractiveCard>
         </div>
 
