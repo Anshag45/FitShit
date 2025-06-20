@@ -35,8 +35,12 @@ class GeminiAIService {
   private conversationHistory: ChatMessage[] = [];
 
   constructor(apiKey?: string) {
-    // Use the hardcoded API key
-    const key = 'AIzaSyD3CIbAcTm14iQLVSHIDjex5K8EIC_iBiY';
+    // Use the hardcoded API key from env
+    const key = import.meta.env.VITE_GEMINI_API_KEY || 'AIzaSyD3CIbAcTm14iQLVSHIDjex5K8EIC_iBiY';
+    
+    if (!key) {
+      throw new Error('Gemini API key not found');
+    }
     
     this.config = {
       apiKey: key,
@@ -74,6 +78,44 @@ I'm powered by advanced AI and I learn from every interaction to better support 
       const systemPrompt = this.buildSystemPrompt(context);
       const userMessage = this.buildUserMessage(message, context);
 
+      const requestBody = {
+        contents: [
+          {
+            role: 'user',
+            parts: [{ text: systemPrompt + '\n\n' + userMessage }]
+          }
+        ],
+        generationConfig: {
+          temperature: 0.9,
+          topK: 40,
+          topP: 0.95,
+          maxOutputTokens: 512,
+        },
+        safetySettings: [
+          {
+            category: 'HARM_CATEGORY_HARASSMENT',
+            threshold: 'BLOCK_MEDIUM_AND_ABOVE'
+          },
+          {
+            category: 'HARM_CATEGORY_HATE_SPEECH',
+            threshold: 'BLOCK_MEDIUM_AND_ABOVE'
+          },
+          {
+            category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
+            threshold: 'BLOCK_MEDIUM_AND_ABOVE'
+          },
+          {
+            category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
+            threshold: 'BLOCK_MEDIUM_AND_ABOVE'
+          }
+        ]
+      };
+
+      console.log('Sending request to Gemini API:', {
+        url: `${this.baseUrl}/${this.config.model}:generateContent?key=${this.config.apiKey.substring(0, 10)}...`,
+        body: requestBody
+      });
+
       const response = await fetch(
         `${this.baseUrl}/${this.config.model}:generateContent?key=${this.config.apiKey}`,
         {
@@ -81,39 +123,33 @@ I'm powered by advanced AI and I learn from every interaction to better support 
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            contents: [
-              {
-                role: 'user',
-                parts: [{ text: systemPrompt + '\n\n' + userMessage }]
-              }
-            ],
-            generationConfig: {
-              temperature: 0.9,
-              topK: 40,
-              topP: 0.95,
-              maxOutputTokens: 512,
-            },
-            safetySettings: [
-              {
-                category: 'HARM_CATEGORY_HARASSMENT',
-                threshold: 'BLOCK_MEDIUM_AND_ABOVE'
-              }
-            ]
-          })
+          body: JSON.stringify(requestBody)
         }
       );
 
+      console.log('Gemini API Response Status:', response.status);
+
       if (!response.ok) {
-        console.error('Gemini API error:', response.status, response.statusText);
-        throw new Error(`Gemini API error: ${response.status}`);
+        const errorText = await response.text();
+        console.error('Gemini API error:', response.status, response.statusText, errorText);
+        throw new Error(`Gemini API error: ${response.status} - ${errorText}`);
       }
 
       const data = await response.json();
-      console.log('Gemini API Response:', data);
+      console.log('Gemini API Response Data:', data);
       
-      const aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || 
-        this.getFallbackResponse(message, context?.mode);
+      if (!data.candidates || data.candidates.length === 0) {
+        console.error('No candidates in response:', data);
+        throw new Error('No response candidates from Gemini API');
+      }
+
+      const candidate = data.candidates[0];
+      if (!candidate.content || !candidate.content.parts || candidate.content.parts.length === 0) {
+        console.error('Invalid candidate structure:', candidate);
+        throw new Error('Invalid response structure from Gemini API');
+      }
+
+      const aiResponse = candidate.content.parts[0].text || this.getFallbackResponse(message, context?.mode);
 
       // Update conversation history
       this.conversationHistory.push(

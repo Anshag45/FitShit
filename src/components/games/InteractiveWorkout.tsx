@@ -35,9 +35,10 @@ export function InteractiveWorkout({ exercise, onComplete, onSkip }: Interactive
 
   useEffect(() => {
     // Initialize AI service if available
-    const apiKey = localStorage.getItem('gemini_api_key');
-    if (apiKey) {
-      setAiService(new GeminiAIService(apiKey));
+    try {
+      setAiService(new GeminiAIService());
+    } catch (error) {
+      console.log('AI service not available, using fallback motivation');
     }
   }, []);
 
@@ -56,11 +57,16 @@ export function InteractiveWorkout({ exercise, onComplete, onSkip }: Interactive
       const targetSpawner = setInterval(() => {
         const newTarget = {
           id: Date.now(),
-          x: Math.random() * 80 + 10,
-          y: Math.random() * 60 + 20,
+          x: Math.random() * 70 + 15,
+          y: Math.random() * 50 + 25,
           hit: false
         };
         setTargets(prev => [...prev.slice(-3), newTarget]);
+        
+        // Auto-remove targets after 4 seconds
+        setTimeout(() => {
+          setTargets(prev => prev.filter(t => t.id !== newTarget.id));
+        }, 4000);
       }, 2000);
 
       const heartRateSimulator = setInterval(() => {
@@ -84,6 +90,11 @@ export function InteractiveWorkout({ exercise, onComplete, onSkip }: Interactive
             setTimeout(() => setShowMotivation(false), 3000);
           } catch (error) {
             console.error('AI motivation error:', error);
+            // Use fallback motivation
+            const fallbackMotivation = motivationalPhrases[Math.floor(Math.random() * motivationalPhrases.length)];
+            setAiMotivation(fallbackMotivation);
+            setShowMotivation(true);
+            setTimeout(() => setShowMotivation(false), 2000);
           }
         }
       }, 30000);
@@ -122,7 +133,11 @@ export function InteractiveWorkout({ exercise, onComplete, onSkip }: Interactive
         setAiMotivation(feedback);
       } catch (error) {
         console.error('AI feedback error:', error);
+        setAiMotivation(`🔥 ${combo} COMBO! You're on fire! Keep it going! 💪`);
       }
+    } else {
+      // Use fallback motivation
+      setAiMotivation(motivationalPhrases[Math.floor(Math.random() * motivationalPhrases.length)]);
     }
     
     // Show motivation
@@ -156,6 +171,9 @@ export function InteractiveWorkout({ exercise, onComplete, onSkip }: Interactive
         setTimeout(() => setShowMotivation(false), 3000);
       } catch (error) {
         console.error('AI start motivation error:', error);
+        setAiMotivation("🚀 Let's crush this workout! You've got this, champion! 💪");
+        setShowMotivation(true);
+        setTimeout(() => setShowMotivation(false), 2000);
       }
     }
   };

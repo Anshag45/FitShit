@@ -13,6 +13,7 @@ function SquatCounter({ onComplete }: { onComplete: (score: number) => void }) {
   const [count, setCount] = useState(0);
   const [timeLeft, setTimeLeft] = useState(60);
   const [isActive, setIsActive] = useState(false);
+  const [gameStarted, setGameStarted] = useState(false);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -20,17 +21,24 @@ function SquatCounter({ onComplete }: { onComplete: (score: number) => void }) {
       interval = setInterval(() => {
         setTimeLeft(prev => prev - 1);
       }, 1000);
-    } else if (timeLeft === 0) {
+    } else if (timeLeft === 0 && gameStarted) {
       setIsActive(false);
       onComplete(count * 10);
     }
     return () => clearInterval(interval);
-  }, [isActive, timeLeft, count, onComplete]);
+  }, [isActive, timeLeft, count, onComplete, gameStarted]);
 
   const handleSquat = () => {
     if (isActive) {
       setCount(prev => prev + 1);
     }
+  };
+
+  const startGame = () => {
+    setIsActive(true);
+    setGameStarted(true);
+    setCount(0);
+    setTimeLeft(60);
   };
 
   return (
@@ -54,8 +62,8 @@ function SquatCounter({ onComplete }: { onComplete: (score: number) => void }) {
         </div>
 
         <div className="space-y-4">
-          {!isActive && timeLeft > 0 && (
-            <Button onClick={() => setIsActive(true)} variant="primary" size="lg" className="w-full">
+          {!gameStarted && (
+            <Button onClick={startGame} variant="primary" size="lg" className="w-full">
               Start Challenge
             </Button>
           )}
@@ -66,10 +74,13 @@ function SquatCounter({ onComplete }: { onComplete: (score: number) => void }) {
             </Button>
           )}
 
-          {timeLeft === 0 && (
+          {timeLeft === 0 && gameStarted && (
             <div className="text-center">
               <div className="text-green-400 font-light mb-4">Challenge Complete!</div>
               <div className="text-white/80 font-light">Score: {count * 10} points</div>
+              <Button onClick={() => onComplete(count * 10)} variant="primary" className="mt-4">
+                Continue
+              </Button>
             </div>
           )}
         </div>
@@ -82,6 +93,7 @@ function PunchingGame({ onComplete }: { onComplete: (score: number) => void }) {
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(30);
   const [isActive, setIsActive] = useState(false);
+  const [gameStarted, setGameStarted] = useState(false);
   const [targets, setTargets] = useState<Array<{ id: number; x: number; y: number }>>([]);
 
   useEffect(() => {
@@ -90,22 +102,27 @@ function PunchingGame({ onComplete }: { onComplete: (score: number) => void }) {
       interval = setInterval(() => {
         setTimeLeft(prev => prev - 1);
       }, 1000);
-    } else if (timeLeft === 0) {
+    } else if (timeLeft === 0 && gameStarted) {
       setIsActive(false);
       onComplete(score);
     }
     return () => clearInterval(interval);
-  }, [isActive, timeLeft, score, onComplete]);
+  }, [isActive, timeLeft, score, onComplete, gameStarted]);
 
   useEffect(() => {
     if (isActive) {
       const targetInterval = setInterval(() => {
         const newTarget = {
           id: Date.now(),
-          x: Math.random() * 80 + 10,
-          y: Math.random() * 60 + 20
+          x: Math.random() * 70 + 15,
+          y: Math.random() * 50 + 25
         };
         setTargets(prev => [...prev.slice(-2), newTarget]);
+        
+        // Auto-remove targets after 3 seconds
+        setTimeout(() => {
+          setTargets(prev => prev.filter(t => t.id !== newTarget.id));
+        }, 3000);
       }, 1500);
 
       return () => clearInterval(targetInterval);
@@ -117,6 +134,14 @@ function PunchingGame({ onComplete }: { onComplete: (score: number) => void }) {
     setScore(prev => prev + 50);
   };
 
+  const startGame = () => {
+    setIsActive(true);
+    setGameStarted(true);
+    setScore(0);
+    setTimeLeft(30);
+    setTargets([]);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-900 to-orange-900 relative overflow-hidden">
       <div className="absolute top-4 left-4 right-4 z-20">
@@ -126,31 +151,36 @@ function PunchingGame({ onComplete }: { onComplete: (score: number) => void }) {
         </div>
       </div>
 
-      {targets.map(target => (
-        <motion.button
-          key={target.id}
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          exit={{ scale: 0 }}
-          className="absolute w-16 h-16 bg-red-500 rounded-full flex items-center justify-center text-2xl"
-          style={{ left: `${target.x}%`, top: `${target.y}%` }}
-          onClick={() => hitTarget(target.id)}
-        >
-          🎯
-        </motion.button>
-      ))}
+      <AnimatePresence>
+        {targets.map(target => (
+          <motion.button
+            key={target.id}
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            exit={{ scale: 0 }}
+            className="absolute w-16 h-16 bg-red-500 rounded-full flex items-center justify-center text-2xl hover:bg-red-400 transition-colors"
+            style={{ left: `${target.x}%`, top: `${target.y}%` }}
+            onClick={() => hitTarget(target.id)}
+          >
+            🎯
+          </motion.button>
+        ))}
+      </AnimatePresence>
 
       <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-20">
         <InteractiveCard className="p-4 bg-black/50">
-          {!isActive && timeLeft > 0 && (
-            <Button onClick={() => setIsActive(true)} variant="primary">
+          {!gameStarted && (
+            <Button onClick={startGame} variant="primary">
               Start Punching!
             </Button>
           )}
-          {timeLeft === 0 && (
+          {timeLeft === 0 && gameStarted && (
             <div className="text-center text-white">
               <div>Game Over!</div>
               <div>Final Score: {score}</div>
+              <Button onClick={() => onComplete(score)} variant="primary" className="mt-2">
+                Continue
+              </Button>
             </div>
           )}
         </InteractiveCard>
@@ -164,6 +194,7 @@ function BalanceGame({ onComplete }: { onComplete: (score: number) => void }) {
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(45);
   const [isActive, setIsActive] = useState(false);
+  const [gameStarted, setGameStarted] = useState(false);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -172,7 +203,7 @@ function BalanceGame({ onComplete }: { onComplete: (score: number) => void }) {
         setTimeLeft(prev => prev - 1);
         // Random balance changes
         setBalance(prev => {
-          const change = (Math.random() - 0.5) * 10;
+          const change = (Math.random() - 0.5) * 8;
           const newBalance = Math.max(0, Math.min(100, prev + change));
           if (newBalance > 40 && newBalance < 60) {
             setScore(s => s + 5);
@@ -180,20 +211,28 @@ function BalanceGame({ onComplete }: { onComplete: (score: number) => void }) {
           return newBalance;
         });
       }, 1000);
-    } else if (timeLeft === 0) {
+    } else if (timeLeft === 0 && gameStarted) {
       setIsActive(false);
       onComplete(score);
     }
     return () => clearInterval(interval);
-  }, [isActive, timeLeft, score, onComplete]);
+  }, [isActive, timeLeft, score, onComplete, gameStarted]);
 
   const adjustBalance = (direction: 'left' | 'right') => {
     if (isActive) {
       setBalance(prev => {
-        const adjustment = direction === 'left' ? -5 : 5;
+        const adjustment = direction === 'left' ? -8 : 8;
         return Math.max(0, Math.min(100, prev + adjustment));
       });
     }
+  };
+
+  const startGame = () => {
+    setIsActive(true);
+    setGameStarted(true);
+    setScore(0);
+    setTimeLeft(45);
+    setBalance(50);
   };
 
   return (
@@ -219,8 +258,8 @@ function BalanceGame({ onComplete }: { onComplete: (score: number) => void }) {
         </div>
 
         <div className="space-y-4">
-          {!isActive && timeLeft > 0 && (
-            <Button onClick={() => setIsActive(true)} variant="primary" size="lg" className="w-full">
+          {!gameStarted && (
+            <Button onClick={startGame} variant="primary" size="lg" className="w-full">
               Start Balance Challenge
             </Button>
           )}
@@ -236,10 +275,13 @@ function BalanceGame({ onComplete }: { onComplete: (score: number) => void }) {
             </div>
           )}
 
-          {timeLeft === 0 && (
+          {timeLeft === 0 && gameStarted && (
             <div className="text-center">
               <div className="text-green-400 font-light mb-4">Challenge Complete!</div>
               <div className="text-white/80 font-light">Final Score: {score} points</div>
+              <Button onClick={() => onComplete(score)} variant="primary" className="mt-4">
+                Continue
+              </Button>
             </div>
           )}
         </div>
@@ -406,11 +448,7 @@ export function FitnessGames() {
   const handleStartGame = (gameId: string) => {
     const game = soloGames.find(g => g.id === gameId);
     if (game) {
-      if (game.type === 'interactive' && game.exerciseId) {
-        setSelectedGame(gameId);
-      } else if (game.type === 'simple') {
-        setSelectedGame(gameId);
-      }
+      setSelectedGame(gameId);
     }
   };
 

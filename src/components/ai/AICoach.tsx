@@ -18,6 +18,7 @@ export function AICoach({ isVisible, onClose }: AICoachProps) {
   const [isListening, setIsListening] = useState(false);
   const [coachMode, setCoachMode] = useState<'chat' | 'analysis' | 'motivation'>('chat');
   const [aiService, setAiService] = useState<GeminiAIService | null>(null);
+  const [isConnected, setIsConnected] = useState(false);
 
   const aiPersonalities = {
     cheetah: {
@@ -50,21 +51,32 @@ export function AICoach({ isVisible, onClose }: AICoachProps) {
 
   useEffect(() => {
     if (isVisible) {
-      // Initialize AI service
-      const service = new GeminiAIService();
-      setAiService(service);
-      
-      // Add welcome message
-      setMessages([{
-        type: 'ai',
-        content: `🚀 AI Coach ${currentCoach.name} is now online! I'm powered by advanced AI and ready to help you dominate your fitness journey. What would you like to work on today?`,
-        timestamp: new Date()
-      }]);
+      // Initialize AI service with the hardcoded API key
+      try {
+        const service = new GeminiAIService();
+        setAiService(service);
+        setIsConnected(true);
+        
+        // Add welcome message
+        setMessages([{
+          type: 'ai',
+          content: `🚀 AI Coach ${currentCoach.name} is now online! I'm powered by advanced AI and ready to help you dominate your fitness journey. What would you like to work on today?`,
+          timestamp: new Date()
+        }]);
+      } catch (error) {
+        console.error('Failed to initialize AI service:', error);
+        setIsConnected(false);
+        setMessages([{
+          type: 'ai',
+          content: `⚠️ AI Coach is currently offline, but I'm still here to support you! Try asking me about workouts, motivation, or fitness tips!`,
+          timestamp: new Date()
+        }]);
+      }
     }
   }, [isVisible, currentCoach.name]);
 
   const handleSendMessage = async () => {
-    if (!userInput.trim() || !aiService || isLoading) return;
+    if (!userInput.trim() || isLoading) return;
 
     const userMessage = {
       type: 'user' as const,
@@ -78,33 +90,40 @@ export function AICoach({ isVisible, onClose }: AICoachProps) {
     setIsLoading(true);
 
     try {
-      const context = {
-        biometrics: {
-          heartRate: 75 + Math.random() * 20,
-          calories: Math.random() * 100,
-          steps: Math.random() * 1000,
-          stress: Math.random() * 50,
-          energy: 70 + Math.random() * 30,
-          focus: 60 + Math.random() * 40,
-          workoutIntensity: state.isWorkoutActive ? 60 + Math.random() * 40 : undefined,
-          formAccuracy: state.isWorkoutActive ? 80 + Math.random() * 20 : undefined
-        },
-        workout: {
-          currentExercise: state.currentWorkout?.exercises[state.currentExerciseIndex]?.name,
-          exerciseType: state.currentWorkout?.exercises[state.currentExerciseIndex]?.skillType,
-          duration: state.currentWorkout?.duration,
-          difficulty: state.currentWorkout?.difficulty,
-          userFitnessLevel: state.user?.fitnessLevel,
-          goals: state.user?.goals,
-          spiritAnimal: state.user?.spiritAnimal
-        },
-        userStats: state.userStats,
-        mode: coachMode
-      };
+      let aiResponse = '';
+      
+      if (aiService && isConnected) {
+        const context = {
+          biometrics: {
+            heartRate: 75 + Math.random() * 20,
+            calories: Math.random() * 100,
+            steps: Math.random() * 1000,
+            stress: Math.random() * 50,
+            energy: 70 + Math.random() * 30,
+            focus: 60 + Math.random() * 40,
+            workoutIntensity: state.isWorkoutActive ? 60 + Math.random() * 40 : undefined,
+            formAccuracy: state.isWorkoutActive ? 80 + Math.random() * 20 : undefined
+          },
+          workout: {
+            currentExercise: state.currentWorkout?.exercises[state.currentExerciseIndex]?.name,
+            exerciseType: state.currentWorkout?.exercises[state.currentExerciseIndex]?.skillType,
+            duration: state.currentWorkout?.duration,
+            difficulty: state.currentWorkout?.difficulty,
+            userFitnessLevel: state.user?.fitnessLevel,
+            goals: state.user?.goals,
+            spiritAnimal: state.user?.spiritAnimal
+          },
+          userStats: state.userStats,
+          mode: coachMode
+        };
 
-      console.log('Sending message to AI:', currentInput, context);
-      const aiResponse = await aiService.sendMessage(currentInput, context);
-      console.log('AI Response received:', aiResponse);
+        console.log('Sending message to AI:', currentInput, context);
+        aiResponse = await aiService.sendMessage(currentInput, context);
+        console.log('AI Response received:', aiResponse);
+      } else {
+        // Fallback responses when AI is not connected
+        aiResponse = getFallbackResponse(currentInput, coachMode);
+      }
 
       const aiMessage = {
         type: 'ai' as const,
@@ -117,13 +136,56 @@ export function AICoach({ isVisible, onClose }: AICoachProps) {
       console.error('AI response error:', error);
       const errorMessage = {
         type: 'ai' as const,
-        content: "🔥 I'm having trouble connecting right now, but I'm still here to support you! Let's keep pushing forward! 💪",
+        content: getFallbackResponse(currentInput, coachMode),
         timestamp: new Date()
       };
       setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const getFallbackResponse = (input: string, mode: string): string => {
+    const lowerInput = input.toLowerCase();
+    
+    // Context-aware responses
+    if (lowerInput.includes('workout') || lowerInput.includes('exercise')) {
+      return "🔥 Let's crush this workout! Remember to focus on proper form and push yourself safely. You've got this, champion! 💪";
+    }
+    
+    if (lowerInput.includes('motivation') || lowerInput.includes('tired')) {
+      return "⚡ Every rep makes you STRONGER! Every challenge is just another step toward your legendary transformation! Keep going! 🚀";
+    }
+    
+    if (lowerInput.includes('diet') || lowerInput.includes('nutrition')) {
+      return "🥗 Fuel your body like the champion you are! Focus on whole foods, stay hydrated, and remember - abs are made in the kitchen! 💪";
+    }
+    
+    if (lowerInput.includes('progress') || lowerInput.includes('results')) {
+      return "📈 Progress isn't always visible day-to-day, but every workout is building your strength! Trust the process and celebrate small wins! 🏆";
+    }
+
+    // Mode-specific fallbacks
+    const fallbacks = {
+      chat: [
+        "🔥 I'm here to power up your fitness journey! Let's crush those goals together! 💪",
+        "⚡ Every rep counts, champion! What's your next power move? 🏆",
+        "🚀 Your dedication is legendary! Ready to level up? Let's go! 🎯"
+      ],
+      analysis: [
+        "📊 Your performance metrics show incredible potential! Keep this intensity! 🔥",
+        "🧠 Based on your data, you're in the optimal training zone! Keep pushing! ⚡",
+        "📈 Your biometrics indicate peak performance mode! You're crushing it! 💪"
+      ],
+      motivation: [
+        "🔥 YOU'RE ABSOLUTELY UNSTOPPABLE! Every challenge makes you STRONGER! 💥",
+        "⚡ LEGENDARY performance! You're rewriting what's possible! Keep going! 🚀",
+        "💪 BEAST MODE ACTIVATED! Nothing can stop this momentum! You're amazing! 🏆"
+      ]
+    };
+
+    const responses = fallbacks[mode as keyof typeof fallbacks] || fallbacks.chat;
+    return responses[Math.floor(Math.random() * responses.length)];
   };
 
   const handleVoiceInput = () => {
@@ -155,8 +217,6 @@ export function AICoach({ isVisible, onClose }: AICoachProps) {
   };
 
   const handleQuickAction = async (action: string) => {
-    if (!aiService) return;
-
     const quickActions = {
       'analyze': 'Analyze my current performance and biometrics',
       'motivate': 'Give me high-energy motivation for my workout!',
@@ -199,17 +259,23 @@ export function AICoach({ isVisible, onClose }: AICoachProps) {
             >
               {currentCoach.avatar}
               <motion.div
-                className="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-gray-900"
+                className={`absolute -top-1 -right-1 w-4 h-4 rounded-full border-2 border-gray-900 ${
+                  isConnected ? 'bg-green-400' : 'bg-yellow-400'
+                }`}
                 animate={{ scale: [1, 1.2, 1] }}
                 transition={{ duration: 1, repeat: Infinity }}
               />
             </motion.div>
             <div>
               <h3 className="font-bold text-white">{currentCoach.name}</h3>
-              <p className="text-xs text-gray-400">AI Coach • Powered by Gemini</p>
+              <p className="text-xs text-gray-400">
+                AI Coach • {isConnected ? 'Connected' : 'Offline Mode'}
+              </p>
               <div className="flex items-center space-x-1 mt-1">
                 <Brain className="w-3 h-3 text-cyan-400" />
-                <span className="text-xs text-cyan-400">Neural Mode Active</span>
+                <span className="text-xs text-cyan-400">
+                  {isConnected ? 'Neural Mode Active' : 'Local Mode'}
+                </span>
               </div>
             </div>
           </div>
