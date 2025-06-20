@@ -206,11 +206,17 @@ function Dashboard() {
           </div>
         );
       case 'games':
-        return <FitnessGames />;
-      default:
         return (
           <div className="min-h-screen bg-black relative overflow-hidden">
             <FloatingLogo />
+            <div className="relative z-10">
+              <FitnessGames />
+            </div>
+          </div>
+        );
+      default:
+        return (
+          <div className="min-h-screen bg-black relative overflow-hidden">
             <div className="relative z-10">
               <Header />
               <div className="p-4">
@@ -258,9 +264,7 @@ function AppContent() {
 function App() {
   return (
     <AppProvider>
-      <div style={{ cursor: 'none' }}>
-        <CursorTrail />
-        <InteractiveCursor />
+      <div>
         <AppContent />
       </div>
     </AppProvider>
