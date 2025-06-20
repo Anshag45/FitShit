@@ -243,7 +243,7 @@ export function Welcome({ onNext }: WelcomeProps) {
                   >
                     <Shield className="w-6 h-6 text-green-400" />
                     <span className="text-lg">Free to start • No credit card required</span>
-                  </div>
+                  </motion.div>
                   <div className="flex items-center gap-6 text-white/50 text-base">
                     <div className="flex items-center gap-2">
                       <Play className="w-5 h-5" />
