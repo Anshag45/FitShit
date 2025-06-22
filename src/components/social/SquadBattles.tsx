@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Users, Sword, Trophy, Flame, Target, Crown, Plus, Play, MessageCircle, Share2, Zap } from 'lucide-react';
+import { Users, Sword, Trophy, Flame, Target, Crown, Plus, Play, MessageCircle, Share2, Zap, Send } from 'lucide-react';
 import { Button } from '../common/Button';
 import { InteractiveCard } from '../common/InteractiveCard';
 import { ProgressBar } from '../common/ProgressBar';
@@ -9,6 +9,13 @@ import { useApp } from '../../contexts/AppContext';
 export function SquadBattles() {
   const { state, dispatch } = useApp();
   const [activeTab, setActiveTab] = useState<'battles' | 'squad' | 'leaderboard' | 'tournaments'>('battles');
+  const [chatMessage, setChatMessage] = useState('');
+  const [chatMessages, setChatMessages] = useState([
+    { id: 1, user: 'Alex', avatar: '👨‍💻', message: 'Great workout today team! 💪', time: '2 minutes ago' },
+    { id: 2, user: 'Sarah', avatar: '👩‍💻', message: 'Let\'s crush tomorrow\'s challenge!', time: '5 minutes ago' },
+    { id: 3, user: 'Mike', avatar: '🧑‍💻', message: 'Just hit a new PR! 🔥', time: '10 minutes ago' },
+    { id: 4, user: 'Emma', avatar: '👩‍💻', message: 'Squad goals! We\'re unstoppable! ⚡', time: '15 minutes ago' }
+  ]);
 
   const mockSquads = [
     {
@@ -20,7 +27,9 @@ export function SquadBattles() {
       isUserSquad: true,
       avatar: '⚡',
       winStreak: 7,
-      trophies: 2340
+      trophies: 2340,
+      weeklyCalories: 3200,
+      change: '+15%'
     },
     {
       id: '2',
@@ -31,7 +40,9 @@ export function SquadBattles() {
       isUserSquad: false,
       avatar: '🌟',
       winStreak: 3,
-      trophies: 2100
+      trophies: 2100,
+      weeklyCalories: 2800,
+      change: '+8%'
     },
     {
       id: '3',
@@ -42,7 +53,35 @@ export function SquadBattles() {
       isUserSquad: false,
       avatar: '🚀',
       winStreak: 5,
-      trophies: 1980
+      trophies: 1980,
+      weeklyCalories: 2700,
+      change: '+12%'
+    },
+    {
+      id: '4',
+      name: 'Quantum Crushers',
+      members: 3,
+      totalCalories: 9500,
+      rank: 4,
+      isUserSquad: false,
+      avatar: '💎',
+      winStreak: 2,
+      trophies: 1750,
+      weeklyCalories: 2380,
+      change: '+5%'
+    },
+    {
+      id: '5',
+      name: 'Stellar Force',
+      members: 7,
+      totalCalories: 8900,
+      rank: 5,
+      isUserSquad: false,
+      avatar: '🌌',
+      winStreak: 4,
+      trophies: 1650,
+      weeklyCalories: 2100,
+      change: '+3%'
     }
   ];
 
@@ -114,11 +153,11 @@ export function SquadBattles() {
   ];
 
   const mockMembers = [
-    { name: 'Alex', level: 15, calories: 3200, isOnline: true, avatar: '👨‍💻', contribution: 28, streak: 12 },
-    { name: 'Sarah', level: 12, calories: 2800, isOnline: true, avatar: '👩‍💻', contribution: 24, streak: 8 },
-    { name: 'Mike', level: 18, calories: 3450, isOnline: false, avatar: '🧑‍💻', contribution: 30, streak: 15 },
-    { name: 'Emma', level: 14, calories: 2900, isOnline: true, avatar: '👩‍💻', contribution: 25, streak: 10 },
-    { name: 'You', level: state.userStats.level, calories: 2100, isOnline: true, avatar: '🎮', contribution: 18, streak: state.userStats.streak }
+    { name: 'Alex', level: 15, calories: 3200, isOnline: true, avatar: '👨‍💻', contribution: 28, streak: 12, status: 'Working out' },
+    { name: 'Sarah', level: 12, calories: 2800, isOnline: true, avatar: '👩‍💻', contribution: 24, streak: 8, status: 'Online' },
+    { name: 'Mike', level: 18, calories: 3450, isOnline: false, avatar: '🧑‍💻', contribution: 30, streak: 15, status: 'Offline' },
+    { name: 'Emma', level: 14, calories: 2900, isOnline: true, avatar: '👩‍💻', contribution: 25, streak: 10, status: 'In game' },
+    { name: 'You', level: state.userStats.level, calories: 2100, isOnline: true, avatar: '🎮', contribution: 18, streak: state.userStats.streak, status: 'Online' }
   ];
 
   const handleJoinBattle = (battleId: string) => {
@@ -128,6 +167,30 @@ export function SquadBattles() {
       dispatch({ type: 'UPDATE_STATS', payload: {
         xp: state.userStats.xp + 50,
         coins: state.userStats.coins + 25
+      }});
+    }
+  };
+
+  const handleSendMessage = () => {
+    if (chatMessage.trim()) {
+      const newMessage = {
+        id: chatMessages.length + 1,
+        user: 'You',
+        avatar: '🎮',
+        message: chatMessage,
+        time: 'Just now'
+      };
+      setChatMessages([newMessage, ...chatMessages]);
+      setChatMessage('');
+    }
+  };
+
+  const handleJoinTournament = (tournamentId: string) => {
+    const tournament = tournaments.find(t => t.id === tournamentId);
+    if (tournament) {
+      dispatch({ type: 'UPDATE_STATS', payload: {
+        xp: state.userStats.xp + 100,
+        coins: state.userStats.coins - parseInt(tournament.entryFee.split(' ')[0])
       }});
     }
   };
@@ -193,14 +256,12 @@ export function SquadBattles() {
                     <span className="text-white/80 font-light">Squad Progress</span>
                     <span className="text-white/60 font-light">{battle.progress}%</span>
                   </div>
-                  <div className="w-full bg-white/[0.05] rounded-full h-3 overflow-hidden">
-                    <motion.div
-                      className="h-full bg-gradient-to-r from-cyan-400 to-purple-500 transition-all duration-500"
-                      initial={{ width: 0 }}
-                      animate={{ width: `${battle.progress}%` }}
-                      transition={{ duration: 1, ease: "easeOut" }}
-                    />
-                  </div>
+                  <ProgressBar
+                    progress={battle.progress}
+                    color="cosmic"
+                    animated
+                    glowEffect
+                  />
                 </div>
               </div>
               
@@ -270,40 +331,62 @@ export function SquadBattles() {
           </div>
         </div>
 
-        {/* Squad Chat */}
-        <div className="bg-white/[0.02] border border-white/10 rounded-xl p-4 mb-6">
+        {/* Enhanced Squad Chat */}
+        <div className="bg-white/[0.02] border border-white/10 rounded-xl p-6 mb-6">
           <h4 className="text-white font-light mb-4 flex items-center">
             <MessageCircle className="w-5 h-5 mr-2 text-cyan-400" />
             Squad Chat
+            <span className="ml-2 px-2 py-1 bg-green-500/20 text-green-400 text-xs rounded-full">
+              {mockMembers.filter(m => m.isOnline).length} online
+            </span>
           </h4>
-          <div className="space-y-3 mb-4">
-            <div className="flex items-start space-x-3">
-              <div className="text-sm">👨‍💻</div>
-              <div>
-                <div className="text-white/80 text-sm font-light">Alex: Great workout today team! 💪</div>
-                <div className="text-white/40 text-xs font-light">2 minutes ago</div>
-              </div>
-            </div>
-            <div className="flex items-start space-x-3">
-              <div className="text-sm">👩‍💻</div>
-              <div>
-                <div className="text-white/80 text-sm font-light">Sarah: Let's crush tomorrow's challenge!</div>
-                <div className="text-white/40 text-xs font-light">5 minutes ago</div>
-              </div>
-            </div>
+          
+          <div className="max-h-48 overflow-y-auto mb-4 space-y-3">
+            {chatMessages.map((msg) => (
+              <motion.div
+                key={msg.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="flex items-start space-x-3 p-3 bg-white/[0.02] rounded-lg hover:bg-white/[0.05] transition-colors"
+              >
+                <div className="text-lg">{msg.avatar}</div>
+                <div className="flex-1">
+                  <div className="flex items-center space-x-2 mb-1">
+                    <span className="text-white/80 text-sm font-medium">{msg.user}</span>
+                    <span className="text-white/40 text-xs">{msg.time}</span>
+                  </div>
+                  <div className="text-white/70 text-sm">{msg.message}</div>
+                </div>
+              </motion.div>
+            ))}
           </div>
+          
           <div className="flex space-x-2">
             <input
               type="text"
+              value={chatMessage}
+              onChange={(e) => setChatMessage(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
               placeholder="Type a message..."
-              className="flex-1 px-3 py-2 bg-white/[0.02] border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-cyan-500/50"
+              className="flex-1 px-4 py-2 bg-white/[0.02] border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-cyan-500/50 placeholder-white/40"
             />
-            <Button variant="outline" size="sm">Send</Button>
+            <Button 
+              onClick={handleSendMessage}
+              variant="primary" 
+              size="sm"
+              className="flex items-center space-x-2"
+              disabled={!chatMessage.trim()}
+            >
+              <Send className="w-4 h-4" />
+              <span>Send</span>
+            </Button>
           </div>
         </div>
       </InteractiveCard>
 
+      {/* Enhanced Squad Members */}
       <div className="space-y-4">
+        <h4 className="text-xl font-light text-white mb-4">Squad Members</h4>
         {mockMembers.map((member, index) => (
           <motion.div
             key={index}
@@ -330,6 +413,14 @@ export function SquadBattles() {
                         🔥 {member.streak} streak
                       </span>
                     )}
+                    <span className={`text-xs px-2 py-1 rounded-full font-light ${
+                      member.status === 'Working out' ? 'bg-red-500/20 text-red-400' :
+                      member.status === 'In game' ? 'bg-purple-500/20 text-purple-400' :
+                      member.status === 'Online' ? 'bg-green-500/20 text-green-400' :
+                      'bg-gray-500/20 text-gray-400'
+                    }`}>
+                      {member.status}
+                    </span>
                   </div>
                   <div className="text-sm text-white/60 font-light">
                     {member.calories} calories • {member.contribution}% contribution
@@ -412,6 +503,7 @@ export function SquadBattles() {
                 </div>
                 <div className="text-white font-light text-lg mb-4">{tournament.startTime}</div>
                 <Button
+                  onClick={() => handleJoinTournament(tournament.id)}
                   variant={tournament.status === 'live' ? 'primary' : 'outline'}
                   className="flex items-center space-x-2 font-light"
                 >
@@ -432,10 +524,32 @@ export function SquadBattles() {
   const renderLeaderboard = () => (
     <div className="space-y-6">
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-light text-white mb-3">Squad Leaderboard</h2>
+        <h2 className="text-3xl font-light text-white mb-3">Global Leaderboard</h2>
         <p className="text-white/60 font-light">Top performing squads this week</p>
       </div>
 
+      {/* Leaderboard Stats */}
+      <div className="grid grid-cols-3 gap-6 mb-8">
+        <InteractiveCard className="p-6 text-center bg-white/[0.02] border-white/[0.05]" glowEffect>
+          <div className="text-3xl mb-2">🏆</div>
+          <div className="text-2xl font-light text-white">#{mockSquads.find(s => s.isUserSquad)?.rank}</div>
+          <div className="text-white/60 text-sm font-light">Your Squad Rank</div>
+        </InteractiveCard>
+        
+        <InteractiveCard className="p-6 text-center bg-white/[0.02] border-white/[0.05]" glowEffect>
+          <div className="text-3xl mb-2">🔥</div>
+          <div className="text-2xl font-light text-white">12,450</div>
+          <div className="text-white/60 text-sm font-light">Total Calories</div>
+        </InteractiveCard>
+        
+        <InteractiveCard className="p-6 text-center bg-white/[0.02] border-white/[0.05]" glowEffect>
+          <div className="text-3xl mb-2">⚡</div>
+          <div className="text-2xl font-light text-white">+15%</div>
+          <div className="text-white/60 text-sm font-light">Weekly Growth</div>
+        </InteractiveCard>
+      </div>
+
+      {/* Enhanced Leaderboard */}
       {mockSquads.map((squad, index) => (
         <motion.div
           key={squad.id}
@@ -446,42 +560,56 @@ export function SquadBattles() {
           <InteractiveCard 
             className={`p-6 bg-white/[0.02] border-white/[0.05] ${squad.isUserSquad ? 'ring-1 ring-cyan-400/30' : ''}`}
             glowEffect={squad.isUserSquad}
+            hoverScale={1.02}
           >
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-6">
               <div className="flex items-center space-x-4">
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center font-light ${
-                  squad.rank === 1 ? 'bg-yellow-400 text-black' :
-                  squad.rank === 2 ? 'bg-gray-300 text-black' :
-                  squad.rank === 3 ? 'bg-orange-400 text-black' :
+                <div className={`w-16 h-16 rounded-full flex items-center justify-center font-light text-xl ${
+                  squad.rank === 1 ? 'bg-gradient-to-r from-yellow-400 to-yellow-600 text-black' :
+                  squad.rank === 2 ? 'bg-gradient-to-r from-gray-300 to-gray-500 text-black' :
+                  squad.rank === 3 ? 'bg-gradient-to-r from-orange-400 to-orange-600 text-black' :
                   'bg-white/10 text-white'
                 }`}>
-                  {squad.rank}
+                  {squad.rank === 1 ? '👑' : squad.rank}
                 </div>
-                <div className="text-3xl">{squad.avatar}</div>
+                <div className="text-4xl">{squad.avatar}</div>
               </div>
               
               <div className="flex-1">
-                <div className="flex items-center space-x-3 mb-1">
-                  <span className="font-light text-white text-lg">{squad.name}</span>
+                <div className="flex items-center space-x-3 mb-2">
+                  <span className="font-light text-white text-xl">{squad.name}</span>
                   {squad.isUserSquad && (
-                    <span className="text-xs bg-cyan-500/20 text-cyan-400 px-2 py-1 rounded-full font-light">
+                    <span className="text-xs bg-cyan-500/20 text-cyan-400 px-3 py-1 rounded-full font-light">
                       Your Squad
                     </span>
                   )}
                   {squad.winStreak > 5 && (
-                    <span className="text-xs bg-orange-500/20 text-orange-400 px-2 py-1 rounded-full font-light">
+                    <span className="text-xs bg-orange-500/20 text-orange-400 px-3 py-1 rounded-full font-light">
                       🔥 {squad.winStreak} wins
                     </span>
                   )}
+                  <span className={`text-xs px-3 py-1 rounded-full font-light ${
+                    squad.change.startsWith('+') ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+                  }`}>
+                    {squad.change}
+                  </span>
                 </div>
-                <div className="text-sm text-white/60 font-light">
+                <div className="text-sm text-white/60 font-light mb-2">
                   {squad.members} members • {squad.trophies} trophies
+                </div>
+                <div className="w-full bg-white/[0.05] rounded-full h-2">
+                  <div 
+                    className="h-full bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full transition-all duration-1000"
+                    style={{ width: `${(squad.weeklyCalories / 4000) * 100}%` }}
+                  />
                 </div>
               </div>
               
               <div className="text-right">
-                <div className="text-xl font-light text-white">{squad.totalCalories.toLocaleString()}</div>
-                <div className="text-xs text-white/60 font-light">calories this week</div>
+                <div className="text-2xl font-light text-white">{squad.totalCalories.toLocaleString()}</div>
+                <div className="text-xs text-white/60 font-light">total calories</div>
+                <div className="text-lg font-light text-cyan-400 mt-1">{squad.weeklyCalories}</div>
+                <div className="text-xs text-white/60 font-light">this week</div>
               </div>
             </div>
           </InteractiveCard>
