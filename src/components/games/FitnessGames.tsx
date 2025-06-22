@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Gamepad2, Target, Zap, Trophy, Star, Play, Pause, RotateCcw, Users, Crown, Flame, ArrowLeft } from 'lucide-react';
 import { Button } from '../common/Button';
@@ -15,7 +15,7 @@ function SquatCounter({ onComplete }: { onComplete: (score: number) => void }) {
   const [isActive, setIsActive] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
 
-  useEffect(() => {
+  React.useEffect(() => {
     let interval: NodeJS.Timeout;
     if (isActive && timeLeft > 0) {
       interval = setInterval(() => {
@@ -96,7 +96,7 @@ function PunchingGame({ onComplete }: { onComplete: (score: number) => void }) {
   const [gameStarted, setGameStarted] = useState(false);
   const [targets, setTargets] = useState<Array<{ id: number; x: number; y: number }>>([]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     let interval: NodeJS.Timeout;
     if (isActive && timeLeft > 0) {
       interval = setInterval(() => {
@@ -109,7 +109,7 @@ function PunchingGame({ onComplete }: { onComplete: (score: number) => void }) {
     return () => clearInterval(interval);
   }, [isActive, timeLeft, score, onComplete, gameStarted]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (isActive) {
       const targetInterval = setInterval(() => {
         const newTarget = {
@@ -119,7 +119,6 @@ function PunchingGame({ onComplete }: { onComplete: (score: number) => void }) {
         };
         setTargets(prev => [...prev.slice(-2), newTarget]);
         
-        // Auto-remove targets after 3 seconds
         setTimeout(() => {
           setTargets(prev => prev.filter(t => t.id !== newTarget.id));
         }, 3000);
@@ -196,12 +195,11 @@ function BalanceGame({ onComplete }: { onComplete: (score: number) => void }) {
   const [isActive, setIsActive] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
 
-  useEffect(() => {
+  React.useEffect(() => {
     let interval: NodeJS.Timeout;
     if (isActive && timeLeft > 0) {
       interval = setInterval(() => {
         setTimeLeft(prev => prev - 1);
-        // Random balance changes
         setBalance(prev => {
           const change = (Math.random() - 0.5) * 8;
           const newBalance = Math.max(0, Math.min(100, prev + change));
@@ -607,7 +605,6 @@ export function FitnessGames() {
               </div>
               <Button
                 onClick={() => {
-                  // Simulate joining multiplayer game
                   dispatch({ type: 'UPDATE_STATS', payload: {
                     xp: state.userStats.xp + 75,
                     coins: state.userStats.coins + 35
@@ -676,7 +673,6 @@ export function FitnessGames() {
                 size="sm"
                 className="font-light"
                 onClick={() => {
-                  // Simulate challenge participation
                   dispatch({ type: 'UPDATE_STATS', payload: {
                     xp: state.userStats.xp + 25,
                     coins: state.userStats.coins + 10

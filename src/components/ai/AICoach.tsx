@@ -51,18 +51,19 @@ export function AICoach({ isVisible, onClose }: AICoachProps) {
 
   useEffect(() => {
     if (isVisible) {
-      // Initialize AI service with the hardcoded API key
+      console.log('Initializing AI Coach...');
       try {
         const service = new GeminiAIService();
         setAiService(service);
         setIsConnected(true);
         
-        // Add welcome message
         setMessages([{
           type: 'ai',
           content: `🚀 AI Coach ${currentCoach.name} is now online! I'm powered by advanced AI and ready to help you dominate your fitness journey. What would you like to work on today?`,
           timestamp: new Date()
         }]);
+        
+        console.log('AI Coach initialized successfully');
       } catch (error) {
         console.error('Failed to initialize AI service:', error);
         setIsConnected(false);
@@ -93,6 +94,8 @@ export function AICoach({ isVisible, onClose }: AICoachProps) {
       let aiResponse = '';
       
       if (aiService && isConnected) {
+        console.log('Sending message to AI service:', currentInput);
+        
         const context = {
           biometrics: {
             heartRate: 75 + Math.random() * 20,
@@ -117,11 +120,10 @@ export function AICoach({ isVisible, onClose }: AICoachProps) {
           mode: coachMode
         };
 
-        console.log('Sending message to AI:', currentInput, context);
         aiResponse = await aiService.sendMessage(currentInput, context);
         console.log('AI Response received:', aiResponse);
       } else {
-        // Fallback responses when AI is not connected
+        console.log('AI service not available, using fallback');
         aiResponse = getFallbackResponse(currentInput, coachMode);
       }
 
@@ -148,7 +150,6 @@ export function AICoach({ isVisible, onClose }: AICoachProps) {
   const getFallbackResponse = (input: string, mode: string): string => {
     const lowerInput = input.toLowerCase();
     
-    // Context-aware responses
     if (lowerInput.includes('workout') || lowerInput.includes('exercise')) {
       return "🔥 Let's crush this workout! Remember to focus on proper form and push yourself safely. You've got this, champion! 💪";
     }
@@ -165,7 +166,6 @@ export function AICoach({ isVisible, onClose }: AICoachProps) {
       return "📈 Progress isn't always visible day-to-day, but every workout is building your strength! Trust the process and celebrate small wins! 🏆";
     }
 
-    // Mode-specific fallbacks
     const fallbacks = {
       chat: [
         "🔥 I'm here to power up your fitness journey! Let's crush those goals together! 💪",
@@ -208,7 +208,6 @@ export function AICoach({ isVisible, onClose }: AICoachProps) {
 
       recognition.start();
     } else {
-      // Fallback for demo
       setTimeout(() => {
         setUserInput("How can I improve my workout performance?");
         setIsListening(false);
@@ -229,7 +228,6 @@ export function AICoach({ isVisible, onClose }: AICoachProps) {
     const message = quickActions[action as keyof typeof quickActions];
     if (message) {
       setUserInput(message);
-      // Auto-send the message
       setTimeout(() => {
         handleSendMessage();
       }, 100);

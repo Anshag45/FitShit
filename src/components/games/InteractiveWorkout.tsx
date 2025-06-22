@@ -34,7 +34,6 @@ export function InteractiveWorkout({ exercise, onComplete, onSkip }: Interactive
   ];
 
   useEffect(() => {
-    // Initialize AI service if available
     try {
       setAiService(new GeminiAIService());
     } catch (error) {
@@ -63,7 +62,6 @@ export function InteractiveWorkout({ exercise, onComplete, onSkip }: Interactive
         };
         setTargets(prev => [...prev.slice(-3), newTarget]);
         
-        // Auto-remove targets after 4 seconds
         setTimeout(() => {
           setTargets(prev => prev.filter(t => t.id !== newTarget.id));
         }, 4000);
@@ -76,7 +74,6 @@ export function InteractiveWorkout({ exercise, onComplete, onSkip }: Interactive
         });
       }, 1000);
 
-      // Generate AI motivation every 30 seconds
       const motivationInterval = setInterval(async () => {
         if (aiService) {
           try {
@@ -90,7 +87,6 @@ export function InteractiveWorkout({ exercise, onComplete, onSkip }: Interactive
             setTimeout(() => setShowMotivation(false), 3000);
           } catch (error) {
             console.error('AI motivation error:', error);
-            // Use fallback motivation
             const fallbackMotivation = motivationalPhrases[Math.floor(Math.random() * motivationalPhrases.length)];
             setAiMotivation(fallbackMotivation);
             setShowMotivation(true);
@@ -120,7 +116,6 @@ export function InteractiveWorkout({ exercise, onComplete, onSkip }: Interactive
     
     setScore(prev => prev + totalScore);
     
-    // Get AI feedback for good performance
     if (aiService && combo > 0 && combo % 5 === 0) {
       try {
         const feedback = await aiService.sendMessage(
@@ -136,11 +131,9 @@ export function InteractiveWorkout({ exercise, onComplete, onSkip }: Interactive
         setAiMotivation(`🔥 ${combo} COMBO! You're on fire! Keep it going! 💪`);
       }
     } else {
-      // Use fallback motivation
       setAiMotivation(motivationalPhrases[Math.floor(Math.random() * motivationalPhrases.length)]);
     }
     
-    // Show motivation
     setShowMotivation(true);
     setTimeout(() => setShowMotivation(false), 1000);
 
@@ -156,7 +149,6 @@ export function InteractiveWorkout({ exercise, onComplete, onSkip }: Interactive
     setCombo(0);
     setTimeLeft(exercise.duration || 60);
 
-    // Get AI workout start motivation
     if (aiService) {
       try {
         const startMotivation = await aiService.sendMessage(
@@ -181,7 +173,6 @@ export function InteractiveWorkout({ exercise, onComplete, onSkip }: Interactive
   const handleComplete = async () => {
     const finalScore = score + (repsCompleted * 50) + (timeLeft * 10);
     
-    // Get AI completion feedback
     if (aiService) {
       try {
         await aiService.sendMessage(
@@ -210,7 +201,6 @@ export function InteractiveWorkout({ exercise, onComplete, onSkip }: Interactive
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-black relative overflow-hidden">
       <ParticleSystem count={500} color="#00d4ff" speed={gameState === 'active' ? 2 : 0.5} />
       
-      {/* Back Button */}
       <motion.button
         onClick={onSkip}
         className="fixed top-6 left-6 z-50 w-12 h-12 bg-white/10 backdrop-blur-lg rounded-full flex items-center justify-center border border-white/20 shadow-lg"
@@ -223,7 +213,6 @@ export function InteractiveWorkout({ exercise, onComplete, onSkip }: Interactive
         <ArrowLeft className="w-5 h-5 text-white" />
       </motion.button>
       
-      {/* AI Status Indicator */}
       {aiService && (
         <motion.div
           className="fixed top-6 right-6 z-50 flex items-center space-x-2 bg-white/10 backdrop-blur-lg rounded-full px-4 py-2 border border-white/20"
@@ -235,7 +224,6 @@ export function InteractiveWorkout({ exercise, onComplete, onSkip }: Interactive
         </motion.div>
       )}
       
-      {/* Game UI */}
       <div className="absolute top-4 left-4 right-4 z-20">
         <div className="flex items-center justify-between">
           <InteractiveCard className="p-3 bg-gray-900/80 border-cyan-500/50" glowEffect>
@@ -270,7 +258,6 @@ export function InteractiveWorkout({ exercise, onComplete, onSkip }: Interactive
         </div>
       </div>
 
-      {/* 3D Visualization */}
       <div className="absolute top-20 left-1/2 transform -translate-x-1/2 z-10">
         <WorkoutVisualization 
           exerciseName={exercise.name} 
@@ -279,7 +266,6 @@ export function InteractiveWorkout({ exercise, onComplete, onSkip }: Interactive
         />
       </div>
 
-      {/* Interactive Targets */}
       <div className="absolute inset-0 z-15">
         <AnimatePresence>
           {targets.map((target) => (
@@ -308,7 +294,6 @@ export function InteractiveWorkout({ exercise, onComplete, onSkip }: Interactive
         </AnimatePresence>
       </div>
 
-      {/* AI Motivation Popup */}
       <AnimatePresence>
         {showMotivation && (
           <motion.div
@@ -324,7 +309,6 @@ export function InteractiveWorkout({ exercise, onComplete, onSkip }: Interactive
         )}
       </AnimatePresence>
 
-      {/* Game States */}
       <AnimatePresence>
         {gameState === 'ready' && (
           <motion.div
@@ -416,7 +400,6 @@ export function InteractiveWorkout({ exercise, onComplete, onSkip }: Interactive
         )}
       </AnimatePresence>
 
-      {/* Instructions */}
       {gameState === 'active' && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
