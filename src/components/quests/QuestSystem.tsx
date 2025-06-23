@@ -11,25 +11,22 @@ export function QuestSystem() {
   const { state, dispatch } = useApp();
   const [selectedQuest, setSelectedQuest] = useState<string | null>(null);
   const [activeChapter, setActiveChapter] = useState(0);
-  const [questProgress, setQuestProgress] = useState<Record<string, number>>({});
+  const [questProgress, setQuestProgress] = useState<Record<string, number>>({
+    'space-explorer': 33,
+    'ninja-warrior': 0
+  });
 
   const currentQuest = selectedQuest ? quests.find(q => q.id === selectedQuest) : null;
 
   const handleStartQuest = (questId: string) => {
     dispatch({ type: 'START_QUEST', payload: questId });
     setSelectedQuest(questId);
-    setActiveChapter(0);
-    if (!questProgress[questId]) {
-      setQuestProgress(prev => ({ ...prev, [questId]: 0 }));
-    }
+    setActiveChapter(questProgress[questId] ? Math.floor((questProgress[questId] / 100) * quests.find(q => q.id === questId)!.chapters.length) : 0);
   };
 
   const handleStartChapter = (chapterId: string) => {
     const chapter = currentQuest?.chapters.find(c => c.id === chapterId);
     if (chapter && currentQuest) {
-      // Simulate starting the workout
-      console.log('Starting chapter workout:', chapter.workoutId);
-      
       // Mark chapter as completed and move to next
       const newProgress = Math.min(activeChapter + 1, currentQuest.chapters.length);
       setActiveChapter(newProgress);

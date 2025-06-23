@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Bot, MessageCircle, Zap, Target, TrendingUp, Heart, Brain, Camera, Mic, Send, Sparkles, X } from 'lucide-react';
 import { InteractiveCard } from '../common/InteractiveCard';
 import { useApp } from '../../contexts/AppContext';
-import GeminiAIService from '../../services/geminiAI';
 
 interface AICoachProps {
   isVisible: boolean;
@@ -17,8 +16,6 @@ export function AICoach({ isVisible, onClose }: AICoachProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [coachMode, setCoachMode] = useState<'chat' | 'analysis' | 'motivation'>('chat');
-  const [aiService, setAiService] = useState<GeminiAIService | null>(null);
-  const [isConnected, setIsConnected] = useState(false);
 
   const aiPersonalities = {
     cheetah: {
@@ -51,28 +48,11 @@ export function AICoach({ isVisible, onClose }: AICoachProps) {
 
   useEffect(() => {
     if (isVisible) {
-      console.log('Initializing AI Coach...');
-      try {
-        const service = new GeminiAIService();
-        setAiService(service);
-        setIsConnected(true);
-        
-        setMessages([{
-          type: 'ai',
-          content: `🚀 AI Coach ${currentCoach.name} is now online! I'm powered by advanced AI and ready to help you dominate your fitness journey. What would you like to work on today?`,
-          timestamp: new Date()
-        }]);
-        
-        console.log('AI Coach initialized successfully');
-      } catch (error) {
-        console.error('Failed to initialize AI service:', error);
-        setIsConnected(false);
-        setMessages([{
-          type: 'ai',
-          content: `⚠️ AI Coach is currently offline, but I'm still here to support you! Try asking me about workouts, motivation, or fitness tips!`,
-          timestamp: new Date()
-        }]);
-      }
+      setMessages([{
+        type: 'ai',
+        content: `🚀 AI Coach ${currentCoach.name} is now online! I'm here to help you dominate your fitness journey. What would you like to work on today?`,
+        timestamp: new Date()
+      }]);
     }
   }, [isVisible, currentCoach.name]);
 
@@ -90,64 +70,20 @@ export function AICoach({ isVisible, onClose }: AICoachProps) {
     setUserInput('');
     setIsLoading(true);
 
-    try {
-      let aiResponse = '';
-      
-      if (aiService && isConnected) {
-        console.log('Sending message to AI service:', currentInput);
-        
-        const context = {
-          biometrics: {
-            heartRate: 75 + Math.random() * 20,
-            calories: Math.random() * 100,
-            steps: Math.random() * 1000,
-            stress: Math.random() * 50,
-            energy: 70 + Math.random() * 30,
-            focus: 60 + Math.random() * 40,
-            workoutIntensity: state.isWorkoutActive ? 60 + Math.random() * 40 : undefined,
-            formAccuracy: state.isWorkoutActive ? 80 + Math.random() * 20 : undefined
-          },
-          workout: {
-            currentExercise: state.currentWorkout?.exercises[state.currentExerciseIndex]?.name,
-            exerciseType: state.currentWorkout?.exercises[state.currentExerciseIndex]?.skillType,
-            duration: state.currentWorkout?.duration,
-            difficulty: state.currentWorkout?.difficulty,
-            userFitnessLevel: state.user?.fitnessLevel,
-            goals: state.user?.goals,
-            spiritAnimal: state.user?.spiritAnimal
-          },
-          userStats: state.userStats,
-          mode: coachMode
-        };
-
-        aiResponse = await aiService.sendMessage(currentInput, context);
-        console.log('AI Response received:', aiResponse);
-      } else {
-        console.log('AI service not available, using fallback');
-        aiResponse = getFallbackResponse(currentInput, coachMode);
-      }
-
+    // Simulate AI response
+    setTimeout(() => {
+      const aiResponse = getAIResponse(currentInput, coachMode);
       const aiMessage = {
         type: 'ai' as const,
         content: aiResponse,
         timestamp: new Date()
       };
-
       setMessages(prev => [...prev, aiMessage]);
-    } catch (error) {
-      console.error('AI response error:', error);
-      const errorMessage = {
-        type: 'ai' as const,
-        content: getFallbackResponse(currentInput, coachMode),
-        timestamp: new Date()
-      };
-      setMessages(prev => [...prev, errorMessage]);
-    } finally {
       setIsLoading(false);
-    }
+    }, 1000);
   };
 
-  const getFallbackResponse = (input: string, mode: string): string => {
+  const getAIResponse = (input: string, mode: string): string => {
     const lowerInput = input.toLowerCase();
     
     if (lowerInput.includes('workout') || lowerInput.includes('exercise')) {
@@ -190,24 +126,8 @@ export function AICoach({ isVisible, onClose }: AICoachProps) {
 
   const handleVoiceInput = () => {
     setIsListening(!isListening);
-    if (!isListening && 'webkitSpeechRecognition' in window) {
-      const recognition = new (window as any).webkitSpeechRecognition();
-      recognition.continuous = false;
-      recognition.interimResults = false;
-      recognition.lang = 'en-US';
-
-      recognition.onresult = (event: any) => {
-        const transcript = event.results[0][0].transcript;
-        setUserInput(transcript);
-        setIsListening(false);
-      };
-
-      recognition.onerror = () => {
-        setIsListening(false);
-      };
-
-      recognition.start();
-    } else {
+    if (!isListening) {
+      // Simulate voice input
       setTimeout(() => {
         setUserInput("How can I improve my workout performance?");
         setIsListening(false);
@@ -215,7 +135,7 @@ export function AICoach({ isVisible, onClose }: AICoachProps) {
     }
   };
 
-  const handleQuickAction = async (action: string) => {
+  const handleQuickAction = (action: string) => {
     const quickActions = {
       'analyze': 'Analyze my current performance and biometrics',
       'motivate': 'Give me high-energy motivation for my workout!',
@@ -257,23 +177,17 @@ export function AICoach({ isVisible, onClose }: AICoachProps) {
             >
               {currentCoach.avatar}
               <motion.div
-                className={`absolute -top-1 -right-1 w-4 h-4 rounded-full border-2 border-gray-900 ${
-                  isConnected ? 'bg-green-400' : 'bg-yellow-400'
-                }`}
+                className="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-gray-900"
                 animate={{ scale: [1, 1.2, 1] }}
                 transition={{ duration: 1, repeat: Infinity }}
               />
             </motion.div>
             <div>
               <h3 className="font-bold text-white">{currentCoach.name}</h3>
-              <p className="text-xs text-gray-400">
-                AI Coach • {isConnected ? 'Connected' : 'Offline Mode'}
-              </p>
+              <p className="text-xs text-gray-400">AI Coach • Connected</p>
               <div className="flex items-center space-x-1 mt-1">
                 <Brain className="w-3 h-3 text-cyan-400" />
-                <span className="text-xs text-cyan-400">
-                  {isConnected ? 'Neural Mode Active' : 'Local Mode'}
-                </span>
+                <span className="text-xs text-cyan-400">Neural Mode Active</span>
               </div>
             </div>
           </div>

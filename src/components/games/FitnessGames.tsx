@@ -3,12 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Gamepad2, Target, Zap, Trophy, Star, Play, Pause, RotateCcw, Users, Crown, Flame, ArrowLeft } from 'lucide-react';
 import { Button } from '../common/Button';
 import { InteractiveCard } from '../common/InteractiveCard';
-import { InteractiveWorkout } from './InteractiveWorkout';
 import { useApp } from '../../contexts/AppContext';
-import { exercises } from '../../data/workouts';
-import { FloatingLogo } from '../effects/FloatingLogo';
 
-// Simple Fitness Games
+// Working Squat Counter Game
 function SquatCounter({ onComplete }: { onComplete: (score: number) => void }) {
   const [count, setCount] = useState(0);
   const [timeLeft, setTimeLeft] = useState(60);
@@ -89,6 +86,7 @@ function SquatCounter({ onComplete }: { onComplete: (score: number) => void }) {
   );
 }
 
+// Working Punching Game
 function PunchingGame({ onComplete }: { onComplete: (score: number) => void }) {
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(30);
@@ -188,6 +186,7 @@ function PunchingGame({ onComplete }: { onComplete: (score: number) => void }) {
   );
 }
 
+// Working Balance Game
 function BalanceGame({ onComplete }: { onComplete: (score: number) => void }) {
   const [balance, setBalance] = useState(50);
   const [score, setScore] = useState(0);
@@ -329,45 +328,6 @@ export function FitnessGames() {
       color: 'from-white/10 to-white/5',
       type: 'simple',
       players: 1
-    },
-    {
-      id: 'cardio-runner',
-      name: 'Cardio Runner',
-      description: 'Run in place to escape the digital void',
-      icon: '🏃‍♂️',
-      difficulty: 'Hard',
-      duration: '6 min',
-      calories: 120,
-      color: 'from-white/10 to-white/5',
-      exerciseId: '5',
-      type: 'interactive',
-      players: 1
-    },
-    {
-      id: 'yoga-flow',
-      name: 'Zen Flow Master',
-      description: 'Follow the flowing patterns with yoga poses',
-      icon: '🕉️',
-      difficulty: 'Medium',
-      duration: '8 min',
-      calories: 60,
-      color: 'from-white/10 to-white/5',
-      exerciseId: '8',
-      type: 'interactive',
-      players: 1
-    },
-    {
-      id: 'hiit-blaster',
-      name: 'HIIT Blaster',
-      description: 'Explosive intervals that push your limits',
-      icon: '💥',
-      difficulty: 'Extreme',
-      duration: '10 min',
-      calories: 150,
-      color: 'from-white/10 to-white/5',
-      exerciseId: '2',
-      type: 'interactive',
-      players: 1
     }
   ];
 
@@ -395,18 +355,6 @@ export function FitnessGames() {
       players: '2-20',
       type: 'multiplayer',
       status: 'waiting'
-    },
-    {
-      id: 'dance-off',
-      name: 'Dance Battle',
-      description: 'Show your moves in epic dance competitions',
-      icon: '💃',
-      difficulty: 'Easy',
-      duration: '5 min',
-      calories: 80,
-      players: '2-10',
-      type: 'multiplayer',
-      status: 'live'
     }
   ];
 
@@ -430,24 +378,11 @@ export function FitnessGames() {
       reward: '500 XP + 200 Coins',
       timeLeft: '2d 14h',
       type: 'weekly'
-    },
-    {
-      id: 'monthly-legend',
-      name: 'Monthly Legend',
-      description: 'Complete 50 workouts this month',
-      icon: '👑',
-      progress: 40,
-      reward: '2000 XP + 1000 Coins + Legendary Badge',
-      timeLeft: '12d 6h',
-      type: 'monthly'
     }
   ];
 
   const handleStartGame = (gameId: string) => {
-    const game = soloGames.find(g => g.id === gameId);
-    if (game) {
-      setSelectedGame(gameId);
-    }
+    setSelectedGame(gameId);
   };
 
   const handleGameComplete = (score: number) => {
@@ -469,30 +404,15 @@ export function FitnessGames() {
 
   // Render specific games
   if (selectedGame) {
-    const game = soloGames.find(g => g.id === selectedGame);
-    
-    if (game?.type === 'simple') {
-      switch (selectedGame) {
-        case 'squat-challenge':
-          return <SquatCounter onComplete={handleGameComplete} />;
-        case 'punch-master':
-          return <PunchingGame onComplete={handleGameComplete} />;
-        case 'balance-beam':
-          return <BalanceGame onComplete={handleGameComplete} />;
-      }
-    }
-    
-    if (game?.type === 'interactive' && game.exerciseId) {
-      const exercise = exercises.find(e => e.id === game.exerciseId);
-      if (exercise) {
-        return (
-          <InteractiveWorkout
-            exercise={exercise}
-            onComplete={handleGameComplete}
-            onSkip={handleBackToGames}
-          />
-        );
-      }
+    switch (selectedGame) {
+      case 'squat-challenge':
+        return <SquatCounter onComplete={handleGameComplete} />;
+      case 'punch-master':
+        return <PunchingGame onComplete={handleGameComplete} />;
+      case 'balance-beam':
+        return <BalanceGame onComplete={handleGameComplete} />;
+      default:
+        return null;
     }
   }
 
@@ -522,7 +442,6 @@ export function FitnessGames() {
                 <div className={`px-3 py-1 rounded-full text-xs font-light ${
                   game.difficulty === 'Easy' ? 'bg-green-500/20 text-green-400' :
                   game.difficulty === 'Medium' ? 'bg-yellow-500/20 text-yellow-400' :
-                  game.difficulty === 'Hard' ? 'bg-orange-500/20 text-orange-400' :
                   'bg-red-500/20 text-red-400'
                 }`}>
                   {game.difficulty}
@@ -690,8 +609,6 @@ export function FitnessGames() {
 
   return (
     <div className="min-h-screen bg-black relative overflow-hidden">
-      <FloatingLogo />
-      
       <div className="relative z-10 p-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

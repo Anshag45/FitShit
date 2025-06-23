@@ -56,32 +56,6 @@ export function SquadBattles() {
       trophies: 1980,
       weeklyCalories: 2700,
       change: '+12%'
-    },
-    {
-      id: '4',
-      name: 'Quantum Crushers',
-      members: 3,
-      totalCalories: 9500,
-      rank: 4,
-      isUserSquad: false,
-      avatar: '💎',
-      winStreak: 2,
-      trophies: 1750,
-      weeklyCalories: 2380,
-      change: '+5%'
-    },
-    {
-      id: '5',
-      name: 'Stellar Force',
-      members: 7,
-      totalCalories: 8900,
-      rank: 5,
-      isUserSquad: false,
-      avatar: '🌌',
-      winStreak: 4,
-      trophies: 1650,
-      weeklyCalories: 2100,
-      change: '+3%'
     }
   ];
 
@@ -111,44 +85,6 @@ export function SquadBattles() {
       isActive: false,
       type: 'challenge',
       prize: '500 Coins + Streak Master Badge'
-    },
-    {
-      id: '3',
-      name: 'HIIT Battle Royale',
-      description: 'Intense HIIT workouts in real-time competition',
-      timeLeft: '12h 30m',
-      progress: 0,
-      reward: { xp: 800, coins: 400, trophies: 100 },
-      participants: 32,
-      isLive: true,
-      isActive: false,
-      type: 'tournament',
-      prize: '2000 Coins + Champion Title'
-    }
-  ];
-
-  const tournaments = [
-    {
-      id: 'grand-championship',
-      name: 'Grand Championship',
-      description: 'The ultimate fitness gaming tournament',
-      startTime: '2h 15m',
-      duration: '3 days',
-      participants: 128,
-      prizePool: '10,000 Coins',
-      status: 'upcoming',
-      entryFee: '100 Coins'
-    },
-    {
-      id: 'speed-demons',
-      name: 'Speed Demons',
-      description: 'Fast-paced cardio challenges',
-      startTime: 'Live Now',
-      duration: '6 hours',
-      participants: 64,
-      prizePool: '5,000 Coins',
-      status: 'live',
-      entryFee: '50 Coins'
     }
   ];
 
@@ -185,16 +121,6 @@ export function SquadBattles() {
     }
   };
 
-  const handleJoinTournament = (tournamentId: string) => {
-    const tournament = tournaments.find(t => t.id === tournamentId);
-    if (tournament) {
-      dispatch({ type: 'UPDATE_STATS', payload: {
-        xp: state.userStats.xp + 100,
-        coins: state.userStats.coins - parseInt(tournament.entryFee.split(' ')[0])
-      }});
-    }
-  };
-
   const renderBattles = () => (
     <div className="space-y-6">
       <div className="text-center mb-8">
@@ -225,13 +151,6 @@ export function SquadBattles() {
                         JOINED
                       </span>
                     )}
-                    <span className={`px-3 py-1 text-xs rounded-full font-light ${
-                      battle.type === 'tournament' ? 'bg-purple-500/20 text-purple-400' :
-                      battle.type === 'weekly' ? 'bg-blue-500/20 text-blue-400' :
-                      'bg-orange-500/20 text-orange-400'
-                    }`}>
-                      {battle.type.toUpperCase()}
-                    </span>
                   </div>
                 </div>
                 <p className="text-white/60 mb-4 font-light">{battle.description}</p>
@@ -331,7 +250,7 @@ export function SquadBattles() {
           </div>
         </div>
 
-        {/* Enhanced Squad Chat */}
+        {/* Working Squad Chat */}
         <div className="bg-white/[0.02] border border-white/10 rounded-xl p-6 mb-6">
           <h4 className="text-white font-light mb-4 flex items-center">
             <MessageCircle className="w-5 h-5 mr-2 text-cyan-400" />
@@ -384,7 +303,7 @@ export function SquadBattles() {
         </div>
       </InteractiveCard>
 
-      {/* Enhanced Squad Members */}
+      {/* Squad Members */}
       <div className="space-y-4">
         <h4 className="text-xl font-light text-white mb-4">Squad Members</h4>
         {mockMembers.map((member, index) => (
@@ -434,90 +353,6 @@ export function SquadBattles() {
           </motion.div>
         ))}
       </div>
-
-      <div className="flex space-x-4">
-        <Button variant="outline" className="flex-1 flex items-center justify-center space-x-2 font-light">
-          <Plus className="w-4 h-4" />
-          <span>Invite Friends</span>
-        </Button>
-        <Button variant="outline" className="flex-1 flex items-center justify-center space-x-2 font-light">
-          <Zap className="w-4 h-4" />
-          <span>Squad Boost</span>
-        </Button>
-      </div>
-    </div>
-  );
-
-  const renderTournaments = () => (
-    <div className="space-y-6">
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-light text-white mb-3">Tournaments</h2>
-        <p className="text-white/60 font-light">Compete in epic tournaments for massive rewards</p>
-      </div>
-
-      {tournaments.map((tournament, index) => (
-        <motion.div
-          key={tournament.id}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.1 }}
-        >
-          <InteractiveCard className="p-8 bg-white/[0.02] border-white/[0.05]" glowEffect>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-6">
-                <div className="w-20 h-20 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center text-3xl">
-                  🏆
-                </div>
-                <div>
-                  <div className="flex items-center space-x-3 mb-2">
-                    <h3 className="text-2xl font-light text-white">{tournament.name}</h3>
-                    <span className={`px-3 py-1 rounded-full text-xs font-light ${
-                      tournament.status === 'live' ? 'bg-red-500/20 text-red-400 animate-pulse' :
-                      tournament.status === 'upcoming' ? 'bg-blue-500/20 text-blue-400' :
-                      'bg-gray-500/20 text-gray-400'
-                    }`}>
-                      {tournament.status === 'live' ? 'LIVE NOW' : 
-                       tournament.status === 'upcoming' ? 'UPCOMING' : 'ENDED'}
-                    </span>
-                  </div>
-                  <p className="text-white/60 font-light mb-4">{tournament.description}</p>
-                  <div className="flex items-center space-x-6 text-sm text-white/60">
-                    <div className="flex items-center space-x-2">
-                      <Users className="w-4 h-4" />
-                      <span className="font-light">{tournament.participants} players</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Target className="w-4 h-4" />
-                      <span className="font-light">{tournament.duration}</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Trophy className="w-4 h-4" />
-                      <span className="font-light">{tournament.prizePool}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="text-right">
-                <div className="text-white/60 text-sm mb-2 font-light">
-                  {tournament.status === 'live' ? 'Live Now' : 'Starts In'}
-                </div>
-                <div className="text-white font-light text-lg mb-4">{tournament.startTime}</div>
-                <Button
-                  onClick={() => handleJoinTournament(tournament.id)}
-                  variant={tournament.status === 'live' ? 'primary' : 'outline'}
-                  className="flex items-center space-x-2 font-light"
-                >
-                  <Play className="w-4 h-4" />
-                  <span>
-                    {tournament.status === 'live' ? 'Join Now' : 
-                     tournament.status === 'upcoming' ? `Enter (${tournament.entryFee})` : 'View Results'}
-                  </span>
-                </Button>
-              </div>
-            </div>
-          </InteractiveCard>
-        </motion.div>
-      ))}
     </div>
   );
 
@@ -643,7 +478,6 @@ export function SquadBattles() {
           {[
             { id: 'battles', label: 'Battles', icon: Sword },
             { id: 'squad', label: 'My Squad', icon: Users },
-            { id: 'tournaments', label: 'Tournaments', icon: Crown },
             { id: 'leaderboard', label: 'Leaderboard', icon: Trophy }
           ].map((tab) => (
             <Button
@@ -667,7 +501,6 @@ export function SquadBattles() {
         >
           {activeTab === 'battles' && renderBattles()}
           {activeTab === 'squad' && renderSquad()}
-          {activeTab === 'tournaments' && renderTournaments()}
           {activeTab === 'leaderboard' && renderLeaderboard()}
         </motion.div>
       </motion.div>

@@ -38,15 +38,6 @@ export function WorkoutCarousel({ onStartWorkout }: WorkoutCarouselProps) {
     }
   };
 
-  const getIntensityIcon = (intensity: string) => {
-    switch (intensity) {
-      case 'low': return <Star className="w-4 h-4" />;
-      case 'medium': return <Flame className="w-4 h-4" />;
-      case 'high': return <Zap className="w-4 h-4" />;
-      default: return <Target className="w-4 h-4" />;
-    }
-  };
-
   return (
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
@@ -136,7 +127,7 @@ export function WorkoutCarousel({ onStartWorkout }: WorkoutCarouselProps) {
                       <span className="font-light">{currentWorkout.calories} cal</span>
                     </div>
                     <div className="flex items-center space-x-2 text-white/90">
-                      {getIntensityIcon(currentWorkout.intensity)}
+                      <Zap className="w-5 h-5 text-cyan-400" />
                       <span className="font-light capitalize">{currentWorkout.intensity}</span>
                     </div>
                   </div>

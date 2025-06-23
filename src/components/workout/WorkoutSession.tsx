@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { SkipForward, CheckCircle, Star } from 'lucide-react';
+import { SkipForward, CheckCircle, Star, Play, Pause, Timer } from 'lucide-react';
 import { Button } from '../common/Button';
 import { BackButton } from '../common/BackButton';
 import { InteractiveCard } from '../common/InteractiveCard';
-import { InteractiveWorkout } from '../games/InteractiveWorkout';
-import { ParticleSystem } from '../effects/ParticleSystem';
 import { useApp } from '../../contexts/AppContext';
 
 interface WorkoutSessionProps {
@@ -16,47 +14,86 @@ interface WorkoutSessionProps {
 export function WorkoutSession({ onBack, onComplete }: WorkoutSessionProps) {
   const { state, dispatch } = useApp();
   const { currentWorkout, currentExerciseIndex } = state;
-  const [useInteractiveMode, setUseInteractiveMode] = useState(true);
+  const [isTimerActive, setIsTimerActive] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(0);
+  const [exerciseStarted, setExerciseStarted] = useState(false);
 
   const currentExercise = currentWorkout?.exercises[currentExerciseIndex];
-  const isLastExercise = currentExerciseIndex === currentWorkout?.exercises.length - 1;
-  const progress = ((currentExerciseIndex + 1) / currentWorkout?.exercises.length) * 100;
+  const isLastExercise = currentExerciseIndex === (currentWorkout?.exercises.length || 0) - 1;
+  const progress = ((currentExerciseIndex + 1) / (currentWorkout?.exercises.length || 1)) * 100;
 
-  const handleCompleteExercise = (score?: number) => {
+  useEffect(() => {
+    if (currentExercise && !exerciseStarted) {
+      setTimeLeft(currentExercise.duration);
+    }
+  }, [currentExercise, exerciseStarted]);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isTimerActive && timeLeft > 0) {
+      interval = setInterval(() => {
+        setTimeLeft(prev => prev - 1);
+      }, 1000);
+    } else if (timeLeft === 0 && isTimerActive) {
+      setIsTimerActive(false);
+      handleCompleteExercise();
+    }
+    return () => clearInterval(interval);
+  }, [isTimerActive, timeLeft]);
+
+  const handleStartExercise = () => {
+    setExerciseStarted(true);
+    setIsTimerActive(true);
+    if (currentExercise) {
+      setTimeLeft(currentExercise.duration);
+    }
+  };
+
+  const handlePauseExercise = () => {
+    setIsTimerActive(!isTimerActive);
+  };
+
+  const handleCompleteExercise = () => {
+    setIsTimerActive(false);
+    setExerciseStarted(false);
+    
+    // Award XP and coins for completing exercise
+    dispatch({ type: 'UPDATE_STATS', payload: {
+      xp: state.userStats.xp + 25,
+      coins: state.userStats.coins + 10
+    }});
+
     if (isLastExercise) {
-      const xpEarned = score ? Math.floor(score / 100) : 50;
-      const coinsEarned = score ? Math.floor(score / 200) : 10;
-      
+      // Complete workout
       dispatch({ type: 'UPDATE_STATS', payload: {
-        xp: state.userStats.xp + xpEarned,
-        coins: state.userStats.coins + coinsEarned,
+        xp: state.userStats.xp + 100,
+        coins: state.userStats.coins + 50,
         totalWorkouts: state.userStats.totalWorkouts + 1,
-        totalTime: state.userStats.totalTime + currentWorkout.duration
+        totalTime: state.userStats.totalTime + (currentWorkout?.duration || 0)
       }});
       
       dispatch({ type: 'END_WORKOUT' });
       onComplete();
     } else {
       dispatch({ type: 'NEXT_EXERCISE' });
+      setTimeLeft(0);
     }
   };
 
   const handleSkipExercise = () => {
+    setIsTimerActive(false);
+    setExerciseStarted(false);
     handleCompleteExercise();
+  };
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
   if (!currentWorkout || !currentExercise) {
     return null;
-  }
-
-  if (useInteractiveMode) {
-    return (
-      <InteractiveWorkout
-        exercise={currentExercise}
-        onComplete={handleCompleteExercise}
-        onSkip={handleSkipExercise}
-      />
-    );
   }
 
   return (
@@ -66,28 +103,6 @@ export function WorkoutSession({ onBack, onComplete }: WorkoutSessionProps) {
         background: `linear-gradient(135deg, ${currentWorkout.backgroundGradient.join(', ')})`
       }}
     >
-      <ParticleSystem count={300} color="#00d4ff" speed={1} />
-      
-      {/* Animated background elements */}
-      <div className="absolute inset-0">
-        <motion.div
-          className="absolute top-20 right-20 w-32 h-32 bg-white/10 rounded-full blur-xl"
-          animate={{ 
-            scale: [1, 1.2, 1],
-            opacity: [0.3, 0.6, 0.3]
-          }}
-          transition={{ duration: 4, repeat: Infinity }}
-        />
-        <motion.div
-          className="absolute bottom-20 left-20 w-48 h-48 bg-white/5 rounded-full blur-2xl"
-          animate={{ 
-            scale: [1.2, 1, 1.2],
-            opacity: [0.2, 0.4, 0.2]
-          }}
-          transition={{ duration: 5, repeat: Infinity }}
-        />
-      </div>
-
       <BackButton onClick={onBack} variant="floating" />
 
       {/* Header */}
@@ -134,7 +149,52 @@ export function WorkoutSession({ onBack, onComplete }: WorkoutSessionProps) {
               exit={{ opacity: 0, x: -100 }}
               transition={{ duration: 0.3 }}
             >
-              {/* Exercise Image */}
+              {/* Timer Display */}
+              <InteractiveCard className="p-6 mb-6 text-center border border-gray-600/30 bg-gray-800/30" glowEffect>
+                <div className="relative">
+                  <motion.div 
+                    className="text-6xl font-light text-white mb-4"
+                    animate={{ 
+                      scale: timeLeft <= 5 && timeLeft > 0 && isTimerActive ? [1, 1.2, 1] : 1,
+                      color: timeLeft <= 5 && timeLeft > 0 && isTimerActive ? ['#ffffff', '#ff4757', '#ffffff'] : '#ffffff'
+                    }}
+                    transition={{ duration: 0.5, repeat: timeLeft <= 5 && timeLeft > 0 && isTimerActive ? Infinity : 0 }}
+                  >
+                    {formatTime(timeLeft)}
+                  </motion.div>
+                  <div className="text-white/60 text-sm font-light mb-4">
+                    {isTimerActive ? 'Training...' : exerciseStarted ? 'Paused' : 'Ready'}
+                  </div>
+                  
+                  {/* Timer Controls */}
+                  <div className="flex justify-center space-x-4">
+                    {!exerciseStarted ? (
+                      <Button 
+                        onClick={handleStartExercise} 
+                        variant="primary" 
+                        size="lg"
+                        className="flex items-center space-x-2"
+                        glowEffect
+                      >
+                        <Play className="w-5 h-5" />
+                        <span>Start Exercise</span>
+                      </Button>
+                    ) : (
+                      <Button 
+                        onClick={handlePauseExercise} 
+                        variant="outline" 
+                        size="lg"
+                        className="flex items-center space-x-2"
+                      >
+                        {isTimerActive ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+                        <span>{isTimerActive ? 'Pause' : 'Resume'}</span>
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </InteractiveCard>
+
+              {/* Exercise Details */}
               <InteractiveCard className="p-4 mb-6 border border-gray-600/30 bg-gray-800/30" glowEffect>
                 <motion.img
                   src={currentExercise.imageUrl}
@@ -161,7 +221,7 @@ export function WorkoutSession({ onBack, onComplete }: WorkoutSessionProps) {
                   {currentExercise.description}
                 </motion.p>
                 
-                {/* Exercise Details */}
+                {/* Exercise Stats */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -196,7 +256,7 @@ export function WorkoutSession({ onBack, onComplete }: WorkoutSessionProps) {
                 <InteractiveCard className="p-4 mb-6 border border-gray-600/30 bg-gray-800/30" glowEffect>
                   <h3 className="font-bold text-white text-lg mb-4 flex items-center">
                     <Star className="w-5 h-5 mr-2 text-cyan-400" />
-                    Mission Instructions
+                    Instructions
                   </h3>
                   <ol className="space-y-3">
                     {currentExercise.instructions.map((instruction, index) => (
@@ -217,32 +277,6 @@ export function WorkoutSession({ onBack, onComplete }: WorkoutSessionProps) {
                 </InteractiveCard>
               </motion.div>
 
-              {/* Mode Toggle */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.0 }}
-                className="mb-6"
-              >
-                <InteractiveCard className="p-4 border border-gray-600/30 bg-gray-800/30" glowEffect>
-                  <div className="flex items-center justify-between">
-                    <span className="text-white font-medium">Interactive Gaming Mode</span>
-                    <button
-                      onClick={() => setUseInteractiveMode(!useInteractiveMode)}
-                      className={`relative w-12 h-6 rounded-full transition-colors ${
-                        useInteractiveMode ? 'bg-cyan-500' : 'bg-gray-600'
-                      }`}
-                    >
-                      <motion.div
-                        className="absolute top-1 w-4 h-4 bg-white rounded-full"
-                        animate={{ x: useInteractiveMode ? 26 : 2 }}
-                        transition={{ duration: 0.2 }}
-                      />
-                    </button>
-                  </div>
-                </InteractiveCard>
-              </motion.div>
-
               {/* Action Buttons */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -260,13 +294,13 @@ export function WorkoutSession({ onBack, onComplete }: WorkoutSessionProps) {
                 </Button>
                 
                 <Button
-                  onClick={() => handleCompleteExercise()}
-                  variant="legendary"
+                  onClick={handleCompleteExercise}
+                  variant="primary"
                   className="flex-2 flex items-center justify-center space-x-2"
                   glowEffect
                 >
                   <CheckCircle className="w-4 h-4" />
-                  <span>{isLastExercise ? 'Complete Mission' : 'Next Exercise'}</span>
+                  <span>{isLastExercise ? 'Complete Workout' : 'Complete Exercise'}</span>
                 </Button>
               </motion.div>
             </motion.div>
