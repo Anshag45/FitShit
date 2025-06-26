@@ -402,6 +402,19 @@ export function FitnessGames() {
     setSelectedGame(null);
   };
 
+  const handleCompleteChallenge = (challengeId: string) => {
+    const challenge = challenges.find(c => c.id === challengeId);
+    if (challenge) {
+      const xpReward = challenge.type === 'daily' ? 100 : 500;
+      const coinReward = challenge.type === 'daily' ? 50 : 200;
+      
+      dispatch({ type: 'UPDATE_STATS', payload: {
+        xp: state.userStats.xp + xpReward,
+        coins: state.userStats.coins + coinReward
+      }});
+    }
+  };
+
   // Render specific games
   if (selectedGame) {
     switch (selectedGame) {
@@ -591,14 +604,9 @@ export function FitnessGames() {
                 variant="outline"
                 size="sm"
                 className="font-light"
-                onClick={() => {
-                  dispatch({ type: 'UPDATE_STATS', payload: {
-                    xp: state.userStats.xp + 25,
-                    coins: state.userStats.coins + 10
-                  }});
-                }}
+                onClick={() => handleCompleteChallenge(challenge.id)}
               >
-                Participate
+                Complete Challenge
               </Button>
             </div>
           </InteractiveCard>

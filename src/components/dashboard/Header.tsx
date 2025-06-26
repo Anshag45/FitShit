@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { User, Bell, Settings, Crown, ArrowLeft, Bot, Activity, Brain } from 'lucide-react';
+import { User, Bell, Settings, Crown, ArrowLeft, Bot, Activity } from 'lucide-react';
 import { useApp } from '../../contexts/AppContext';
 import { ProgressBar } from '../common/ProgressBar';
 import { InteractiveCard } from '../common/InteractiveCard';
 import { AICoach } from '../ai/AICoach';
-import { AITracker } from '../ai/AITracker';
 
 interface HeaderProps {
   showBackButton?: boolean;
@@ -17,7 +16,6 @@ export function Header({ showBackButton = false, onBack, title }: HeaderProps) {
   const { state } = useApp();
   const { user, userStats } = state;
   const [showAICoach, setShowAICoach] = useState(false);
-  const [showAITracker, setShowAITracker] = useState(false);
 
   const xpToNextLevel = userStats.level * 1000;
   const xpProgress = ((userStats.xp % 1000) / 1000) * 100;
@@ -80,20 +78,6 @@ export function Header({ showBackButton = false, onBack, title }: HeaderProps) {
               <InteractiveCard
                 className="p-3 hover:bg-white/[0.02] rounded-full transition-colors backdrop-blur-sm border-0 relative"
                 hoverScale={1.1}
-                onClick={() => setShowAITracker(!showAITracker)}
-                variant="vercel"
-              >
-                <Brain className="w-5 h-5 text-white/60" />
-                <motion.div
-                  className="absolute -top-1 -right-1 w-3 h-3 bg-cyan-400 rounded-full"
-                  animate={{ scale: [1, 1.2, 1] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                />
-              </InteractiveCard>
-
-              <InteractiveCard
-                className="p-3 hover:bg-white/[0.02] rounded-full transition-colors backdrop-blur-sm border-0 relative"
-                hoverScale={1.1}
                 onClick={() => setShowAICoach(!showAICoach)}
                 variant="vercel"
               >
@@ -142,34 +126,6 @@ export function Header({ showBackButton = false, onBack, title }: HeaderProps) {
       </div>
 
       <AICoach isVisible={showAICoach} onClose={() => setShowAICoach(false)} />
-      
-      {/* AI Tracker Modal */}
-      {showAITracker && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-          onClick={() => setShowAITracker(false)}
-        >
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="bg-gray-900/95 border border-white/10 rounded-2xl p-6 max-w-4xl w-full max-h-[80vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-light text-white">AI Fitness Tracker</h2>
-              <button
-                onClick={() => setShowAITracker(false)}
-                className="text-white/60 hover:text-white transition-colors"
-              >
-                ✕
-              </button>
-            </div>
-            <AITracker />
-          </motion.div>
-        </motion.div>
-      )}
     </>
   );
 }

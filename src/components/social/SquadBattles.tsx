@@ -8,7 +8,7 @@ import { useApp } from '../../contexts/AppContext';
 
 export function SquadBattles() {
   const { state, dispatch } = useApp();
-  const [activeTab, setActiveTab] = useState<'battles' | 'squad' | 'leaderboard' | 'tournaments'>('battles');
+  const [activeTab, setActiveTab] = useState<'battles' | 'squad' | 'leaderboard'>('battles');
   const [chatMessage, setChatMessage] = useState('');
   const [chatMessages, setChatMessages] = useState([
     { id: 1, user: 'Alex', avatar: '👨‍💻', message: 'Great workout today team! 💪', time: '2 minutes ago' },

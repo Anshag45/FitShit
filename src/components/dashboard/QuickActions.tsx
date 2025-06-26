@@ -59,24 +59,11 @@ export function QuickActions({ onNavigate }: QuickActionsProps) {
       bgColor: 'bg-blue-500/20',
       action: 'analytics',
       progress: 0
-    },
-    {
-      icon: Brain,
-      label: 'AI Coach',
-      description: 'Personal trainer',
-      color: 'from-cyan-500 to-teal-600',
-      bgColor: 'bg-cyan-500/20',
-      action: 'ai-coach',
-      isActive: true,
-      progress: 0
     }
   ];
 
   const handleActionClick = (action: string) => {
-    // Add some XP for exploring features
-    if (action !== 'ai-coach') {
-      onNavigate(action);
-    }
+    onNavigate(action);
   };
 
   return (
@@ -118,11 +105,6 @@ export function QuickActions({ onNavigate }: QuickActionsProps) {
                 {action.isLive && (
                   <span className="px-2 py-1 bg-blue-500/20 text-blue-400 text-xs rounded-full font-light animate-pulse">
                     LIVE
-                  </span>
-                )}
-                {action.isActive && (
-                  <span className="px-2 py-1 bg-cyan-500/20 text-cyan-400 text-xs rounded-full font-light">
-                    ACTIVE
                   </span>
                 )}
               </div>
